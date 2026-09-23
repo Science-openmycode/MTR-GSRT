@@ -1,0 +1,11 @@
+{
+  "protocol": "executed_full_population_profile_v1",
+  "corpora": [
+    "SPRT",
+    "PrivTrace",
+    "DPTraj-PM",
+    "DPStd",
+    "MTR-GSRT"
+  ],
+  "result": ".\\experiment_results\\executed_reference\\profile\\results.csv"
+}

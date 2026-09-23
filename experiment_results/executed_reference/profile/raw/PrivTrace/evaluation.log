@@ -1,0 +1,4 @@
+2026-09-23 00:35:48,668 INFO loading real and synthetic trajectories
+2026-09-23 00:35:49,074 INFO building public directed graph and statistical metrics
+2026-09-23 00:36:11,120 INFO running retrospective query, OD, destination and grid-route tasks
+2026-09-23 00:36:23,248 INFO wrote all metrics to E:\study\大四下\Paper-Agent-main\Paper-Agent-main\ARA_codex\reproducibility_folders\01_gsrt_precomputed_baselines\experiment_results\executed_reference\profile\raw\PrivTrace

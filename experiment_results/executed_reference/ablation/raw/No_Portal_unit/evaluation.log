@@ -1,0 +1,4 @@
+2026-09-23 00:42:54,967 INFO loading real and synthetic trajectories
+2026-09-23 00:42:55,413 INFO building public directed graph and statistical metrics
+2026-09-23 00:43:52,801 INFO running retrospective query, OD, destination and grid-route tasks
+2026-09-23 00:44:08,353 INFO wrote all metrics to E:\study\大四下\Paper-Agent-main\Paper-Agent-main\ARA_codex\reproducibility_folders\01_gsrt_precomputed_baselines\experiment_results\executed_reference\ablation\raw\No_Portal_unit

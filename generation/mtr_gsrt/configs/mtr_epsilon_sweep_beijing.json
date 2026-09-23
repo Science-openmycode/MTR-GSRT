@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "dataset": "geolife",
+  "epsilons": ["1/5", "2/5", "7/10", "1", "7/5", "2", "3"],
+  "noise_seeds": [20260719, 20260720, 20260721, 20260722, 20260723],
+  "decoder_seed_offset": 10000000,
+  "evaluation_seed": 20260713,
+  "bootstrap_seed": 20260719,
+  "bootstrap_draws": 10000,
+  "paper_operating_point": "7/5",
+  "expected_output_count": 17123,
+  "postprocessing": {
+    "occupancy_strength": 0.25,
+    "dwell_strength": 0.10,
+    "hierarchy_likelihood_ratio_cap": 100.0
+  },
+  "budget_fractions": {
+    "endpoint": "8/35",
+    "od": "33/140",
+    "geometry": "4/35",
+    "point_length": "19/140",
+    "compact_graph_flow": "1/7",
+    "portal_fiber_q5": "1/7"
+  }
+}

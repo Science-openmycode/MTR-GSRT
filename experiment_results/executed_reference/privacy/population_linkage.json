@@ -1,0 +1,15 @@
+{
+  "attack": "population_nearest_landmark_linkage",
+  "interpretation": "black-box member/non-member separation, not a one-to-one correspondence claim",
+  "landmarks": 16,
+  "members": 1000,
+  "release_size": 17123,
+  "member_nearest_distance_m_mean": 1456.714331821685,
+  "nonmember_nearest_distance_m_mean": 1489.4306256888901,
+  "auc": 0.51512,
+  "balanced_accuracy_median_threshold": 0.515,
+  "auc_bootstrap95": [
+    0.48900464387921255,
+    0.5400692663754286
+  ]
+}

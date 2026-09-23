@@ -1,0 +1,5 @@
+{
+  "protocol": "executed_mtr_gsrt_algorithm_ablation_v1",
+  "rows": 2,
+  "result": ".\\experiment_results\\executed_reference\\ablation\\results.csv"
+}

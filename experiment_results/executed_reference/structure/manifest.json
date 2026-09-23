@@ -1,0 +1,5 @@
+{
+  "protocol": "executed_coordinate_trajectory_structure_v1",
+  "rows": 6,
+  "result": ".\\experiment_results\\executed_reference\\structure\\results.csv"
+}

@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "datasets": [
+    {
+      "method": "SPRT",
+      "path": "datasets/synthetic/baselines/sprt_native.pkl",
+      "source": "public_release/outputs/synthetic_releases/current_best/sprt_native.pkl",
+      "sha256": "bb95796a5d4340b49912f71c90df18a90dbab665ea976c0a9ba1e21a2900f01b",
+      "size": 3938454,
+      "kind": "synthetic_trajectory_dataset"
+    },
+    {
+      "method": "PrivTrace",
+      "path": "datasets/synthetic/baselines/privtrace_native.pkl",
+      "source": "public_release/outputs/synthetic_releases/current_best/privtrace_native.pkl",
+      "sha256": "76538f38dbd78420ed0594b391f0a26bc0958d905d1bf0d98144873b684d6c73",
+      "size": 1958256,
+      "kind": "synthetic_trajectory_dataset"
+    },
+    {
+      "method": "DPTraj-PM",
+      "path": "datasets/synthetic/baselines/dptrajpm_native.pkl",
+      "source": "public_release/outputs/synthetic_releases/current_best/dptrajpm_native.pkl",
+      "sha256": "3b468623db12ec4f963d1b7774016842d289ee948c3c170d2641144560d863d1",
+      "size": 15634473,
+      "kind": "synthetic_trajectory_dataset"
+    },
+    {
+      "method": "DPStd",
+      "path": "datasets/synthetic/baselines/dpstd_native.pkl",
+      "source": "public_release/outputs/synthetic_releases/current_best/dpstd_native.pkl",
+      "sha256": "4c881f309c0d14ea6b8222c9aaa4793101d77694b81be8159ad7c22d04eab4cd",
+      "size": 76060079,
+      "kind": "synthetic_trajectory_dataset"
+    },
+    {
+      "method": "SPRT",
+      "path": "datasets/synthetic/route_experiments/SPRT/FMM.pkl.gz",
+      "source": "exploration/mtr_router_matrix_20260731/fmm_full_delta1500/matched_paths/SPRT.pkl.gz",
+      "sha256": "d5544d89122ab8cd4d5c0c612b9b68ae3b6f38f1b134a4cdaea41c93e11be35c",
+      "size": 63930,
+      "kind": "synthetic_public_routing_output"
+    },
+    {
+      "method": "SPRT",
+      "path": "datasets/synthetic/route_experiments/SPRT/STMatch.pkl.gz",
+      "source": "check/road_metric_extension_20260726/beijing_common_match_cache_v1/matched_paths/SPRT.pkl.gz",
+      "sha256": "ca60ced0960a2f224aa23a566e325d0a51ed531e001122efc7045bf077713a82",
+      "size": 14879782,
+      "kind": "synthetic_public_routing_output"
+    },
+    {
+      "method": "PrivTrace",
+      "path": "datasets/synthetic/route_experiments/PrivTrace/FMM.pkl.gz",
+      "source": "exploration/mtr_router_matrix_20260731/fmm_full_delta1500/matched_paths/PrivTrace.pkl.gz",
+      "sha256": "b497b49f48231657666f930fac02b8eefb7407c39f0f3a06cea72a1b40f3927b",
+      "size": 85137,
+      "kind": "synthetic_public_routing_output"
+    },
+    {
+      "method": "PrivTrace",
+      "path": "datasets/synthetic/route_experiments/PrivTrace/STMatch.pkl.gz",
+      "source": "check/road_metric_extension_20260726/beijing_common_match_cache_v1/matched_paths/PrivTrace.pkl.gz",
+      "sha256": "dbbbfd55a41694225140dd035b4668451495c28e8f2a2a608df5418c87c6e835",
+      "size": 1868211,
+      "kind": "synthetic_public_routing_output"
+    },
+    {
+      "method": "DPTraj-PM",
+      "path": "datasets/synthetic/route_experiments/DPTraj-PM/FMM.pkl.gz",
+      "source": "exploration/mtr_router_matrix_20260731/fmm_full_delta1500/matched_paths/DPTraj-PM.pkl.gz",
+      "sha256": "4bdb4d26440eb923e897d77b09cdfbb2b8984b9bbd16fafd91fb7b3c926d0b2a",
+      "size": 40356,
+      "kind": "synthetic_public_routing_output"
+    },
+    {
+      "method": "DPTraj-PM",
+      "path": "datasets/synthetic/route_experiments/DPTraj-PM/STMatch.pkl.gz",
+      "source": "check/road_metric_extension_20260726/beijing_common_match_cache_v1/matched_paths/DPTraj-PM.pkl.gz",
+      "sha256": "181294b5719d3c4f55baa35541a746f861a2bacda9d8b4e0112fc238d525da9a",
+      "size": 1648029,
+      "kind": "synthetic_public_routing_output"
+    },
+    {
+      "method": "DPStd",
+      "path": "datasets/synthetic/route_experiments/DPStd/FMM.pkl.gz",
+      "source": "exploration/mtr_router_matrix_20260731/fmm_full_delta1500/matched_paths/DPStd.pkl.gz",
+      "sha256": "85aa6f227200b5ba591b81c8b57ce7589fdd3b7fd21bfd9a9f14d2c5b949054a",
+      "size": 60783,
+      "kind": "synthetic_public_routing_output"
+    },
+    {
+      "method": "DPStd",
+      "path": "datasets/synthetic/route_experiments/DPStd/STMatch.pkl.gz",
+      "source": "check/road_metric_extension_20260726/beijing_common_match_cache_v1/matched_paths/DPStd.pkl.gz",
+      "sha256": "fde11b6ae09f8c603ba227aa1df7b7b9853b4e7b35e0eb4ea9efa173bc7e56b5",
+      "size": 491157,
+      "kind": "synthetic_public_routing_output"
+    },
+    {
+      "method": "SPRT",
+      "path": "datasets/synthetic/train_only_baselines/sprt_train.pkl",
+      "source": "public_release/outputs/kdd_revised/task_releases_certified/sprt_paper_structured_train_release.pkl",
+      "sha256": "037bfc5e4eb15baa56758262e4513b44013336612da44afd2ca0ea52e1220c3e",
+      "size": 1004033,
+      "kind": "train_only_synthetic_trajectory_dataset"
+    },
+    {
+      "method": "PrivTrace",
+      "path": "datasets/synthetic/train_only_baselines/privtrace_train.pkl",
+      "source": "public_release/outputs/kdd_revised/task_releases_certified/privtrace_official_stagea_train_release.pkl",
+      "sha256": "806bc513cd285649c565351f462bac5f435cdc51c6af59c45011a58239473f70",
+      "size": 1111434,
+      "kind": "train_only_synthetic_trajectory_dataset"
+    },
+    {
+      "method": "DPTraj-PM",
+      "path": "datasets/synthetic/train_only_baselines/dptrajpm_train.pkl",
+      "source": "public_release/outputs/kdd_revised/task_releases/dptrajpm_train_release.pkl",
+      "sha256": "9dca8a40453270cbf21205589794f21530aaec27e4d8837ca88f3ba1c6035c68",
+      "size": 11872309,
+      "kind": "train_only_synthetic_trajectory_dataset"
+    },
+    {
+      "method": "MTR-GSRT",
+      "path": "datasets/synthetic/mtr_gsrt/trajectories.pkl",
+      "source": "public_release/outputs/synthetic_releases/current_best/active_hierarchy_release_v1_20260726/trajectories.pkl",
+      "sha256": "34de44012537557783a0ecf375c33145c13b2a75cd06b733fa2fdadbb26cdac7",
+      "size": 318191275,
+      "kind": "synthetic_trajectory_dataset"
+    },
+    {
+      "method": "MTR-GSRT",
+      "path": "datasets/synthetic/mtr_gsrt/road_witnesses.pkl",
+      "source": "public_release/outputs/synthetic_releases/current_best/active_hierarchy_release_v1_20260726/road_witnesses.pkl",
+      "sha256": "ee87aef1c919244bc47fefcbb376bb9652a18b0231c1beb12498bd8bb9aea001",
+      "size": 65852416,
+      "kind": "synthetic_trajectory_dataset"
+    },
+    {
+      "method": "MTR-GSRT",
+      "path": "datasets/synthetic/mtr_gsrt/protocol.json",
+      "source": "public_release/outputs/synthetic_releases/current_best/active_hierarchy_release_v1_20260726/protocol.json",
+      "sha256": "7791c5d4d7a822981e8272db9fba34b649b7b204e7089f0b07096aee0dbc0836",
+      "size": 2358,
+      "kind": "release_metadata"
+    },
+    {
+      "method": "MTR-GSRT",
+      "path": "datasets/synthetic/mtr_gsrt/protocol.isolated.json",
+      "source": "public_release/outputs/synthetic_releases/current_best/active_hierarchy_release_v1_20260726/protocol.isolated.json",
+      "sha256": "a9c5fa673f3f1d25bb4211eae20ee61958257ebb99584fb4b1e035984b33307a",
+      "size": 3348,
+      "kind": "release_metadata"
+    },
+    {
+      "method": "MTR-GSRT",
+      "path": "datasets/synthetic/mtr_gsrt/MANIFEST.json",
+      "source": "public_release/outputs/synthetic_releases/current_best/active_hierarchy_release_v1_20260726/MANIFEST.json",
+      "sha256": "e5a8b672eb9b5d406965be570f3fe0a02cc225dc9ee4ac2b07dc6e49bcd157f1",
+      "size": 637,
+      "kind": "release_metadata"
+    },
+    {
+      "method": "MTR-GSRT ablation",
+      "path": "datasets/synthetic/ablation/mtr_gsrt/no_portal_unit_trajectories.pkl",
+      "source": "public_release/results/portal_unit_ablation/seed_20260719/inputs/no_portal_unit_node_trajectories_v2.pkl",
+      "sha256": "bbfbc183c6c77200a203f9d9cd447c626ac525353495d389a56628bd2273afd9",
+      "size": 75295533,
+      "kind": "synthetic_ablation_dataset"
+    },
+    {
+      "method": "MTR-GSRT ablation",
+      "path": "datasets/synthetic/ablation/mtr_gsrt/no_portal_unit_road_witnesses.pkl",
+      "source": "public_release/results/portal_unit_ablation/seed_20260719/inputs/no_portal_unit_road_witnesses.pkl",
+      "sha256": "24526dc4027824d3085207542f3452dc45fbbf543e013d4acd93ce8160b40a51",
+      "size": 67889641,
+      "kind": "synthetic_ablation_dataset"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "protocol": "executed_release_only_privacy_attacks_v1",
+  "commands": [
+    [
+      "E:\\anconda\\python.exe",
+      ".\\evaluation\\pipeline\\evaluate_population_linkage.py",
+      "--members",
+      "${ORIGINAL_WORKSPACE}\\public_release\\outputs\\privacy_attack_audit\\manifests\\beijing_kdd_split_v1\\member_candidates.pkl",
+      "--nonmembers",
+      "${ORIGINAL_WORKSPACE}\\public_release\\outputs\\privacy_attack_audit\\manifests\\beijing_kdd_split_v1\\nonmember_candidates.pkl",
+      "--release",
+      ".\\datasets\\synthetic\\mtr_gsrt\\trajectories.pkl",
+      "--out",
+      ".\\experiment_results\\executed_reference\\privacy\\population_linkage.json",
+      "--landmarks",
+      "16",
+      "--seed",
+      "20260724"
+    ],
+    [
+      "E:\\anconda\\python.exe",
+      ".\\evaluation\\pipeline\\evaluate_gda_mia.py",
+      "--members",
+      "${ORIGINAL_WORKSPACE}\\public_release\\outputs\\privacy_attack_audit\\manifests\\beijing_kdd_split_v1\\member_candidates.pkl",
+      "--nonmembers",
+      "${ORIGINAL_WORKSPACE}\\public_release\\outputs\\privacy_attack_audit\\manifests\\beijing_kdd_split_v1\\nonmember_candidates.pkl",
+      "--reference",
+      "${ORIGINAL_WORKSPACE}\\public_release\\outputs\\privacy_attack_audit\\manifests\\beijing_kdd_split_v1\\reference.pkl",
+      "--release",
+      "MTR-GSRT",
+      ".\\datasets\\synthetic\\mtr_gsrt\\trajectories.pkl",
+      "--bbox",
+      "39.75",
+      "40.15",
+      "116.10",
+      "116.65",
+      "--out",
+      ".\\experiment_results\\executed_reference\\privacy\\gda_mia",
+      "--landmarks",
+      "8",
+      "--seed",
+      "20260724"
+    ]
+  ],
+  "result": ".\\experiment_results\\executed_reference\\privacy\\results.csv"
+}

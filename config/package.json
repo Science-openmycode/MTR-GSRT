@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "package_id": "MTR-GSRT",
+  "concrete_algorithm": "mtr_gsrt",
+  "includes_precomputed_baseline_synthetic_data": true,
+  "includes_baseline_code": false,
+  "contains_raw_or_private_trajectory_data": false,
+  "main_generation_entry": "generation/mtr_gsrt/generation/mtr/generate.py",
+  "forbidden_algorithm_token": "mtr_dfr",
+  "python": "3.11",
+  "powershell": ">=7 recommended; Windows PowerShell 5.1 supported"
+}

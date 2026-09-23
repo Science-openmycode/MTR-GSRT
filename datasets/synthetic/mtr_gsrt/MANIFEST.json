@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "status": "ACTIVE_MTR_GSRT_POSTPROCESSING_RELEASE",
+  "algorithm_id": "mtr-gsrt-active-hierarchy-v1",
+  "record_count": 17123,
+  "files": {
+    "trajectories.pkl": "34de44012537557783a0ecf375c33145c13b2a75cd06b733fa2fdadbb26cdac7",
+    "road_witnesses.pkl": "ee87aef1c919244bc47fefcbb376bb9652a18b0231c1beb12498bd8bb9aea001",
+    "evaluation/metrics.json": "55dbb605d16a25b443b9761a0e8c570e2594168a065c36e78992821696d1ab21",
+    "evaluation/metrics.csv": "68b0fcb079da001e891b03ebf75cc0e2330166fce5b58feb147b00f3d98d914d"
+  },
+  "protocol": "protocol.json",
+  "historical_protocol": "protocol.isolated.json"
+}

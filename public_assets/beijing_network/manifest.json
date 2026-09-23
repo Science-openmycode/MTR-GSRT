@@ -1,0 +1,29 @@
+{
+  "bbox": [
+    39.75,
+    40.15,
+    116.1,
+    116.65
+  ],
+  "construction": "one directed FMM edge per consecutive OSM-node pair",
+  "dataset": "geolife",
+  "directed_segment_edges": 190908,
+  "elapsed_sec": 6.670072793960571,
+  "osm": {
+    "path": "generation/mtr_gsrt/data/osm/osm_cache_beijing.pkl",
+    "sha256": "7159e12ab8712338b4ff5a2859c68b158e1374504f999dc44080c2fe2d53a5c5"
+  },
+  "outputs": {
+    "network.cpg": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824",
+    "network.dbf": "6b14427065cb68e4943934825e8c55936d8a49cc68f2e038be78576fa7e677ab",
+    "network.prj": "99a5a32f41f7df7e52e869dca1b2df8b2009ba20c28dbf95e61dc9c891dffd38",
+    "network.shp": "f9ab3c394563e6516a5813cb303fa7c72b0c83c89479c404544984ed46f473c0",
+    "network.shx": "210f13c332afcd8e2f22110ba064719a6d8de3bd54019a8aabe941d8e12f2e13"
+  },
+  "projected_crs": "EPSG:32650",
+  "schema_version": 1,
+  "selected_osm_ways": 29872,
+  "ubodt_delta_m": null,
+  "ubodt_format": null,
+  "ubodt_invocation": null
+}

@@ -1,0 +1,9 @@
+Measurement,Stage,StageKey,RoadYield,BTF,FamilyCPC
+SPRT,native coordinate release,native,0.0,0.0,0.0
+SPRT,MTR public routing,routed,0.9284003971266718,0.5821873384288432,1.0
+PrivTrace,native coordinate release,native,0.0,0.0,0.0
+PrivTrace,MTR public routing,routed,0.5404426794370145,0.6890799196875967,1.0
+DPTraj-PM,native coordinate release,native,0.0,0.0,0.0
+DPTraj-PM,MTR public routing,routed,0.15493780295508963,0.14884372723470843,1.0
+DPStd,native coordinate release,native,0.0,0.0,0.0
+DPStd,MTR public routing,routed,0.7939029375693512,0.4177420121402307,1.0

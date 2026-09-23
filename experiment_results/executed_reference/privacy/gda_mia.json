@@ -1,0 +1,31 @@
+{
+  "attack": "GDA-MIA trajectory adaptation",
+  "citation": "Zhang et al., Generated Distributions Are All You Need for Membership Inference Attacks Against Generative Models, WACV 2024",
+  "threat_model": "black-box release-only: generated trajectories are positive attack examples; disjoint same-domain reference trajectories are negative examples",
+  "warning": "A cross-method comparison requires all releases to have been generated from the same frozen member-training manifest.",
+  "bbox": [
+    39.75,
+    40.15,
+    116.1,
+    116.65
+  ],
+  "rows": [
+    {
+      "method": "MTR-GSRT",
+      "attack": "GDA-MIA",
+      "attack_classifier": "HistGradientBoostingClassifier-fixed",
+      "auc": 0.4759315,
+      "auc_bootstrap95_low": 0.4513674375,
+      "auc_bootstrap95_high": 0.501718625,
+      "accuracy": 0.4975,
+      "tpr_at_1pct_fpr": 0.009,
+      "realized_fpr_at_1pct": 0.01,
+      "tpr_at_5pct_fpr": 0.047,
+      "realized_fpr_at_5pct": 0.05,
+      "candidate_members_per_class": 1000,
+      "generated_positive_count": 2425,
+      "reference_negative_count": 2425,
+      "landmarks": 8
+    }
+  ]
+}

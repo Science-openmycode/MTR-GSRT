@@ -1,0 +1,14 @@
+{
+  "candidate_group_size": 50,
+  "landmarks": 8,
+  "seed": 20260724,
+  "methods": [
+    {
+      "name": "MTR-GSRT-active-v3",
+      "real_path": "outputs/privacy_attack_audit/manifests/beijing_kdd_split_v1/member_training.pkl",
+      "real_representation": "coordinates",
+      "release_path": "results/active_hierarchy_release_v1_20260726/privacy_attacks/mtr_release/trajectories.pkl",
+      "release_representation": "coordinates"
+    }
+  ]
+}

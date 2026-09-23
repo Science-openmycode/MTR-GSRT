@@ -1,0 +1,9 @@
+Measurement,Stage,StageKey,RoadYield,BTF,FamilyCPC,ODPF96,ODPF384,PrivateAccessAfterMeasurement,Interpretation
+DPStd,Native coordinate release,native,0.0,0.0,0.0,0.0,0.0,False,No consumer-visible directed-road witness
+DPStd,MTR waypoint realization,waypoint,0.7939029375693512,0.0818910428296064,0.149029054604452,0.084722814124921,0.0256897247961212,False,Public graph completes released intermediate observations
+DPTraj-PM,Native coordinate release,native,0.0,0.0,0.0,0.0,0.0,False,No consumer-visible directed-road witness
+DPTraj-PM,MTR waypoint realization,waypoint,0.1549378029550896,0.0303738273280928,0.0010602802828282,0.0010764143588921,0.000468157500653,False,Public graph completes released intermediate observations
+PrivTrace,Native coordinate release,native,0.0,0.0,0.0,0.0,0.0,False,No consumer-visible directed-road witness
+PrivTrace,MTR waypoint realization,waypoint,0.5404426794370145,0.2252936239590685,0.1532619972716737,0.1538129472082461,0.0821108407897577,False,Public graph completes released intermediate observations
+SPRT,Native coordinate release,native,0.0,0.0,0.0,0.0,0.0,False,No consumer-visible directed-road witness
+SPRT,MTR waypoint realization,waypoint,0.9284003971266718,0.2864899861135341,0.0764959667258665,0.1562930317183491,0.0660107798498847,False,Public graph completes released intermediate observations

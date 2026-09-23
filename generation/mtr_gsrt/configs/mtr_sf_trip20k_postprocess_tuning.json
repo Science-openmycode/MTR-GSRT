@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "classification": "PREDECLARED_DP_TRANSCRIPT_ONLY_POSTPROCESS_TUNING",
+  "dataset_config": "sf",
+  "epsilon_total": "7/5",
+  "q5_epsilon": "1/5",
+  "decoder_seed": 30260719,
+  "request_seed": 30744448,
+  "selection_access": ["released DP transcript", "public OSM graph", "decoder diagnostics"],
+  "forbidden_selection_access": ["raw trajectories", "real-data utility metrics", "baseline metrics"],
+  "score": "selected_log_error_mean + 2*fallback_rate",
+  "tie_break": ["selected_log_error_p90", "candidate_name"],
+  "candidates": [
+    {
+      "name": "p1_l8_default",
+      "betas": "0.03,0.06,0.12,0.24,0.48,0.96",
+      "length_proposals": 1,
+      "length_log_penalty": 8.0,
+      "od_likelihood_ratio_cap": 100.0
+    },
+    {
+      "name": "p4_l8",
+      "betas": "0.03,0.06,0.12,0.24,0.48,0.96",
+      "length_proposals": 4,
+      "length_log_penalty": 8.0,
+      "od_likelihood_ratio_cap": 100.0
+    },
+    {
+      "name": "p4_l12",
+      "betas": "0.03,0.06,0.12,0.24,0.48,0.96",
+      "length_proposals": 4,
+      "length_log_penalty": 12.0,
+      "od_likelihood_ratio_cap": 100.0
+    },
+    {
+      "name": "p8_l8",
+      "betas": "0.03,0.06,0.12,0.24,0.48,0.96",
+      "length_proposals": 8,
+      "length_log_penalty": 8.0,
+      "od_likelihood_ratio_cap": 100.0
+    }
+  ]
+}
