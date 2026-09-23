@@ -1,0 +1,56 @@
+{
+  "schema_version": 4,
+  "promotion_status": "APPROVED_ACTIVE_HIERARCHY_V1",
+  "production_status": "COMMITTED_AND_ARTIFACT_SEALED",
+  "active_algorithm_id": "mtr-gsrt-active-hierarchy-v1",
+  "active_proof_id": "portal-fiber-raw-slot-proof-20260715",
+  "active_privacy_event_ids": {
+    "base": "da9b07d8-a6fe-4668-af0a-693206150c41",
+    "portal_fiber_q5": "3426bf39-ee80-4c59-8560-8a34c9b36b79"
+  },
+  "privacy": {
+    "adjacency": "fixed-capacity raw-record add/remove with bottom",
+    "protected_unit": "one complete trajectory record",
+    "base_epsilon_rational": "6/5",
+    "q5_epsilon_rational": "1/5",
+    "composed_epsilon_rational": "7/5",
+    "delta": 0
+  },
+  "query": {
+    "id": "portal-fiber-route-query-v1",
+    "integer_l1_sensitivity": 1000000,
+    "normalized_l1_sensitivity": 1,
+    "q5_transcript_sha256": "7442f7407b1f07e6921f8ab2e87e51a28c31f7750a894f614cf33511a422ee3c"
+  },
+  "production_output": {
+    "record_count": 17123,
+    "sha256": "34de44012537557783a0ecf375c33145c13b2a75cd06b733fa2fdadbb26cdac7",
+    "fallback_count": 0,
+    "witness_sha256": "ee87aef1c919244bc47fefcbb376bb9652a18b0231c1beb12498bd8bb9aea001",
+    "witness_valid": 1.0,
+    "protocol_sha256": "61d8838c8f9662debb5eb92dae47297ecba17b4673fb498334af5c4b6385eda7"
+  },
+  "active_hierarchy": {
+    "active_block_count": 8,
+    "row_sum_max_abs_error": 2.220446049250313e-16,
+    "minimum_positive_probability": 7.4369379837516165e-06,
+    "additional_privacy_cost": 0,
+    "strict_matched_all_endpoint_rule": "failed"
+  },
+  "historical_certified_release": {
+    "algorithm_id": "dp-gsrt-portal-fiber-nested-qrsp384-edge-witness-v1",
+    "sha256": "33efa30a8161722af81e19a4848458a4b2a363b665cffef3f7460f7d54a7db55",
+    "witness_sha256": "64e3ad167e4b42f9b98cc638160115916cf5d604e37f7fc29e00d96bb3196930",
+    "status": "superseded_by_active_hierarchy_postprocessing"
+  },
+  "proof_artifacts": {
+    "english_pdf_sha256": "7a3bc69b335cc33591d483e0bdd7d2a9b0359826309f02cee7ed7dd9ec398223",
+    "chinese_pdf_sha256": "efa9fbecf9f76f0ab5f8c7d95a0d9da54156a8c1a1b60f79a802efdc3429cc17"
+  },
+  "independent_privacy_audit": "PASS",
+  "rejected_algorithm_ids": [
+    "dp-gsrt-self-distilled-edge-v1"
+  ],
+  "archive": "C:/ara_codex_final_artifacts/superseded_erroneous_self_distilled_20260715",
+  "updated_at": "2026-07-26T01:10:00+08:00"
+}

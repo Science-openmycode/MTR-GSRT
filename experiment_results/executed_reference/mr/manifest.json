@@ -1,0 +1,6 @@
+{
+  "protocol": "executed_route_object_m_by_r_v1",
+  "real_routes": "${ORIGINAL_WORKSPACE}\\check\\road_metric_extension_20260726\\beijing_common_match_cache_v1\\matched_paths\\Real.pkl.gz",
+  "rows": 9,
+  "result": ".\\experiment_results\\executed_reference\\mr\\results.csv"
+}

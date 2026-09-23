@@ -1,0 +1,26 @@
+{
+  "classification": "RESEARCH_EVALUATION_LEDGER_NOT_A_DP_RELEASE",
+  "elapsed_sec": 37.97631120681763,
+  "inputs": {
+    "osm": {
+      "path": "${ORIGINAL_WORKSPACE}\\public_release\\data\\osm\\osm_cache_beijing.pkl",
+      "sha256": "7159e12ab8712338b4ff5a2859c68b158e1374504f999dc44080c2fe2d53a5c5"
+    },
+    "real": {
+      "count": 17123,
+      "path": "${ORIGINAL_WORKSPACE}\\public_release\\outputs\\kdd_revised\\split\\real_full_frozen.pkl",
+      "sha256": "6a160ca557fbd7bab97af489b56c931e73532c498c390e31965c0d61e53361fd",
+      "spec": "${ORIGINAL_WORKSPACE}\\public_release\\outputs\\kdd_revised\\split\\real_full_frozen.pkl"
+    },
+    "synthetic": {
+      "path": ".\\datasets\\synthetic\\baselines\\sprt_native.pkl",
+      "sha256": "bb95796a5d4340b49912f71c90df18a90dbab665ea976c0a9ba1e21a2900f01b"
+    },
+    "witness": null
+  },
+  "outputs": {
+    "metrics.csv": "f5260f8260edd8ca4eea106a3bf65f6166f1da9d8f32b1781b011a33ef0aac3e",
+    "metrics.json": "ccd40a79107a96679454fa08efbbdb634710b9f24a14c6f0a8db74a882379c88"
+  },
+  "schema_version": 1
+}

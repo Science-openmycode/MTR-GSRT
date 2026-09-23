@@ -1,0 +1,40 @@
+{
+  "schema_version": 2,
+  "promotion_status": "APPROVED_ACTIVE_FINAL",
+  "production_status": "COMMITTED_AND_ARTIFACT_SEALED",
+  "active_algorithm_id": "dp-gsrt-portal-fiber-nested-qrsp384-v1",
+  "active_proof_id": "portal-fiber-raw-slot-proof-20260715",
+  "active_privacy_event_ids": {
+    "base": "da9b07d8-a6fe-4668-af0a-693206150c41",
+    "portal_fiber_q5": "3426bf39-ee80-4c59-8560-8a34c9b36b79"
+  },
+  "privacy": {
+    "adjacency": "fixed-capacity raw-record add/remove with bottom",
+    "protected_unit": "one complete trajectory record",
+    "base_epsilon_rational": "6/5",
+    "q5_epsilon_rational": "1/5",
+    "composed_epsilon_rational": "7/5",
+    "delta": 0
+  },
+  "query": {
+    "id": "portal-fiber-route-query-v1",
+    "integer_l1_sensitivity": 1000000,
+    "normalized_l1_sensitivity": 1,
+    "q5_transcript_sha256": "7442f7407b1f07e6921f8ab2e87e51a28c31f7750a894f614cf33511a422ee3c"
+  },
+  "production_output": {
+    "record_count": 17123,
+    "sha256": "b770a924c1c491719e36355d9c9bd3fe66e60ca54f11913e98b70b73cfe62668",
+    "fallback_count": 0
+  },
+  "proof_artifacts": {
+    "english_pdf_sha256": "7a3bc69b335cc33591d483e0bdd7d2a9b0359826309f02cee7ed7dd9ec398223",
+    "chinese_pdf_sha256": "efa9fbecf9f76f0ab5f8c7d95a0d9da54156a8c1a1b60f79a802efdc3429cc17"
+  },
+  "independent_privacy_audit": "PASS",
+  "rejected_algorithm_ids": [
+    "dp-gsrt-self-distilled-edge-v1"
+  ],
+  "archive": "C:/ara_codex_final_artifacts/superseded_erroneous_self_distilled_20260715",
+  "updated_at": "2026-07-15"
+}

@@ -1,0 +1,9 @@
+order,contribution,experiment,primary_comparison,primary_metrics,evidence_role
+1,MTR performance,Native M versus MTR public R,same frozen statistical measurement before/after routing,RoadYield;BTF;FamilyCPC,framework causal factor
+2,MTR privacy,formal boundary audit,DP measurement plus public post-processing,privacy accounting;fixed slots;support closure,formal guarantee
+3,MTR privacy,interface attacks,MTR-GSRT versus positive-control interfaces,DOMIAS;GDA-MIA;Origin Top1;Route Top1,empirical stress test
+4,MTR-GSRT utility,independent five-layer profile,MTR-GSRT against Real reference,37 metrics,algorithm profile
+5,MTR-GSRT utility,strict single-source MxR,MTR-GSRT measurement across eight routers,RoadYield;BTF;FamilyCPC,measurement-router diagnosis
+6,MTR-GSRT utility,Portal-Fiber unit ablation,full unit versus no Portal unit,RC-CPC;RC-NDCG;NextRoadAcc;NextRoadNLL,component attribution
+7,MTR-GSRT utility,trajectory visualization and anatomy,real versus released trajectories,road corridors;backbone;closed structure,construct audit
+8,MTR-GSRT utility,strict TSTR,train-only synthesis on unseen Real-test,NextCell;Destination;RoadContinuation,downstream substitution

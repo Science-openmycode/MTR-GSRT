@@ -1,0 +1,13 @@
+{
+  "protocol": "strict_train_only_tstr_executed_v1",
+  "raw_generic_results": ".\\experiment_results\\executed_reference\\tstr\\raw_generic\\generic_mobility_tasks.json",
+  "raw_road_results": ".\\experiment_results\\executed_reference\\tstr\\raw_road\\road_network_mining_tasks.json",
+  "result": ".\\experiment_results\\executed_reference\\tstr\\results.csv",
+  "normalization": "each task score divided by the Real-train score; Real-train=1",
+  "pipelines": [
+    "Real-train",
+    "SPRT",
+    "PrivTrace",
+    "DPTraj-PM"
+  ]
+}

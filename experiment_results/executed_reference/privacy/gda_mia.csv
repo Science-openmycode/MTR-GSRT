@@ -1,0 +1,2 @@
+method,attack,attack_classifier,auc,auc_bootstrap95_low,auc_bootstrap95_high,accuracy,tpr_at_1pct_fpr,realized_fpr_at_1pct,tpr_at_5pct_fpr,realized_fpr_at_5pct,candidate_members_per_class,generated_positive_count,reference_negative_count,landmarks
+MTR-GSRT,GDA-MIA,HistGradientBoostingClassifier-fixed,0.4759315,0.4513674375,0.501718625,0.4975,0.009,0.01,0.047,0.05,1000,2425,2425,8

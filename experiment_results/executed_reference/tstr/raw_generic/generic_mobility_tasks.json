@@ -1,0 +1,72 @@
+{
+  "protocol": "strict_full_release_tstr_generic_grid_v1",
+  "grid": 32,
+  "train_count": 13698,
+  "test_count": 3425,
+  "rows": [
+    {
+      "method": "Real-train",
+      "release_trajectory_count": 13698.0,
+      "eligible_grid_sequences": 11426.0,
+      "next_cell_coverage": 0.9991407352850917,
+      "next_cell_hit_at_1": 0.6274955464094846,
+      "next_cell_hit_at_5": 0.9444990478530623,
+      "next_cell_mrr": 0.7583875954706358,
+      "next_cell_query_count": 32586.0,
+      "destination_coverage": 0.9870448179271709,
+      "destination_hit_at_1": 0.4111387016672579,
+      "destination_hit_at_5": 0.6229159276339127,
+      "destination_mrr": 0.4949686650112332,
+      "destination_query_count": 2856.0,
+      "range_query_are": 0.06972519984676606
+    },
+    {
+      "method": "SPRT",
+      "release_trajectory_count": 13698.0,
+      "eligible_grid_sequences": 8891.0,
+      "next_cell_coverage": 0.9830295218805623,
+      "next_cell_hit_at_1": 0.017044922423750507,
+      "next_cell_hit_at_5": 0.07838791246527019,
+      "next_cell_mrr": 0.037001945909947466,
+      "next_cell_query_count": 32586.0,
+      "destination_coverage": 0.9807422969187675,
+      "destination_hit_at_1": 0.008211353088182792,
+      "destination_hit_at_5": 0.03213138164941092,
+      "destination_mrr": 0.016214447221230513,
+      "destination_query_count": 2856.0,
+      "range_query_are": 0.5581452172332705
+    },
+    {
+      "method": "PrivTrace",
+      "release_trajectory_count": 13698.0,
+      "eligible_grid_sequences": 5663.0,
+      "next_cell_coverage": 0.896335849751427,
+      "next_cell_hit_at_1": 0.10921665297178855,
+      "next_cell_hit_at_5": 0.30885373870172556,
+      "next_cell_mrr": 0.17857208070847747,
+      "next_cell_query_count": 32586.0,
+      "destination_coverage": 0.9145658263305322,
+      "destination_hit_at_1": 0.02679938744257274,
+      "destination_hit_at_5": 0.12595712098009187,
+      "destination_mrr": 0.06439509954058194,
+      "destination_query_count": 2856.0,
+      "range_query_are": 0.47030453923642745
+    },
+    {
+      "method": "DPTraj-PM",
+      "release_trajectory_count": 13698.0,
+      "eligible_grid_sequences": 13599.0,
+      "next_cell_coverage": 0.21724053274412325,
+      "next_cell_hit_at_1": 0.059612939680745866,
+      "next_cell_hit_at_5": 0.17248198898149456,
+      "next_cell_mrr": 0.09508169703818839,
+      "next_cell_query_count": 32586.0,
+      "destination_coverage": 0.14460784313725492,
+      "destination_hit_at_1": 0.007263922518159807,
+      "destination_hit_at_5": 0.06295399515738499,
+      "destination_mrr": 0.030024213075060528,
+      "destination_query_count": 2856.0,
+      "range_query_are": 1.60905154741619
+    }
+  ]
+}

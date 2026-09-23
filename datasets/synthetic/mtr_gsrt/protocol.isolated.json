@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "classification": "RESEARCH_ONLY_DP_TRANSCRIPT_POSTPROCESS_DO_NOT_RELEASE",
+  "candidate_schema": "mtr-gsrt-active-hierarchy-v1",
+  "source_run": "E:\\study\\\u5927\u56db\u4e0b\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\public_release\\results\\synthetic_datasets\\mtr\\geolife\\eps_7_5\\seed_20260719",
+  "source_protocol_sha256": "b20f290a3bd2d4909f6e250e8d8ba7e5c644f63c428fe6433fd8a4848b541bb2",
+  "source_dp_transcript_sha256": "5343f9be4f7c0e9eedc42fc76231931f317c83e76788c5a7b50d40c41d4e4aad",
+  "new_private_access": false,
+  "additional_privacy_cost": 0,
+  "dataset": "geolife",
+  "bbox": [
+    39.75,
+    40.15,
+    116.1,
+    116.65
+  ],
+  "public_slot_count": 17123,
+  "output_count": 17123,
+  "postprocessing": {
+    "decoder_seed": 30260719,
+    "request_seed": 30744448,
+    "betas": "0.03,0.06,0.12,0.24,0.48,0.96",
+    "length_proposals": 1,
+    "length_log_penalty": 8.0,
+    "od_likelihood_ratio_cap": 100.0,
+    "occupancy_strength": 0.25,
+    "dwell_strength": 0.1,
+    "hierarchy_likelihood_ratio_cap": 100.0
+  },
+  "active_hierarchy": {
+    "graph_flow_shrinkage": {
+      "fine_occupancy": {
+        "dimension": 96,
+        "residual_l2_squared": 2382137.2980936524,
+        "raw_additive_noise_energy": 4799.999999999983,
+        "estimated_nonnegative_signal_energy": 2377337.2980936524,
+        "positive_part_alpha": 0.9979850027939862
+      },
+      "fine_flow": {
+        "dimension": 438,
+        "residual_l2_squared": 1940750.5729178009,
+        "raw_additive_noise_energy": 21899.999999999924,
+        "estimated_nonnegative_signal_energy": 1918850.5729178009,
+        "positive_part_alpha": 0.9887157060234306
+      },
+      "dwell": {
+        "dimension": 5,
+        "residual_l2_squared": 274032.0620530506,
+        "raw_additive_noise_energy": 249.99999999999912,
+        "estimated_nonnegative_signal_energy": 273782.0620530506,
+        "positive_part_alpha": 0.9990876979937056
+      }
+    },
+    "coarse_flow_precision_weights": {
+      "compact_graph_flow": 0.9411764705882353,
+      "q5_fine96_flow": 0.058823529411764705
+    },
+    "occupancy": {
+      "weights": [
+        0.2,
+        0.6,
+        0.2
+      ],
+      "strength": 0.25,
+      "likelihood_ratio_cap": 100.0,
+      "maximum_abs_node_potential": 4.497909746541067,
+      "row_sum_max_abs_error": 2.220446049250313e-16
+    },
+    "dwell_probability": [
+      0.20379498692156386,
+      0.09868519283935123,
+      0.12312826925980179,
+      0.1112719258143052,
+      0.46311962516497784
+    ],
+    "expected_dwell_fraction": 0.48345511494018395,
+    "target_region_count": 2.0684443479799075,
+    "hop_penalty": 0.12560132265702098,
+    "active_blocks": [
+      "qg.fine_occupancy",
+      "qg.fine_flow",
+      "qg.dwell",
+      "q5.coarse24_occupancy",
+      "q5.fine384_occupancy",
+      "q5.fine96_flow",
+      "q5.fine384_flow",
+      "q5.portal_fiber_flow"
+    ],
+    "row_sum_max_abs_error": 2.220446049250313e-16,
+    "minimum_positive_probability": 7.4369379837516165e-06
+  },
+  "fallback_count": 0,
+  "outputs": {
+    "trajectories.pkl": "34de44012537557783a0ecf375c33145c13b2a75cd06b733fa2fdadbb26cdac7",
+    "road_witnesses.pkl": "ee87aef1c919244bc47fefcbb376bb9652a18b0231c1beb12498bd8bb9aea001"
+  }
+}

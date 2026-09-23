@@ -1,0 +1,29 @@
+{
+  "classification": "RESEARCH_EVALUATION_LEDGER_NOT_A_DP_RELEASE",
+  "elapsed_sec": 73.3852322101593,
+  "inputs": {
+    "osm": {
+      "path": "${ORIGINAL_WORKSPACE}\\public_release\\data\\osm\\osm_cache_beijing.pkl",
+      "sha256": "7159e12ab8712338b4ff5a2859c68b158e1374504f999dc44080c2fe2d53a5c5"
+    },
+    "real": {
+      "count": 17123,
+      "path": "${ORIGINAL_WORKSPACE}\\public_release\\outputs\\kdd_revised\\split\\real_full_frozen.pkl",
+      "sha256": "6a160ca557fbd7bab97af489b56c931e73532c498c390e31965c0d61e53361fd",
+      "spec": "${ORIGINAL_WORKSPACE}\\public_release\\outputs\\kdd_revised\\split\\real_full_frozen.pkl"
+    },
+    "synthetic": {
+      "path": ".\\datasets\\synthetic\\ablation\\mtr_gsrt\\no_portal_unit_trajectories.pkl",
+      "sha256": "bbfbc183c6c77200a203f9d9cd447c626ac525353495d389a56628bd2273afd9"
+    },
+    "witness": {
+      "path": ".\\datasets\\synthetic\\ablation\\mtr_gsrt\\no_portal_unit_road_witnesses.pkl",
+      "sha256": "24526dc4027824d3085207542f3452dc45fbbf543e013d4acd93ce8160b40a51"
+    }
+  },
+  "outputs": {
+    "metrics.csv": "006550b3a104322aeb067a8cabd4f64ad3285d22c1e43c903a0edfbedb39b0b4",
+    "metrics.json": "8bfc7f4ecd0e650dc0ea0c81fd0a7b25b5bb2eb657a677bce08f2484f0ad180e"
+  },
+  "schema_version": 1
+}

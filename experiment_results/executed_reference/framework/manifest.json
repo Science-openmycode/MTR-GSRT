@@ -1,0 +1,5 @@
+{
+  "protocol": "executed_native_vs_public_routing_v1",
+  "rows": 8,
+  "result": ".\\experiment_results\\executed_reference\\framework\\results.csv"
+}

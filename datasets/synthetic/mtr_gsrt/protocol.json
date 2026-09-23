@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "classification": "PROMOTED_REVIEWED_DP_TRANSCRIPT_POSTPROCESSING",
+  "algorithm_id": "mtr-gsrt-active-hierarchy-v1",
+  "promotion_date": "2026-07-26",
+  "dataset": "geolife",
+  "bbox": [
+    39.75,
+    40.15,
+    116.1,
+    116.65
+  ],
+  "privacy": {
+    "adjacency": "fixed-capacity trajectory-record add/remove",
+    "epsilon": "7/5",
+    "delta": 0,
+    "new_private_access": false,
+    "additional_privacy_cost": 0,
+    "source_dp_transcript_sha256": "5343f9be4f7c0e9eedc42fc76231931f317c83e76788c5a7b50d40c41d4e4aad"
+  },
+  "public_slot_count": 17123,
+  "output_count": 17123,
+  "postprocessing": {
+    "decoder_seed": 30260719,
+    "request_seed": 30744448,
+    "occupancy_strength": 0.25,
+    "dwell_strength": 0.1,
+    "hierarchy_likelihood_ratio_cap": 100.0
+  },
+  "active_hierarchy": {
+    "active_blocks": [
+      "qg.fine_occupancy",
+      "qg.fine_flow",
+      "qg.dwell",
+      "q5.coarse24_occupancy",
+      "q5.fine384_occupancy",
+      "q5.fine96_flow",
+      "q5.fine384_flow",
+      "q5.portal_fiber_flow"
+    ],
+    "row_sum_max_abs_error": 2.220446049250313e-16,
+    "minimum_positive_probability": 7.4369379837516165e-06,
+    "fallback_count": 0
+  },
+  "source_binding": {
+    "source_manifest": "src/mtr/DP_GSRT/final/SOURCE_MANIFEST.json",
+    "source_manifest_sha256": "072cfb4a5f7192bb4dee8d49700b48958a56d4700d6d9b805f4fec78af71bea5",
+    "decoder_sha256": "e51746a8557794efbce7e3e10016fe40ae17f2c42791ce49c726fc1f3a973289",
+    "generation_cli_sha256": "f0647b3e4f8daa7b52e78cc6ef58f1d120af165072e6bd132b19febec2e96520"
+  },
+  "outputs": {
+    "trajectories.pkl": "34de44012537557783a0ecf375c33145c13b2a75cd06b733fa2fdadbb26cdac7",
+    "road_witnesses.pkl": "ee87aef1c919244bc47fefcbb376bb9652a18b0231c1beb12498bd8bb9aea001",
+    "evaluation/metrics.json": "55dbb605d16a25b443b9761a0e8c570e2594168a065c36e78992821696d1ab21",
+    "evaluation/metrics.csv": "68b0fcb079da001e891b03ebf75cc0e2330166fce5b58feb147b00f3d98d914d"
+  },
+  "evidence_boundary": {
+    "implementation_causal_path_tests": "passed",
+    "road_witness_validity": 1.0,
+    "strict_matched_all_endpoint_rule": "failed",
+    "permitted_claim": "All released graph-flow and Portal-Fiber blocks causally enter the public route law.",
+    "excluded_claim": "Correct alignment improves every route-choice endpoint over both controls."
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "datasets": {
+    "geolife": {
+      "real": "geolife",
+      "methods": [
+        {
+          "name": "SPRT",
+          "path": "outputs/synthetic_releases/current_best/sprt_native.pkl"
+        },
+        {
+          "name": "PrivTrace",
+          "path": "outputs/synthetic_releases/current_best/privtrace_native.pkl"
+        },
+        {
+          "name": "DPTraj-PM",
+          "path": "outputs/synthetic_releases/current_best/dptrajpm_native.pkl"
+        },
+        {
+          "name": "DPStd",
+          "path": "outputs/synthetic_releases/current_best/dpstd_native.pkl"
+        },
+        {
+          "name": "MTR-GSRT",
+          "path": "results/active_hierarchy_release_v1_20260726/multicity/beijing/release/trajectories.pkl",
+          "witness": "results/active_hierarchy_release_v1_20260726/multicity/beijing/release/road_witnesses.pkl"
+        }
+      ]
+    },
+    "porto": {
+      "real": "porto",
+      "methods": [
+        {
+          "name": "SPRT",
+          "path": "results/synthetic_datasets/baselines/porto/sprt_native_eps_7_5_seed_42/sprt-native.pkl"
+        },
+        {
+          "name": "PrivTrace",
+          "path": "results/synthetic_datasets/baselines/porto/privtrace_native_eps_7_5_seed_42/privtrace-native.pkl"
+        },
+        {
+          "name": "DPTraj-PM",
+          "path": "results/synthetic_datasets/baselines/porto/dptrajpm_native_eps_7_5_seed_42/dptrajpm-native.pkl"
+        },
+        {
+          "name": "DPStd",
+          "path": "results/synthetic_datasets/baselines/porto/dpstd_native_eps_7_5_seed_42/dpstd-native.pkl"
+        },
+        {
+          "name": "MTR-GSRT",
+          "path": "results/active_hierarchy_release_v1_20260726/multicity/porto/release/trajectories.pkl",
+          "witness": "results/active_hierarchy_release_v1_20260726/multicity/porto/release/road_witnesses.pkl"
+        }
+      ]
+    },
+    "sf": {
+      "real": "sf",
+      "methods": [
+        {
+          "name": "SPRT",
+          "path": "results/synthetic_datasets/baselines/sf_trip20k/sprt_native_eps_7_5_seed_42/sprt-native.pkl"
+        },
+        {
+          "name": "PrivTrace",
+          "path": "results/synthetic_datasets/baselines/sf_trip20k/privtrace_native_eps_7_5_seed_42/privtrace-native.pkl"
+        },
+        {
+          "name": "DPTraj-PM",
+          "path": "results/synthetic_datasets/baselines/sf_trip20k/dptrajpm_native_eps_7_5_seed_42/dptrajpm-native.pkl"
+        },
+        {
+          "name": "DPStd",
+          "path": "results/synthetic_datasets/baselines/sf_trip20k/dpstd_native_eps_7_5_seed_42/dpstd-native.pkl"
+        },
+        {
+          "name": "MTR-GSRT",
+          "path": "results/active_hierarchy_release_v1_20260726/multicity/sf/release/trajectories.pkl",
+          "witness": "results/active_hierarchy_release_v1_20260726/multicity/sf/release/road_witnesses.pkl"
+        }
+      ]
+    }
+  }
+}

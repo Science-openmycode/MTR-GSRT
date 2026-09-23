@@ -1,0 +1,9 @@
+metric,MTR-GSRT,No Portal unit
+Grid,0.189,0.196
+Trip,0.486,0.486
+Len,0.032,0.03
+WitnessValid,1.0,1.0
+RC-CPC,0.494,0.482
+RC-NDCG,0.879,0.837
+NextRoadAcc,0.468,0.391
+NextRoadNLL,1.448,1.518
