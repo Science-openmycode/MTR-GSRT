@@ -50,9 +50,11 @@
 | `prepare-attack-split --seed` | 攻击候选抽样种子，默认 `20260715`。 |
 | `prepare-attack-split --out-dir` | member、nonmember、reference 文件输出目录。 |
 | `prepare-road-reference --dataset-config` | 数据集注册名，用于读取公开槽位数和城市配置。 |
+| `verify-matcher --runtime-dir` | 在道路实验前检查外部 FMM/STMatch 运行库目录；随包的 Windows 可执行文件需要兼容的 `gdal204.dll` 与 `boost_serialization.dll`，仓库未包含这两个 DLL。验证还会实际启动 `fmm.exe` 与 `stmatch.exe`。 |
+| `verify-matcher --fmm-bin/--stmatch-bin` | 可覆盖随包匹配器路径；两个可执行文件均须与其 `FMMLIB.dll` 配套。 |
 | `prepare-road-reference --real` | 用户提供的真实坐标轨迹文件。 |
 | `prepare-road-reference --network` | 与轨迹同城的公共有向道路图。 |
-| `prepare-road-reference --stmatch-bin/--runtime-dir` | STMatch 可执行文件及其运行库目录。 |
+| `prepare-road-reference --stmatch-bin/--runtime-dir` | STMatch 可执行文件及兼容运行库目录；先运行 `verify-matcher`，不要把不含依赖 DLL 的 `public_assets/matcher` 当作运行库目录。 |
 | `prepare-road-reference --max-points/--radius-m/--gps-error-m/--candidates` | 每条轨迹的采样上限与公共地图匹配参数。 |
 | `prepare-road-reference --out-dir` | 写出 `matched_paths/Real.pkl.gz` 与匹配 manifest 的目录。 |
 | `run-privacy --method` | 图表中的方法名。 |

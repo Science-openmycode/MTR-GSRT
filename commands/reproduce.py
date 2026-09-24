@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import gzip
+import os
 import pickle
 import subprocess
 import sys
@@ -166,6 +167,49 @@ def stage_materialize_tstr_mr(args: list[str]) -> int:
     return run([sys.executable, str(entry), *forwarded(args)])
 
 
+def stage_verify_matcher(args: list[str]) -> int:
+    parser = argparse.ArgumentParser(description="Check the Windows FMM/STMatch runtime before matching trajectories.")
+    parser.add_argument("--runtime-dir", required=True)
+    parser.add_argument("--fmm-bin", default="public_assets/matcher/fmm.exe")
+    parser.add_argument("--stmatch-bin", default="public_assets/matcher/stmatch.exe")
+    parsed = parser.parse_args(forwarded(args))
+
+    def resolved(value: str) -> Path:
+        path = Path(value)
+        return (path if path.is_absolute() else ROOT / path).resolve()
+
+    runtime_dir = resolved(parsed.runtime_dir)
+    binaries = [resolved(parsed.fmm_bin), resolved(parsed.stmatch_bin)]
+    required = [runtime_dir / "gdal204.dll", runtime_dir / "boost_serialization.dll", *binaries]
+    missing = [str(path) for path in required if not path.is_file()]
+    if missing:
+        print("MATCHER RUNTIME FAILED: missing files:", file=sys.stderr)
+        for path in missing:
+            print(f"- {path}", file=sys.stderr)
+        return 5
+    if os.name == "nt":
+        for binary in binaries:
+            if not (binary.parent / "FMMLIB.dll").is_file():
+                print(f"MATCHER RUNTIME FAILED: missing {binary.parent / 'FMMLIB.dll'}", file=sys.stderr)
+                return 5
+    env = os.environ.copy()
+    env["PATH"] = str(runtime_dir) + os.pathsep + env.get("PATH", "")
+    for binary in binaries:
+        try:
+            result = subprocess.run([str(binary), "--help"], cwd=binary.parent, env=env,
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                    text=True, errors="replace", timeout=30)
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            print(f"MATCHER RUNTIME FAILED: {binary.name}: {exc}", file=sys.stderr)
+            return 5
+        if result.returncode not in (0, 1) or not (result.stdout.strip() or result.stderr.strip()):
+            print(f"MATCHER RUNTIME FAILED: {binary.name} exit={result.returncode}", file=sys.stderr)
+            print((result.stderr or result.stdout).strip(), file=sys.stderr)
+            return 5
+    print("MATCHER RUNTIME OK: fmm.exe and stmatch.exe started")
+    return 0
+
+
 def stage_ablation(args: list[str]) -> int:
     entry = ROOT / "evaluation" / "run_ablation_experiment.py"
     return run([sys.executable, str(entry), *forwarded(args)])
@@ -186,7 +230,7 @@ def main() -> int:
     plot = sub.add_parser("plot")
     plot.add_argument("args", nargs=argparse.REMAINDER)
     for name in ("generate-main", "generate-baselines", "evaluate",
-                 "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
+                 "verify-matcher", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
                  "routes-to-coordinates", "run-tstr", "materialize-tstr-mr", "combine-tstr-mr",
                  "run-ablation", "run-framework", "run-privacy", "run-profile", "run-mr", "run-structure"):
         child = sub.add_parser(name)
@@ -206,6 +250,8 @@ def main() -> int:
         return stage_generate_baselines(ns.args)
     if ns.stage == "evaluate":
         return stage_evaluate(ns.args)
+    if ns.stage == "verify-matcher":
+        return stage_verify_matcher(ns.args)
     if ns.stage in {"prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates"}:
         return stage_helper(ns.stage, ns.args)
     if ns.stage == "run-tstr":
