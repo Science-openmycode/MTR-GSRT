@@ -130,6 +130,38 @@ def plot_evidence_chain() -> None:
 
 def plot_tstr() -> None:
     table = read_table("tstr", "strict_tstr.csv")
+    if {"measurement", "router", "metric", "retention"}.issubset(table.columns):
+        metrics = [
+            "Next-cell Hit@1", "Next-cell MRR", "Destination Hit@5",
+            "Road continuation Hit@1", "Road continuation MRR", "Route retrieval NDCG@5",
+        ]
+        methods = list(dict.fromkeys(table["measurement"].astype(str)))
+        routers = [name for name in ("Native", "FMM", "STMatch")
+                   if name in set(table["router"].astype(str))]
+        fig, axes = plt.subplots(2, 3, figsize=(12.0, 7.2), constrained_layout=True)
+        cmap = plt.get_cmap("YlGnBu")
+        for ax, metric in zip(axes.flat, metrics):
+            part = table[table["metric"].eq(metric)]
+            frame = (part.pivot(index="measurement", columns="router", values="retention")
+                     .reindex(index=methods, columns=routers))
+            values = frame.to_numpy(dtype=float)
+            image = ax.imshow(values, vmin=0, vmax=1, cmap=cmap, aspect="auto")
+            ax.set_xticks(np.arange(len(routers)), routers)
+            ax.set_yticks(np.arange(len(methods)), methods)
+            for i in range(values.shape[0]):
+                for j in range(values.shape[1]):
+                    value = values[i, j]
+                    ax.text(j, i, "—" if not np.isfinite(value) else f"{value:.2f}",
+                            ha="center", va="center", fontsize=8,
+                            color="white" if np.isfinite(value) and value > .62 else "#1F2933")
+            ax.set_title(metric, weight="bold")
+            ax.set_xlabel("Public reconstruction R")
+            ax.set_ylabel("Private measurement / release M")
+        colorbar = fig.colorbar(image, ax=axes.ravel().tolist(), shrink=.78, pad=.02)
+        colorbar.set_label("Task utility retained relative to Real-train")
+        fig.suptitle("Strict train-only TSTR: measurement × public reconstruction", weight="bold")
+        save(fig, "06_strict_tstr")
+        return
     if {"metric", "value"}.issubset(table.columns):
         labels = table["metric"].astype(str).tolist()
         values = table["value"].astype(float).to_numpy()

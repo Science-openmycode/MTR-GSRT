@@ -17,6 +17,14 @@ python -m pip install -r requirements.txt
 
 每条命令的全部参数、默认行为、物理含义和跨数据集替换规则见 [`docs/COMMAND_PARAMETERS_CN.md`](docs/COMMAND_PARAMETERS_CN.md)。所有 `commands/reproduce.py` 入口都按脚本自身位置定位文件夹，因此可以从任意当前目录用绝对脚本路径调用。
 
+仓库提供两条复现路径：直接运行 `python commands/reproduce.py all-precomputed` 可校验已发布合成数据并重画全部论文图；重新生成或重新评价时，由使用者通过 `--data` 提供同格式真实轨迹。真实轨迹不包含在公开仓库中。需要道路级真实参考时，可由同一真实轨迹和公共道路图生成：
+
+```powershell
+python commands/reproduce.py prepare-road-reference -- --dataset-config geolife --real "C:\data\real.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir public_assets\matcher --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 5000 --out-dir "C:\runs\real_road_reference"
+```
+
+该命令生成 `C:\runs\real_road_reference\matched_paths\Real.pkl.gz` 及其 manifest，可直接传给下文的 `--real-routes`。`--dataset-config` 提供公开槽位数和城市配置；`--network` 与匹配器参数决定公共地图匹配过程。预计算 baseline 合成数据已经随本仓库发布；需要从源码重新生成四种 baseline 时使用包含 baseline 源码的完整复现目录。
+
 ## 1. 从统计发布到道路轨迹
 
 这一实验先得到 SPRT、PrivTrace、DPTraj-PM 和 DPStd 的统计式合成轨迹，再比较它们的原生输出与加入 MTR 公共道路路由后的输出。比较保持私有测量不变，只改变道路重建过程，因此直接展示 MTR 路由带来的 RoadYield、BTF 和 FamilyCPC 变化。
@@ -152,40 +160,63 @@ python commands/reproduce.py plot -- --figure ablation --data-root experiment_re
 
 ![MTR-GSRT 算法级消融](experiment_results/published_figures/05_portal_fiber_ablation.png)
 
-## 6. 严格 train-only TSTR 下游实验
+## 6. 严格 train-only TSTR 测量—路由实验
 
-严格 TSTR 只使用真实训练划分生成合成数据，在合成数据上训练下游模型，再到未参与生成的真实测试划分上计算 NextCell、Destination、RoadContinuation 与路线检索结果。
+这一实验同时改变统计发布/私有测量 (M) 和公共道路重建 (R)。真实数据先固定为互斥的 80% 训练集与 20% 测试集；每份合成训练语料只能由训练集生成。随后分别使用原生输出、FMM 和 STMatch 训练下游模型，并在从未进入合成机制的真实测试集上评价。
 
-先固定真实训练/测试划分：
+六个主面板组成三个递进层次：Next-cell Hit@1/MRR 衡量局部移动延续，Destination Hit@5 衡量行程需求，Road continuation Hit@1/MRR 与 Route retrieval NDCG@5 衡量道路选择。Road continuation MRR 计算真实下一道路在完整候选排序中的倒数名次，既保留 Hit@1 的直观含义，又能区分“没有排在第一但排序接近正确”的模型。Destination MRR 与其原始结果保留在 `results_all.csv`，不与同类 Destination Hit@5 重复占用主图面板。每项分数均为
+
+\[
+\frac{\text{查询覆盖率}\times\text{已覆盖查询质量}}
+{\text{Real-train 查询覆盖率}\times\text{Real-train 查询质量}}.
+\]
+
+因此，方法只在少量容易样本上成功时不会得到虚高分数。
+
+### 6.1 生成严格训练侧发布
 
 ```powershell
 python commands/reproduce.py prepare-split -- --data "C:\data\real.pkl" --train-fraction 0.8 --seed 20260713 --out-dir "C:\runs\strict_split"
+python commands/reproduce.py generate-main -- --data "C:\runs\strict_split\train.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 13698 --bbox 39.75 40.15 116.10 116.65 --osm-cache "C:\data\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\tstr_mr\mtr_gsrt"
 ```
 
-参数说明：`--data` 是待划分的任意真实数据集；`--train-fraction` 是只允许合成器访问的训练比例；`--seed` 固定索引；`--out-dir` 写出 train、test 和索引 manifest。
+第一条命令生成 `train.pkl`、`test.pkl` 和 `split_manifest.json`；第二条命令只读取 `train.pkl`，生成 13,698 条 MTR-GSRT 轨迹。四份相同训练划分下的统计式发布位于 `datasets/synthetic/train_only_baselines/`。
 
-该命令实际写出 `C:\runs\strict_split\train.pkl`、`test.pkl` 和 `split_manifest.json`。随后只用训练划分生成 MTR-GSRT。目录同时提供由相同训练划分生成的 SPRT、PrivTrace、DPTraj-PM 和 DPStd 发布及其生成协议：
+### 6.2 执行两种公共道路重建
 
 ```powershell
-python commands/reproduce.py generate-main -- --data "C:\runs\strict_split\train.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 13698 --bbox 39.75 40.15 116.10 116.65 --osm-cache "C:\data\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\tstr\mtr_gsrt"
-# 本目录已包含由同一训练划分生成的四份统计式 DP 方法发布及协议。
-Get-ChildItem datasets\synthetic\train_only_baselines\*.pkl
+python evaluation/evaluation/explore_fmm_road_alignment.py --method "SPRT=datasets\synthetic\train_only_baselines\sprt_train.pkl" --method "PrivTrace=datasets\synthetic\train_only_baselines\privtrace_train.pkl" --method "DPTraj-PM=datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --method "DPStd=datasets\synthetic\train_only_baselines\dpstd_train.pkl" --method "MTR-GSRT=C:\runs\tstr_mr\mtr_gsrt\trajectories.pkl" --network public_assets\beijing_network\network.shp --fmm public_assets\matcher\fmm.exe --fmm-runtime-dir public_assets\matcher --out-dir "C:\runs\tstr_mr\fmm"
+python evaluation/evaluation/cache_common_road_matches.py --dataset-config geolife --real "C:\runs\strict_split\train.pkl" --corpus "SPRT=datasets\synthetic\train_only_baselines\sprt_train.pkl" --corpus "PrivTrace=datasets\synthetic\train_only_baselines\privtrace_train.pkl" --corpus "DPTraj-PM=datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --corpus "DPStd=datasets\synthetic\train_only_baselines\dpstd_train.pkl" --corpus "MTR-GSRT=C:\runs\tstr_mr\mtr_gsrt\trajectories.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir public_assets\matcher --limit 13698 --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 5000 --out-dir "C:\runs\tstr_mr\stmatch"
 ```
 
-参数说明：MTR-GSRT 的生成命令把 `train.pkl` 作为唯一私有输入；`--epsilon-total`、两个随机种子、`--public-slot-count` 和公共道路资产均被显式记录。四份统计式 DP 发布也各包含 13,698 条轨迹，其相邻的 `*_protocol.json` 记录训练输入、隐私预算、种子和输出条数。
+`--method/--corpus NAME=PATH` 指定待路由的训练侧发布；`--network`、匹配器二进制和运行库均为公共资源；`--limit 13698` 与冻结训练侧输出规模一致；`--max-points` 控制每条输入用于匹配的公共采样上限；`--radius-m`、`--gps-error-m` 和 `--candidates` 控制候选道路搜索。两个输出目录都包含 `matched_paths/<方法>.pkl.gz` 和运行 manifest。
 
-接着真正训练并测试五类下游模型。该命令会依次运行通用移动任务和道路网络挖掘任务，而不是读取论文表格：
+### 6.3 生成双视图并执行六项任务
 
 ```powershell
-python commands/reproduce.py run-tstr -- --train-real "C:\runs\strict_split\train.pkl" --test-real "C:\runs\strict_split\test.pkl" --synthetic "datasets\synthetic\train_only_baselines\sprt_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\privtrace_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\dpstd_train.pkl" --synthetic "C:\runs\tstr\mtr_gsrt\trajectories.pkl" --names SPRT PrivTrace DPTraj-PM DPStd MTR-GSRT --osm-cache "C:\data\osm_cache_beijing.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir experiment_results/recomputed/tstr
+python commands/reproduce.py materialize-tstr-mr -- --source "SPRT=datasets\synthetic\train_only_baselines\sprt_train.pkl" --source "PrivTrace=datasets\synthetic\train_only_baselines\privtrace_train.pkl" --source "DPTraj-PM=datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --source "DPStd=datasets\synthetic\train_only_baselines\dpstd_train.pkl" --source "MTR-GSRT=C:\runs\tstr_mr\mtr_gsrt\trajectories.pkl" --fmm-dir "C:\runs\tstr_mr\fmm" --stmatch-dir "C:\runs\tstr_mr\stmatch" --network public_assets\beijing_network\network.shp --out-dir "C:\runs\tstr_mr\views"
+```
+
+该命令为每个 (M\times R) 组合生成两份等价视图：`views/generic/` 保持原发布点数，用于网格下游任务；`views/road/` 保留完整有向道路节点，用于道路任务。这样不会因道路几何顶点过密改变通用任务权重，也不会因稀疏重采样跳过中间道路节点。
+
+随后分别运行 Native、FMM 和 STMatch。三条命令完整列出，避免读者依赖隐含的路径替换：
+
+```powershell
+python commands/reproduce.py run-tstr -- --train-real "C:\runs\strict_split\train.pkl" --test-real "C:\runs\strict_split\test.pkl" --synthetic "datasets\synthetic\train_only_baselines\sprt_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\privtrace_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\dpstd_train.pkl" --synthetic "C:\runs\tstr_mr\mtr_gsrt\trajectories.pkl" --names SPRT PrivTrace DPTraj-PM DPStd MTR-GSRT --osm-cache "C:\data\osm_cache_beijing.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir "C:\runs\tstr_mr\scores\native"
+python commands/reproduce.py run-tstr -- --train-real "C:\runs\strict_split\train.pkl" --test-real "C:\runs\strict_split\test.pkl" --synthetic "C:\runs\tstr_mr\views\generic\fmm\sprt.pkl" --synthetic "C:\runs\tstr_mr\views\generic\fmm\privtrace.pkl" --synthetic "C:\runs\tstr_mr\views\generic\fmm\dptraj_pm.pkl" --synthetic "C:\runs\tstr_mr\views\generic\fmm\dpstd.pkl" --synthetic "C:\runs\tstr_mr\views\generic\fmm\mtr_gsrt.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\fmm\sprt.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\fmm\privtrace.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\fmm\dptraj_pm.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\fmm\dpstd.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\fmm\mtr_gsrt.pkl" --names "SPRT x FMM" "PrivTrace x FMM" "DPTraj-PM x FMM" "DPStd x FMM" "MTR-GSRT x FMM" --osm-cache "C:\data\osm_cache_beijing.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir "C:\runs\tstr_mr\scores\fmm"
+python commands/reproduce.py run-tstr -- --train-real "C:\runs\strict_split\train.pkl" --test-real "C:\runs\strict_split\test.pkl" --synthetic "C:\runs\tstr_mr\views\generic\stmatch\sprt.pkl" --synthetic "C:\runs\tstr_mr\views\generic\stmatch\privtrace.pkl" --synthetic "C:\runs\tstr_mr\views\generic\stmatch\dptraj_pm.pkl" --synthetic "C:\runs\tstr_mr\views\generic\stmatch\dpstd.pkl" --synthetic "C:\runs\tstr_mr\views\generic\stmatch\mtr_gsrt.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\stmatch\sprt.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\stmatch\privtrace.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\stmatch\dptraj_pm.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\stmatch\dpstd.pkl" --road-synthetic "C:\runs\tstr_mr\views\road\stmatch\mtr_gsrt.pkl" --names "SPRT x STMatch" "PrivTrace x STMatch" "DPTraj-PM x STMatch" "DPStd x STMatch" "MTR-GSRT x STMatch" --osm-cache "C:\data\osm_cache_beijing.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir "C:\runs\tstr_mr\scores\stmatch"
+```
+
+每次运行生成 `raw_generic/`、`raw_road/`、`results.csv` 和 `manifest.json`。最后合并三个真实执行结果并作图：
+
+```powershell
+python commands/reproduce.py combine-tstr-mr -- --native "C:\runs\tstr_mr\scores\native\results.csv" --fmm "C:\runs\tstr_mr\scores\fmm\results.csv" --stmatch "C:\runs\tstr_mr\scores\stmatch\results.csv" --out-dir experiment_results/recomputed/tstr
 python commands/reproduce.py plot -- --figure tstr --data-root experiment_results/recomputed
 ```
 
-参数说明：`--train-real/--test-real` 必须互斥；五个 `--synthetic` 分别是只由 train 生成的 SPRT、PrivTrace、DPTraj-PM、DPStd 和 MTR-GSRT 训练语料；`--names` 与路径严格同序；`--osm-cache/--bbox` 定义测试城市；可用 `--seed` 固定下游训练；`--out-dir` 保存实际训练和测试结果。
+最终得到 `results.csv` 中 90 个主图任务单元（5 种测量/发布、3 种公共重建、6 项互补指标）以及 `results_all.csv` 中 105 个完整任务单元（额外保留 Destination MRR），并生成 `06_strict_tstr.png/pdf`。
 
-下游程序分别写出 `tstr/raw_generic/` 与 `tstr/raw_road/` 的逐任务 JSON/CSV；聚合结果为 `tstr/results.csv`，其中每一项都来自刚完成的 train-on-synthetic/test-on-held-out-real 运行。作图命令再生成 `06_strict_tstr.png` 和 `06_strict_tstr.pdf`。
-
-![MTR-GSRT 严格 TSTR](experiment_results/published_figures/06_strict_tstr.png)
+![严格 train-only TSTR 测量—路由矩阵](experiment_results/published_figures/06_strict_tstr.png)
 
 ## 7. 空间轨迹比较
 

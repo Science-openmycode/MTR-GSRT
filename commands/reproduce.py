@@ -12,14 +12,22 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = json.loads((ROOT / "config" / "package.json").read_text(encoding="utf-8"))
+TEXT_SUFFIXES = {
+    ".bat", ".bib", ".cfg", ".csv", ".ini", ".json", ".md", ".ps1",
+    ".py", ".sh", ".tex", ".toml", ".txt", ".yaml", ".yml",
+}
+
+
+def canonical_bytes(path: Path) -> bytes:
+    """Return platform-independent bytes for text and exact bytes for artifacts."""
+    payload = path.read_bytes()
+    if path.suffix.lower() in TEXT_SUFFIXES or path.name in {".gitattributes", ".gitignore"}:
+        payload = payload.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return payload
 
 
 def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
+    return hashlib.sha256(canonical_bytes(path)).hexdigest()
 
 
 def stage_inventory() -> int:
@@ -36,10 +44,11 @@ def stage_verify() -> int:
         if not path.is_file():
             failures.append(f"missing: {entry['path']}")
             continue
-        if path.stat().st_size != entry["size"]:
+        payload = canonical_bytes(path)
+        if len(payload) != entry["size"]:
             failures.append(f"size: {entry['path']}")
             continue
-        if sha256(path) != entry["sha256"]:
+        if hashlib.sha256(payload).hexdigest() != entry["sha256"]:
             failures.append(f"sha256: {entry['path']}")
     actual_data = [p for p in (ROOT / "datasets" / "synthetic").rglob("*") if p.is_file()]
     if not actual_data:
@@ -135,6 +144,7 @@ def stage_helper(name: str, args: list[str]) -> int:
     entries = {
         "prepare-split": ROOT / "evaluation" / "pipeline" / "prepare_kdd_revised_split.py",
         "prepare-attack-split": ROOT / "evaluation" / "pipeline" / "prepare_privacy_attack_splits.py",
+        "prepare-road-reference": ROOT / "evaluation" / "evaluation" / "cache_common_road_matches.py",
         "subset-routes": ROOT / "evaluation" / "subset_matched_routes.py",
         "routes-to-coordinates": ROOT / "evaluation" / "road_routes_to_coordinates.py",
     }
@@ -143,6 +153,16 @@ def stage_helper(name: str, args: list[str]) -> int:
 
 def stage_tstr(args: list[str]) -> int:
     entry = ROOT / "evaluation" / "run_tstr_experiment.py"
+    return run([sys.executable, str(entry), *forwarded(args)])
+
+
+def stage_combine_tstr_mr(args: list[str]) -> int:
+    entry = ROOT / "evaluation" / "combine_tstr_mr.py"
+    return run([sys.executable, str(entry), *forwarded(args)])
+
+
+def stage_materialize_tstr_mr(args: list[str]) -> int:
+    entry = ROOT / "evaluation" / "materialize_tstr_mr.py"
     return run([sys.executable, str(entry), *forwarded(args)])
 
 
@@ -166,8 +186,8 @@ def main() -> int:
     plot = sub.add_parser("plot")
     plot.add_argument("args", nargs=argparse.REMAINDER)
     for name in ("generate-main", "generate-baselines", "evaluate",
-                 "prepare-split", "prepare-attack-split", "subset-routes",
-                 "routes-to-coordinates", "run-tstr",
+                 "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
+                 "routes-to-coordinates", "run-tstr", "materialize-tstr-mr", "combine-tstr-mr",
                  "run-ablation", "run-framework", "run-privacy", "run-profile", "run-mr", "run-structure"):
         child = sub.add_parser(name)
         child.add_argument("args", nargs=argparse.REMAINDER)
@@ -186,10 +206,14 @@ def main() -> int:
         return stage_generate_baselines(ns.args)
     if ns.stage == "evaluate":
         return stage_evaluate(ns.args)
-    if ns.stage in {"prepare-split", "prepare-attack-split", "subset-routes", "routes-to-coordinates"}:
+    if ns.stage in {"prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates"}:
         return stage_helper(ns.stage, ns.args)
     if ns.stage == "run-tstr":
         return stage_tstr(ns.args)
+    if ns.stage == "combine-tstr-mr":
+        return stage_combine_tstr_mr(ns.args)
+    if ns.stage == "materialize-tstr-mr":
+        return stage_materialize_tstr_mr(ns.args)
     if ns.stage == "run-ablation":
         return stage_ablation(ns.args)
     if ns.stage.startswith("run-"):

@@ -52,13 +52,21 @@ Q5_BLOCK_NAMES = (
     "fine384_flow",
     "portal_fiber_flow",
 )
+
+
+def _canonical_source_sha256(path: Path) -> str:
+    """Hash audited text independently of Git's LF/CRLF checkout policy."""
+    payload = path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return hashlib.sha256(payload).hexdigest()
+
+
 def _source_binding() -> dict:
     source_dir = PUBLIC_RELEASE / "src" / "mtr" / "DP_GSRT" / "final"
     manifest_path = source_dir / "SOURCE_MANIFEST.json"
     entries = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
     mismatches = []
     for entry in entries:
-        current = sha256_file(source_dir / entry["file"])
+        current = _canonical_source_sha256(source_dir / entry["file"])
         if current != entry["sha256"]:
             mismatches.append({
                 "file": entry["file"],
@@ -69,7 +77,7 @@ def _source_binding() -> dict:
         raise RuntimeError(f"audited-source manifest mismatch: {mismatches}")
     return {
         "manifest": "src/mtr/DP_GSRT/final/SOURCE_MANIFEST.json",
-        "manifest_sha256": sha256_file(manifest_path),
+        "manifest_sha256": _canonical_source_sha256(manifest_path),
         "manifest_matches_current_source": True,
         "algorithm_schema": ALGORITHM_SCHEMA,
     }

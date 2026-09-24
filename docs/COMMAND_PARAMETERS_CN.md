@@ -49,6 +49,12 @@
 | `prepare-attack-split --attack-candidates` | 每组攻击候选数量，默认 `1000`。 |
 | `prepare-attack-split --seed` | 攻击候选抽样种子，默认 `20260715`。 |
 | `prepare-attack-split --out-dir` | member、nonmember、reference 文件输出目录。 |
+| `prepare-road-reference --dataset-config` | 数据集注册名，用于读取公开槽位数和城市配置。 |
+| `prepare-road-reference --real` | 用户提供的真实坐标轨迹文件。 |
+| `prepare-road-reference --network` | 与轨迹同城的公共有向道路图。 |
+| `prepare-road-reference --stmatch-bin/--runtime-dir` | STMatch 可执行文件及其运行库目录。 |
+| `prepare-road-reference --max-points/--radius-m/--gps-error-m/--candidates` | 每条轨迹的采样上限与公共地图匹配参数。 |
+| `prepare-road-reference --out-dir` | 写出 `matched_paths/Real.pkl.gz` 与匹配 manifest 的目录。 |
 | `run-privacy --method` | 图表中的方法名。 |
 | `run-privacy --members/--nonmembers/--reference` | 三个互斥攻击集合。 |
 | `run-privacy --release` | 被攻击的合成发布。 |

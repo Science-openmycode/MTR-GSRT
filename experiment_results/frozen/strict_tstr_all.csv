@@ -2,90 +2,105 @@ measurement,router,metric,retention
 SPRT,Native,Next-cell Hit@1,0.03827704356338718
 SPRT,Native,Next-cell MRR,0.06714636228944541
 SPRT,Native,Destination Hit@5,0.05182232346241458
+SPRT,Native,Destination MRR,0.02454639926420525
 SPRT,Native,Road continuation Hit@1,0.0
 SPRT,Native,Road continuation MRR,0.0
 SPRT,Native,Route retrieval NDCG@5,0.0
 PrivTrace,Native,Next-cell Hit@1,0.08879099363680862
 PrivTrace,Native,Next-cell MRR,0.147561078505161
 PrivTrace,Native,Destination Hit@5,0.0580865603644647
+PrivTrace,Native,Destination MRR,0.039226459943382044
 PrivTrace,Native,Road continuation Hit@1,0.0
 PrivTrace,Native,Road continuation MRR,0.0
 PrivTrace,Native,Route retrieval NDCG@5,0.0
 DPTraj-PM,Native,Next-cell Hit@1,0.020655898188937837
 DPTraj-PM,Native,Next-cell MRR,0.02725962625591092
 DPTraj-PM,Native,Destination Hit@5,0.014806378132118457
+DPTraj-PM,Native,Destination MRR,0.008886871558427599
 DPTraj-PM,Native,Road continuation Hit@1,0.0
 DPTraj-PM,Native,Road continuation MRR,0.0
 DPTraj-PM,Native,Route retrieval NDCG@5,0.0
 DPStd,Native,Next-cell Hit@1,0.10543318649045523
 DPStd,Native,Next-cell MRR,0.14955028535364867
 DPStd,Native,Destination Hit@5,0.19134396355353078
+DPStd,Native,Destination MRR,0.1418913269389267
 DPStd,Native,Road continuation Hit@1,0.0
 DPStd,Native,Road continuation MRR,0.0
 DPStd,Native,Route retrieval NDCG@5,0.0
 MTR-GSRT,Native,Next-cell Hit@1,0.607880567792462
 MTR-GSRT,Native,Next-cell MRR,0.7504939267429565
 MTR-GSRT,Native,Destination Hit@5,0.30410022779043283
+MTR-GSRT,Native,Destination MRR,0.18972992988449455
 MTR-GSRT,Native,Road continuation Hit@1,0.7155060228903201
 MTR-GSRT,Native,Road continuation MRR,0.6830603074293274
 MTR-GSRT,Native,Route retrieval NDCG@5,0.8189495278235004
 SPRT,FMM,Next-cell Hit@1,0.03827704356338718
 SPRT,FMM,Next-cell MRR,0.06714636228944541
 SPRT,FMM,Destination Hit@5,0.05182232346241458
+SPRT,FMM,Destination MRR,0.02454639926420525
 SPRT,FMM,Road continuation Hit@1,0.0
 SPRT,FMM,Road continuation MRR,0.0
 SPRT,FMM,Route retrieval NDCG@5,0.0
 PrivTrace,FMM,Next-cell Hit@1,0.08879099363680862
 PrivTrace,FMM,Next-cell MRR,0.147561078505161
 PrivTrace,FMM,Destination Hit@5,0.0580865603644647
+PrivTrace,FMM,Destination MRR,0.039226459943382044
 PrivTrace,FMM,Road continuation Hit@1,0.0
 PrivTrace,FMM,Road continuation MRR,0.0
 PrivTrace,FMM,Route retrieval NDCG@5,0.0
 DPTraj-PM,FMM,Next-cell Hit@1,0.020655898188937837
 DPTraj-PM,FMM,Next-cell MRR,0.02725962625591092
 DPTraj-PM,FMM,Destination Hit@5,0.014806378132118457
+DPTraj-PM,FMM,Destination MRR,0.008886871558427599
 DPTraj-PM,FMM,Road continuation Hit@1,0.0018018619239881213
 DPTraj-PM,FMM,Road continuation MRR,0.001678299944315669
 DPTraj-PM,FMM,Route retrieval NDCG@5,0.0014998396574375638
 DPStd,FMM,Next-cell Hit@1,0.10543318649045523
 DPStd,FMM,Next-cell MRR,0.14955028535364867
 DPStd,FMM,Destination Hit@5,0.19134396355353078
+DPStd,FMM,Destination MRR,0.1418913269389267
 DPStd,FMM,Road continuation Hit@1,0.0
 DPStd,FMM,Road continuation MRR,0.0
 DPStd,FMM,Route retrieval NDCG@5,0.0
 MTR-GSRT,FMM,Next-cell Hit@1,0.6148800783162016
 MTR-GSRT,FMM,Next-cell MRR,0.7548253622186059
 MTR-GSRT,FMM,Destination Hit@5,0.3405466970387244
+MTR-GSRT,FMM,Destination MRR,0.222840693271539
 MTR-GSRT,FMM,Road continuation Hit@1,0.8168774400213553
 MTR-GSRT,FMM,Road continuation MRR,0.7836054959143234
 MTR-GSRT,FMM,Route retrieval NDCG@5,0.8632617346005026
 SPRT,STMatch,Next-cell Hit@1,0.04140969162995595
 SPRT,STMatch,Next-cell MRR,0.0687008731045343
 SPRT,STMatch,Destination Hit@5,0.0529612756264237
+SPRT,STMatch,Destination MRR,0.025597534609825716
 SPRT,STMatch,Road continuation Hit@1,0.020554573058827453
 SPRT,STMatch,Road continuation MRR,0.019145051216637995
 SPRT,STMatch,Route retrieval NDCG@5,0.021640543628741987
 PrivTrace,STMatch,Next-cell Hit@1,0.0858541360744004
 PrivTrace,STMatch,Next-cell MRR,0.14514190058015916
 PrivTrace,STMatch,Destination Hit@5,0.06435079726651481
+PrivTrace,STMatch,Destination MRR,0.04143623311315236
 PrivTrace,STMatch,Road continuation Hit@1,0.5150655677533451
 PrivTrace,STMatch,Road continuation MRR,0.48759793320469924
 PrivTrace,STMatch,Route retrieval NDCG@5,0.5493170128889063
 DPTraj-PM,STMatch,Next-cell Hit@1,0.09990210474791972
 DPTraj-PM,STMatch,Next-cell MRR,0.11445060563822501
 DPTraj-PM,STMatch,Destination Hit@5,0.017653758542141233
+DPTraj-PM,STMatch,Destination MRR,0.011299704965420038
 DPTraj-PM,STMatch,Road continuation Hit@1,0.0299976642530615
 DPTraj-PM,STMatch,Road continuation MRR,0.028577718496264025
 DPTraj-PM,STMatch,Route retrieval NDCG@5,0.030812708432145702
 DPStd,STMatch,Next-cell Hit@1,0.14894762604013706
 DPStd,STMatch,Next-cell MRR,0.20104624045305508
 DPStd,STMatch,Destination Hit@5,0.17482915717539865
+DPStd,STMatch,Destination MRR,0.11945914308579898
 DPStd,STMatch,Road continuation Hit@1,0.03683806600153492
 DPStd,STMatch,Road continuation MRR,0.03432744978697511
 DPStd,STMatch,Route retrieval NDCG@5,0.038995831093376655
 MTR-GSRT,STMatch,Next-cell Hit@1,0.5998531571218797
 MTR-GSRT,STMatch,Next-cell MRR,0.754805112403389
 MTR-GSRT,STMatch,Destination Hit@5,0.33997722095671984
+MTR-GSRT,STMatch,Destination MRR,0.2212042666539253
 MTR-GSRT,STMatch,Road continuation Hit@1,0.7716974206680236
 MTR-GSRT,STMatch,Road continuation MRR,0.7462944017818992
 MTR-GSRT,STMatch,Route retrieval NDCG@5,0.7464919237545423
