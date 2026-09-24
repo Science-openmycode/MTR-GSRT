@@ -23,7 +23,7 @@ python -m pip install -r requirements.txt
 python commands/reproduce.py prepare-geolife -- --source-dir "C:\data\Geolife Trajectories 1.3\Data" --out "C:\data\real_full_frozen.pkl" --expected-sha256 6a160ca557fbd7bab97af489b56c931e73532c498c390e31965c0d61e53361fd
 ```
 
-命令按北京边界框筛选 17,123 条轨迹，以公开种子 `20260713` 划分并按训练部分、测试部分的顺序拼接，生成 298,170,617 字节的论文输入。哈希不符时不写文件；换数据集时取消 `--expected-sha256` 并按需设置 `--bbox`、`--seed`。下文 `C:\data\real.pkl` 均可替换成这里生成的路径。
+命令按北京边界框筛选 17,123 条轨迹，以公开种子 `20260713` 划分并按训练部分、测试部分的顺序拼接，生成 298,170,617 字节的论文输入。哈希不符时不写文件；换数据集时取消 `--expected-sha256` 并按需设置 `--bbox`、`--seed`。下文 `C:\data\real_full_frozen.pkl` 均可替换成这里生成的路径。
 
 道路匹配使用 [FMM/STMatch](https://github.com/cyang-kth/fmm)。包内提供 `fmm.exe`、`stmatch.exe` 和 `FMMLIB.dll`；Windows 用户还需提供与这些二进制兼容的 `gdal204.dll`、`boost_serialization.dll`，放在例如 `C:\fmm-runtime`。这两个 DLL 不在仓库中。运行道路实验前检查二进制能否启动：
 
@@ -34,7 +34,7 @@ python commands/reproduce.py verify-matcher -- --runtime-dir "C:\fmm-runtime"
 需要道路级真实参考时，可由同一真实轨迹和公共道路图生成：
 
 ```powershell
-python commands/reproduce.py prepare-road-reference -- --dataset-config geolife --real "C:\data\real.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir "C:\fmm-runtime" --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 20000 --omp-threads-per-worker 8 --out-dir "C:\runs\real_road_reference"
+python commands/reproduce.py prepare-road-reference -- --dataset-config geolife --real "C:\data\real_full_frozen.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir "C:\fmm-runtime" --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 20000 --omp-threads-per-worker 8 --out-dir "C:\runs\real_road_reference"
 ```
 
 该命令生成 `C:\runs\real_road_reference\matched_paths\Real.pkl.gz` 及其 manifest，可直接传给下文的 `--real-routes`。`--dataset-config` 提供公开槽位数和城市配置；`--network` 与匹配器参数决定公共地图匹配过程。预计算 baseline 合成数据已经随本仓库发布；需要从源码重新生成四种 baseline 时使用包含 baseline 源码的完整复现目录。
@@ -81,7 +81,7 @@ experiment_results/regenerated_figures/
 先从同一严格训练/测试划分生成成员、非成员和独立参考集合，再实际运行总体链接与 GDA-MIA：
 
 ```powershell
-python commands/reproduce.py prepare-split -- --data "C:\data\real.pkl" --train-fraction 0.8 --seed 20260713 --out-dir "C:\runs\strict_split"
+python commands/reproduce.py prepare-split -- --data "C:\data\real_full_frozen.pkl" --input-order --train-fraction 0.8 --seed 20260713 --out-dir "C:\runs\strict_split"
 python commands/reproduce.py prepare-attack-split -- --split-dir "C:\runs\strict_split" --out-dir "C:\runs\attack_split"
 python commands/reproduce.py run-privacy -- --method MTR-GSRT --members "C:\runs\attack_split\member_candidates.pkl" --nonmembers "C:\runs\attack_split\nonmember_candidates.pkl" --reference "C:\runs\attack_split\reference.pkl" --release "datasets\synthetic\mtr_gsrt\trajectories.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir experiment_results/recomputed/privacy
 python commands/reproduce.py plot -- --figure privacy --data-root experiment_results/recomputed
@@ -98,7 +98,7 @@ python commands/reproduce.py plot -- --figure privacy --data-root experiment_res
 先运行 MTR-GSRT，生成本文具体方案的合成道路轨迹：
 
 ```powershell
-python commands/reproduce.py generate-main -- --data "C:\data\real.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 17123 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\mtr_gsrt"
+python commands/reproduce.py generate-main -- --data "C:\data\real_full_frozen.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 17123 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\mtr_gsrt"
 ```
 
 参数说明：`--data` 指定任意坐标轨迹；`--epsilon-total` 是总隐私预算；`--noise-seed/--decoder-seed` 分别固定 DP 噪声和公共路由；`--public-slot-count` 是预声明输出数；`--bbox` 为 `lat_min lat_max lon_min lon_max`；`--osm-cache` 是同城公共道路缓存；`--component-mode full` 启用全部组件；`--out-dir` 是本轮独立输出目录。
@@ -117,7 +117,7 @@ C:\runs\mtr_gsrt\
 坐标轨迹使用统一评估器计算 Grid、Trip、Length、RoadYield、DirValid、WitnessValid、OD 与任务指标。下面评估新生成的 MTR-GSRT；评估四份 baseline 时分别替换 `--synthetic`，并为每种方法指定不同的输出目录。
 
 ```powershell
-python commands/reproduce.py evaluate -- --real "C:\data\real.pkl" --synthetic "C:\runs\mtr_gsrt\trajectories.pkl" --witness "C:\runs\mtr_gsrt\road_witnesses.pkl" --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --public-slot-count 17123 --out-dir "C:\runs\metrics\mtr_gsrt"
+python commands/reproduce.py evaluate -- --real "C:\data\real_full_frozen.pkl" --synthetic "C:\runs\mtr_gsrt\trajectories.pkl" --witness "C:\runs\mtr_gsrt\road_witnesses.pkl" --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --public-slot-count 17123 --out-dir "C:\runs\metrics\mtr_gsrt"
 ```
 
 参数说明：`--real` 是真实参考，`--synthetic` 是刚生成的坐标轨迹，`--witness` 是一一对应的道路证明，`--bbox` 与 `--osm-cache` 显式定义数据所在城市及其公共道路图，`--public-slot-count` 是预声明评估条数，`--out-dir` 保存本次指标。已有注册数据集也可用 `--dataset-config` 代替显式公共配置。
@@ -134,7 +134,7 @@ C:\runs\metrics\mtr_gsrt\
 对刚生成的主方法和四份 baseline 合成数据逐份运行统一评估器，再生成完整效用热力图：
 
 ```powershell
-python commands/reproduce.py run-profile -- --real "C:\data\real.pkl" --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --public-slot-count 17123 --synthetic "SPRT=datasets\synthetic\baselines\sprt_native.pkl" --synthetic "PrivTrace=datasets\synthetic\baselines\privtrace_native.pkl" --synthetic "DPTraj-PM=datasets\synthetic\baselines\dptrajpm_native.pkl" --synthetic "DPStd=datasets\synthetic\baselines\dpstd_native.pkl" --synthetic "MTR-GSRT=C:\runs\mtr_gsrt\trajectories.pkl" --witness "MTR-GSRT=C:\runs\mtr_gsrt\road_witnesses.pkl" --out-dir experiment_results/recomputed/profile
+python commands/reproduce.py run-profile -- --real "C:\data\real_full_frozen.pkl" --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --public-slot-count 17123 --synthetic "SPRT=datasets\synthetic\baselines\sprt_native.pkl" --synthetic "PrivTrace=datasets\synthetic\baselines\privtrace_native.pkl" --synthetic "DPTraj-PM=datasets\synthetic\baselines\dptrajpm_native.pkl" --synthetic "DPStd=datasets\synthetic\baselines\dpstd_native.pkl" --synthetic "MTR-GSRT=C:\runs\mtr_gsrt\trajectories.pkl" --witness "MTR-GSRT=C:\runs\mtr_gsrt\road_witnesses.pkl" --out-dir experiment_results/recomputed/profile
 python commands/reproduce.py plot -- --figure profile --data-root experiment_results/recomputed
 ```
 
@@ -164,7 +164,7 @@ python commands/reproduce.py plot -- --figure mr --data-root experiment_results/
 消融实验保持数据、预算和评估方法一致，只移除或替换算法级测量与路由模块。它给出完整方案与各消融臂在路线选择指标上的差异。
 
 ```powershell
-python commands/reproduce.py run-ablation -- --data "C:\data\real.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 17123 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-modes full no-portal-fiber no-graph-flow demand-only --out-dir experiment_results/recomputed/ablation
+python commands/reproduce.py run-ablation -- --data "C:\data\real_full_frozen.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 17123 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-modes full no-portal-fiber no-graph-flow demand-only --out-dir experiment_results/recomputed/ablation
 python commands/reproduce.py plot -- --figure ablation --data-root experiment_results/recomputed
 ```
 
@@ -190,7 +190,7 @@ python commands/reproduce.py plot -- --figure ablation --data-root experiment_re
 ### 6.1 生成严格训练侧发布
 
 ```powershell
-python commands/reproduce.py prepare-split -- --data "C:\data\real.pkl" --train-fraction 0.8 --seed 20260713 --out-dir "C:\runs\strict_split"
+python commands/reproduce.py prepare-split -- --data "C:\data\real_full_frozen.pkl" --input-order --train-fraction 0.8 --seed 20260713 --out-dir "C:\runs\strict_split"
 python commands/reproduce.py generate-main -- --data "C:\runs\strict_split\train.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 13698 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\tstr_mr\mtr_gsrt"
 ```
 
@@ -237,7 +237,7 @@ python commands/reproduce.py plot -- --figure tstr --data-root experiment_result
 Real 与各合成方法在同一北京道路背景上的空间分布。图中直接展示道路实现、走廊覆盖和空间集中程度。
 
 ```powershell
-python commands/reproduce.py run-structure -- --dataset "Real=C:\data\real.pkl" --dataset "SPRT=datasets\synthetic\baselines\sprt_native.pkl" --dataset "PrivTrace=datasets\synthetic\baselines\privtrace_native.pkl" --dataset "DPTraj-PM=datasets\synthetic\baselines\dptrajpm_native.pkl" --dataset "DPStd=datasets\synthetic\baselines\dpstd_native.pkl" --dataset "MTR-GSRT=C:\runs\mtr_gsrt\trajectories.pkl" --out-dir experiment_results/recomputed/structure
+python commands/reproduce.py run-structure -- --dataset "Real=C:\data\real_full_frozen.pkl" --dataset "SPRT=datasets\synthetic\baselines\sprt_native.pkl" --dataset "PrivTrace=datasets\synthetic\baselines\privtrace_native.pkl" --dataset "DPTraj-PM=datasets\synthetic\baselines\dptrajpm_native.pkl" --dataset "DPStd=datasets\synthetic\baselines\dpstd_native.pkl" --dataset "MTR-GSRT=C:\runs\mtr_gsrt\trajectories.pkl" --out-dir experiment_results/recomputed/structure
 python commands/reproduce.py plot -- --figure structure --data-root experiment_results/recomputed
 ```
 
