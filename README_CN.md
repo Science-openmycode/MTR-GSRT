@@ -17,7 +17,13 @@ python -m pip install -r requirements.txt
 
 每条命令的全部参数、默认行为、物理含义和跨数据集替换规则见 [`docs/COMMAND_PARAMETERS_CN.md`](docs/COMMAND_PARAMETERS_CN.md)。所有 `commands/reproduce.py` 入口都按脚本自身位置定位文件夹，因此可以从任意当前目录用绝对脚本路径调用。
 
-仓库提供两条复现路径：直接运行 `python commands/reproduce.py all-precomputed` 可校验已发布合成数据并重画全部论文图；重新生成或重新评价时，由使用者通过 `--data` 提供同格式真实轨迹。真实轨迹不包含在公开仓库中。论文北京实验的冻结输入 SHA-256 为 `6a160ca557fbd7bab97af489b56c931e73532c498c390e31965c0d61e53361fd`。要逐值重算论文结果，输入文件必须与此哈希一致；使用其他轨迹只能复现流程与评价方法。
+仓库提供两条复现路径：直接运行 `python commands/reproduce.py all-precomputed` 可校验已发布合成数据并重画全部论文图；重新生成或重新评价时，由使用者通过 `--data` 提供同格式真实轨迹。北京输入不随代码复制发布，但可从 [Microsoft GeoLife GPS Trajectories 1.3](https://www.microsoft.com/en-us/download/details.aspx?id=52367) 的公开 `.plt` 文件重建。解压后在本目录运行：
+
+```powershell
+python commands/reproduce.py prepare-geolife -- --source-dir "C:\data\Geolife Trajectories 1.3\Data" --out "C:\data\real_full_frozen.pkl" --expected-sha256 6a160ca557fbd7bab97af489b56c931e73532c498c390e31965c0d61e53361fd
+```
+
+命令按北京边界框筛选 17,123 条轨迹，以公开种子 `20260713` 划分并按训练部分、测试部分的顺序拼接，生成 298,170,617 字节的论文输入。哈希不符时不写文件；换数据集时取消 `--expected-sha256` 并按需设置 `--bbox`、`--seed`。下文 `C:\data\real.pkl` 均可替换成这里生成的路径。
 
 道路匹配使用 [FMM/STMatch](https://github.com/cyang-kth/fmm)。包内提供 `fmm.exe`、`stmatch.exe` 和 `FMMLIB.dll`；Windows 用户还需提供与这些二进制兼容的 `gdal204.dll`、`boost_serialization.dll`，放在例如 `C:\fmm-runtime`。这两个 DLL 不在仓库中。运行道路实验前检查二进制能否启动：
 

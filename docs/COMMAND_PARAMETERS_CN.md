@@ -41,6 +41,11 @@
 
 | 入口与参数 | 含义 |
 |---|---|
+| `prepare-geolife --source-dir` | 官方 GeoLife 1.3 解压后的 `Data` 目录；本命令不读取仓库外的研究缓存。 |
+| `prepare-geolife --out` | 北京输入 `real_full_frozen.pkl` 的新路径；已有文件不会被覆盖。配合 `--check-only` 可省略。 |
+| `prepare-geolife --seed/--train-fraction` | 冻结输入的顺序：默认种子 `20260713`，训练比例 `0.8`，训练部分接测试部分。 |
+| `prepare-geolife --bbox/--limit` | 四个边界值 `lat_min lat_max lon_min lon_max`，默认北京范围；`--limit` 只用于小规模检查。 |
+| `prepare-geolife --expected-sha256/--check-only` | 前者在写入前核对预期哈希；后者只计算哈希、不保存轨迹。 |
 | `prepare-split --data` | 待划分真实轨迹。 |
 | `prepare-split --train-fraction` | 训练比例，默认 `0.8`；其余记录形成互斥测试集。 |
 | `prepare-split --seed` | 固定划分顺序的随机种子，默认 `20260713`。 |
