@@ -143,6 +143,7 @@ def stage_evaluate(args: list[str]) -> int:
 
 def stage_helper(name: str, args: list[str]) -> int:
     entries = {
+        "prepare-geolife": ROOT / "commands" / "prepare_geolife_beijing.py",
         "prepare-split": ROOT / "evaluation" / "pipeline" / "prepare_kdd_revised_split.py",
         "prepare-attack-split": ROOT / "evaluation" / "pipeline" / "prepare_privacy_attack_splits.py",
         "prepare-road-reference": ROOT / "evaluation" / "evaluation" / "cache_common_road_matches.py",
@@ -230,7 +231,7 @@ def main() -> int:
     plot = sub.add_parser("plot")
     plot.add_argument("args", nargs=argparse.REMAINDER)
     for name in ("generate-main", "generate-baselines", "evaluate",
-                 "verify-matcher", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
+                 "verify-matcher", "prepare-geolife", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
                  "routes-to-coordinates", "run-tstr", "materialize-tstr-mr", "combine-tstr-mr",
                  "run-ablation", "run-framework", "run-privacy", "run-profile", "run-mr", "run-structure"):
         child = sub.add_parser(name)
@@ -252,7 +253,7 @@ def main() -> int:
         return stage_evaluate(ns.args)
     if ns.stage == "verify-matcher":
         return stage_verify_matcher(ns.args)
-    if ns.stage in {"prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates"}:
+    if ns.stage in {"prepare-geolife", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates"}:
         return stage_helper(ns.stage, ns.args)
     if ns.stage == "run-tstr":
         return stage_tstr(ns.args)

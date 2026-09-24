@@ -16,14 +16,20 @@
     },
     {
       "path": "README_CN.md",
-      "size": 23955,
-      "sha256": "03bd9c521744f2ad090bbdf373e07f7c2407b61ac5c31a72663400de30f95b7a",
+      "size": 24485,
+      "sha256": "67ddc5a5d447c24ba708d7afb6d1a3d66a4c5139dfb306c009957ea2538d4e00",
       "role": "source_or_documentation"
     },
     {
+      "path": "commands/prepare_geolife_beijing.py",
+      "role": "source_or_documentation",
+      "size": 5141,
+      "sha256": "68808119c0e577de288b748b09b3cf087131103a3f6a6089b890dbe86f7be9db"
+    },
+    {
       "path": "commands/reproduce.py",
-      "size": 11176,
-      "sha256": "6e9b55eb0455912db0014df16a5003f2d2c0dc82526fb053de6f4542d55f3f9f",
+      "size": 11291,
+      "sha256": "f8313d70136ba9241acfc8084a7e836a90e02a1adfdc7ae0e65e6524c1371570",
       "role": "source_or_documentation"
     },
     {
@@ -202,8 +208,8 @@
     },
     {
       "path": "docs/COMMAND_PARAMETERS_CN.md",
-      "size": 11310,
-      "sha256": "66d82ee44e1bffa267ea7c4befb53aae7ea6c00fa6cb7bfa2e9f5313955a09e4",
+      "size": 12024,
+      "sha256": "ecc9a515a4340bb34087d71413e426d5708274be008089810b9aca658794e844",
       "role": "source_or_documentation"
     },
     {
@@ -1819,6 +1825,12 @@
       "size": 1050,
       "sha256": "4168059a933d35e581348e1818396c9187af0c819dd5fe67e0a3f546ce07e804",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "tests/test_prepare_geolife.py",
+      "role": "source_or_documentation",
+      "size": 1688,
+      "sha256": "c92a143b234a8e3ed00a1d5f1ba395144429e3f320fcea15a256939ec12d0a38"
     },
     {
       "path": "tests/test_route_metric_core.py",
