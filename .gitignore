@@ -5,4 +5,4 @@ __pycache__/
 .mypy_cache/
 experiment_results/recomputed/
 logs/
-
+/README_CN.pdf

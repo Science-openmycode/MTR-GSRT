@@ -141,14 +141,14 @@
     },
     {
       "path": "datasets/synthetic/train_only_baselines/privtrace_train.pkl",
-      "size": 1111434,
-      "sha256": "806bc513cd285649c565351f462bac5f435cdc51c6af59c45011a58239473f70",
+      "size": 10228292,
+      "sha256": "9abac0aea13667a0b4fa478bae9c276d05133ab5b2708600363386a92d33fef6",
       "role": "synthetic_data"
     },
     {
       "path": "datasets/synthetic/train_only_baselines/sprt_train.pkl",
-      "size": 1004033,
-      "sha256": "037bfc5e4eb15baa56758262e4513b44013336612da44afd2ca0ea52e1220c3e",
+      "size": 20616528,
+      "sha256": "ac55dd6d93901e511af70e3f7937d9b7f43afd7aaa9974f7804003c7bc4012c4",
       "role": "synthetic_data"
     },
     {
@@ -915,14 +915,14 @@
     },
     {
       "path": "experiment_results/published_figures/06_strict_tstr.pdf",
-      "size": 24320,
-      "sha256": "d40cfcf510715913f72e92044b0e5817a9b90bfc5b2acec4f2185ade4f3e13b1",
+      "size": 26680,
+      "sha256": "84496e91c038eaf5843f403751ad096bf1923ae9f22702f61f0dcfd655e4415a",
       "role": "source_or_documentation"
     },
     {
       "path": "experiment_results/published_figures/06_strict_tstr.png",
-      "size": 67117,
-      "sha256": "0c33d4366b41152f303f5efdb8f461aca210f0936c0d3c7861b00e24fc0ff157",
+      "size": 148348,
+      "sha256": "812ea72d8a62f5ceaaf3a2383c231224a4c99e39d18d91b4244a86bd021464af",
       "role": "source_or_documentation"
     },
     {
@@ -1671,8 +1671,8 @@
     },
     {
       "path": "README_CN.md",
-      "size": 16867,
-      "sha256": "9a3c053d2dc098c618813137abfb107df4d097ccd5eafc2f80bfe92f92da79a6",
+      "size": 16989,
+      "sha256": "e7900b53f0a05ebc976582ab84bf145eac2154f293f02e0673d013c07330502d",
       "role": "source_or_documentation"
     },
     {
@@ -1685,6 +1685,78 @@
       "path": "run.ps1",
       "size": 644,
       "sha256": "3334a20dfaf5612f10a9b07e862f4f8b91b6d2c9b2586fe9e46ff7c7a9e604ea",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "datasets/synthetic/train_only_baselines/dpstd_train.pkl",
+      "size": 60909376,
+      "sha256": "2caf95766cd9be83aec00f57d448002551687aac674f3a2c8f05bdf331fe2441",
+      "role": "synthetic_data"
+    },
+    {
+      "path": "datasets/synthetic/train_only_baselines/sprt_train_protocol.json",
+      "size": 823,
+      "sha256": "76c3c97915fb8c338e1e7968b3882768f8e07e2770eed493689208f54c2ca2b6",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "datasets/synthetic/train_only_baselines/privtrace_train_protocol.json",
+      "size": 838,
+      "sha256": "f842d8c7bee691787f8ee801c6c8cbd3651db97748048ba7c53231847854b617",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "datasets/synthetic/train_only_baselines/dptrajpm_train_protocol.json",
+      "size": 834,
+      "sha256": "236cf413244484c51059224e0c7ed9302c530b2fb2cb9c3cfa1ebb2b87b030b9",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "datasets/synthetic/train_only_baselines/dpstd_train_protocol.json",
+      "size": 1003,
+      "sha256": "04aa342eb4cc8ec096a9527f5b90791cd5eddcfb6d1abef3448c91a53471a623",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "experiment_results/executed_reference/tstr/results.csv",
+      "size": 551,
+      "sha256": "fbfc91fa00d80adfa6bb6fb5615502acd0b2fbb97330d275b00fb63f5ed3be6d",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "experiment_results/executed_reference/tstr/manifest.json",
+      "size": 554,
+      "sha256": "976e8776ea7ea26c3e6e5beecadb98fa7461635ae2c83d02b17145486e9f3345",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "experiment_results/executed_reference/tstr/raw_generic/generic_mobility_tasks.csv",
+      "size": 1510,
+      "sha256": "32cfe68ccb2ab16bd224e660eee2857095945824b718e85b25b0ea73aaba8466",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "experiment_results/executed_reference/tstr/raw_generic/generic_mobility_tasks.json",
+      "size": 4006,
+      "sha256": "a50eecfc4cd60c522c57d63934f46676a2eff63bcd98124c4bc9cda0fb919737",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "experiment_results/executed_reference/tstr/raw_road/road_network_mining_tasks.csv",
+      "size": 1793,
+      "sha256": "3eea5727a485f2b02d85be45e9e1c74a378953a29b53d2e0747a91c9d202bfa6",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "experiment_results/executed_reference/tstr/raw_road/road_network_mining_tasks.json",
+      "size": 6324,
+      "sha256": "363190ea96cddcebf76dfd55f9bd182c52235eebe2bdb07a76fbc7598f2cad33",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "docs/STRICT_TSTR_RESULTS_CN.md",
+      "size": 2867,
+      "sha256": "20730b1e9c3f0e763430afe2dfad87e6a23f29eb5296cba9495357a8b084b578",
       "role": "source_or_documentation"
     }
   ]
