@@ -238,8 +238,8 @@
     },
     {
       "path": "evaluation/configs/datasets.json",
-      "size": 2446,
-      "sha256": "1ede368d49b7f7f72ca1fa1c2809bfbcf2efd926b8454e2d295b6ea36accc0e6",
+      "size": 2490,
+      "sha256": "761583dc6a2317ddc63194911ab5339fff57141c5152994d7733829daee6d77c",
       "role": "source_or_documentation"
     },
     {
@@ -1800,6 +1800,24 @@
       "path": "tests/test_frozen_metric_consistency.py",
       "size": 1693,
       "sha256": "db7ca511edbbe61fbb037288452cb4c343d8d40eed44e6c6e9c902b9a739c87b",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "tests/test_manifest_line_endings.py",
+      "size": 899,
+      "sha256": "ddb856ff8a48492432e93e1e1bebc36764a67c58aa981c048f19aa34e5741b66",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "tests/test_packaged_evaluation_paths.py",
+      "size": 527,
+      "sha256": "312d02f1dc8e66379427be359de7f04d45a2ec8fe25b8044ba652aa5c4fbd123",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "tests/test_packaged_source_bindings.py",
+      "size": 1050,
+      "sha256": "4168059a933d35e581348e1818396c9187af0c819dd5fe67e0a3f546ce07e804",
       "role": "source_or_documentation"
     },
     {
