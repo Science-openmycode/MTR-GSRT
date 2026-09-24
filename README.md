@@ -6,8 +6,11 @@ trajectory synthesis.
 
 The repository contains the MTR-GSRT generator, unified evaluation and plotting
 code, precomputed synthetic releases for the reported statistical baselines,
-and the inputs required to reproduce the paper figures. It contains no raw or
-private trajectory dataset.
+and the synthetic inputs required to redraw the paper figures. It contains no
+raw or private trajectory dataset. Exact recomputation of the Beijing results
+requires the original input with SHA-256
+`6a160ca557fbd7bab97af489b56c931e73532c498c390e31965c0d61e53361fd`;
+other datasets reproduce the workflow, not the same numerical results.
 
 ## Quick start
 
@@ -31,7 +34,7 @@ python commands/reproduce.py generate-main -- `
   --decoder-seed 30260719 `
   --public-slot-count 17123 `
   --bbox 39.75 40.15 116.10 116.65 `
-  --osm-cache "C:\data\osm_cache.pkl" `
+  --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" `
   --component-mode full `
   --out-dir "C:\runs\mtr_gsrt"
 ```
@@ -39,6 +42,18 @@ python commands/reproduce.py generate-main -- `
 `--component-mode` also provides executable matched ablations:
 `no-portal-fiber`, `no-graph-flow`, and `demand-only`. Each arm reruns synthesis
 and writes its own trajectories, witnesses, transcript, metrics, and manifest.
+
+Road-reference and FMM/STMatch experiments additionally need binary-compatible
+`gdal204.dll` and `boost_serialization.dll` for the bundled Windows matchers.
+These DLLs are not included. Put them in a runtime directory and check it first:
+
+```powershell
+python commands/reproduce.py verify-matcher -- --runtime-dir "C:\fmm-runtime"
+```
+
+The matchers come from [FMM](https://github.com/cyang-kth/fmm). Use libraries
+from a compatible build; an arbitrary newer GDAL DLL is not interchangeable.
+The Chinese guide gives the complete road-reference command and output path.
 
 The complete experiment-by-experiment guide, expected output trees, all command
 parameters, and cross-dataset migration rules are documented in

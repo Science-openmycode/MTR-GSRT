@@ -10,20 +10,20 @@
     },
     {
       "path": "README.md",
-      "size": 2136,
-      "sha256": "d0d42e138df11eb4c6187519e627743e3840c410d8b4023bd0de5db41fb7fbab",
+      "size": 2964,
+      "sha256": "09b2d6d2bbb7a7370ed8700af3dd34c644e728cce0aeaa1a077d1f658a985cde",
       "role": "source_or_documentation"
     },
     {
       "path": "README_CN.md",
-      "size": 22858,
-      "sha256": "6f4453dd32d2ebd827a94ca3b56f1c5b263d1d7240cc3a213f0cd67ebaf6250f",
+      "size": 23758,
+      "sha256": "eaf85d4db465d39104bb76f6aec61ee5535abbba0ee091b6e19371977f154435",
       "role": "source_or_documentation"
     },
     {
       "path": "commands/reproduce.py",
-      "size": 8840,
-      "sha256": "cf28c173d933c09ce2ca17093bc65da8ac1dffe8c55357102f74550b3900a20f",
+      "size": 11176,
+      "sha256": "6e9b55eb0455912db0014df16a5003f2d2c0dc82526fb053de6f4542d55f3f9f",
       "role": "source_or_documentation"
     },
     {
@@ -202,14 +202,20 @@
     },
     {
       "path": "docs/COMMAND_PARAMETERS_CN.md",
-      "size": 10559,
-      "sha256": "3fb73c98f2fed414c3c7cfea28625f0a9bb770d259d92738d2ee20d27dad20fc",
+      "size": 11086,
+      "sha256": "cda032af005f96c03fdf7a133ae45f79583d09d775a2829d2d54e15f461bcda7",
       "role": "source_or_documentation"
     },
     {
       "path": "docs/FROZEN_EXPERIMENT_REPORT_CN.md",
       "size": 8816,
       "sha256": "b2d2e4cfdcfa6c2510a9b993c73782e2555a2051e2d218a1724672f911fc1674",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "docs/RELEASE_ISSUE_AUDIT_20260924.md",
+      "size": 1832,
+      "sha256": "b8dd3a5ca16431ad4d7acbeb4d0b0b827d7c47683f17b3c012886d363059d286",
       "role": "source_or_documentation"
     },
     {
