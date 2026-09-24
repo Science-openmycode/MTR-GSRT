@@ -164,24 +164,24 @@ python commands/reproduce.py prepare-split -- --data "C:\data\real.pkl" --train-
 
 参数说明：`--data` 是待划分的任意真实数据集；`--train-fraction` 是只允许合成器访问的训练比例；`--seed` 固定索引；`--out-dir` 写出 train、test 和索引 manifest。
 
-该命令实际写出 `C:\runs\strict_split\train.pkl`、`test.pkl` 和 `split_manifest.json`。随后只用训练划分生成 MTR-GSRT 与可执行的 baseline 发布：
+该命令实际写出 `C:\runs\strict_split\train.pkl`、`test.pkl` 和 `split_manifest.json`。随后只用训练划分生成 MTR-GSRT。目录同时提供由相同训练划分生成的 SPRT、PrivTrace、DPTraj-PM 和 DPStd 发布及其生成协议：
 
 ```powershell
 python commands/reproduce.py generate-main -- --data "C:\runs\strict_split\train.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 13698 --bbox 39.75 40.15 116.10 116.65 --osm-cache "C:\data\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\tstr\mtr_gsrt"
-# 本目录已包含由同一训练划分生成的三份外部方法发布；这些方法不在本目录重新训练。
+# 本目录已包含由同一训练划分生成的四份统计式 DP 方法发布及协议。
 Get-ChildItem datasets\synthetic\train_only_baselines\*.pkl
 ```
 
-参数说明：主方法和可执行 baseline 的生成命令都把 `train.pkl` 作为唯一私有输入；隐私预算、随机种子、固定输出数和公共道路资产均在命令中显式给出。DFR 还先用 `subset-routes` 按同一 manifest 取得 train-only 道路路线，再用 `routes-to-coordinates` 将合成道路 ID 序列转为坐标；两步的输入图必须一致。
+参数说明：MTR-GSRT 的生成命令把 `train.pkl` 作为唯一私有输入；`--epsilon-total`、两个随机种子、`--public-slot-count` 和公共道路资产均被显式记录。四份统计式 DP 发布也各包含 13,698 条轨迹，其相邻的 `*_protocol.json` 记录训练输入、隐私预算、种子和输出条数。
 
 接着真正训练并测试五类下游模型。该命令会依次运行通用移动任务和道路网络挖掘任务，而不是读取论文表格：
 
 ```powershell
-python commands/reproduce.py run-tstr -- --train-real "C:\runs\strict_split\train.pkl" --test-real "C:\runs\strict_split\test.pkl" --synthetic "datasets\synthetic\train_only_baselines\sprt_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\privtrace_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --synthetic "C:\runs\tstr\mtr_gsrt\trajectories.pkl" --names SPRT PrivTrace DPTraj-PM MTR-GSRT --osm-cache "C:\data\osm_cache_beijing.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir experiment_results/recomputed/tstr
+python commands/reproduce.py run-tstr -- --train-real "C:\runs\strict_split\train.pkl" --test-real "C:\runs\strict_split\test.pkl" --synthetic "datasets\synthetic\train_only_baselines\sprt_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\privtrace_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --synthetic "datasets\synthetic\train_only_baselines\dpstd_train.pkl" --synthetic "C:\runs\tstr\mtr_gsrt\trajectories.pkl" --names SPRT PrivTrace DPTraj-PM DPStd MTR-GSRT --osm-cache "C:\data\osm_cache_beijing.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir experiment_results/recomputed/tstr
 python commands/reproduce.py plot -- --figure tstr --data-root experiment_results/recomputed
 ```
 
-参数说明：`--train-real/--test-real` 必须互斥；每个 `--synthetic` 是只由 train 生成的训练语料；`--names` 与这些路径严格同序；`--osm-cache/--bbox` 定义测试城市；可用 `--seed` 固定下游训练；`--out-dir` 保存实际训练和测试结果。
+参数说明：`--train-real/--test-real` 必须互斥；五个 `--synthetic` 分别是只由 train 生成的 SPRT、PrivTrace、DPTraj-PM、DPStd 和 MTR-GSRT 训练语料；`--names` 与路径严格同序；`--osm-cache/--bbox` 定义测试城市；可用 `--seed` 固定下游训练；`--out-dir` 保存实际训练和测试结果。
 
 下游程序分别写出 `tstr/raw_generic/` 与 `tstr/raw_road/` 的逐任务 JSON/CSV；聚合结果为 `tstr/results.csv`，其中每一项都来自刚完成的 train-on-synthetic/test-on-held-out-real 运行。作图命令再生成 `06_strict_tstr.png` 和 `06_strict_tstr.pdf`。
 

@@ -1,0 +1,27 @@
+{
+  "command_role": "synthesize_dataset",
+  "method": "privtrace-native",
+  "data": "outputs/kdd_revised/split/train.pkl",
+  "loaded_real_trajectories": 13698,
+  "generated_trajectories": 13698,
+  "default_policy": "full-data generation unless n-train or n-gen is explicitly set",
+  "bbox": [
+    39.75,
+    40.15,
+    116.1,
+    116.65
+  ],
+  "osm_cache": "data/osm/osm_cache_beijing.pkl",
+  "seed": 20260713,
+  "runtime_sec": 105.59365200996399,
+  "outputs": {
+    "pkl": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\public_release\\outputs\\kdd_revised\\task_releases\\privtrace_train_release.pkl"
+  },
+  "diagnostics": {
+    "algorithm": "PrivTrace-native",
+    "family": "reproduced_published_baseline",
+    "privacy_budget": 1.0,
+    "variant": "native",
+    "seed": 20260713
+  }
+}
