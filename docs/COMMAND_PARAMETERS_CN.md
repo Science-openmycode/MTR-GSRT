@@ -47,6 +47,7 @@
 | `prepare-geolife --bbox/--limit` | 四个边界值 `lat_min lat_max lon_min lon_max`，默认北京范围；`--limit` 只用于小规模检查。 |
 | `prepare-geolife --expected-sha256/--check-only` | 前者在写入前核对预期哈希；后者只计算哈希、不保存轨迹。 |
 | `prepare-split --data` | 待划分真实轨迹。 |
+| `prepare-split --input-order` | 输入由 `prepare-geolife` 生成的论文冻结文件时，按原有“训练部分接测试部分”的顺序切分，避免二次随机打乱；任意未预分组数据省略此项。 |
 | `prepare-split --train-fraction` | 训练比例，默认 `0.8`；其余记录形成互斥测试集。 |
 | `prepare-split --seed` | 固定划分顺序的随机种子，默认 `20260713`。 |
 | `prepare-split --out-dir` | 写出 `train.pkl`、`test.pkl`、`split_manifest.json` 的目录。 |
