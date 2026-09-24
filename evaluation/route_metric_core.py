@@ -51,10 +51,16 @@ def _compress(values) -> tuple:
     return tuple(out)
 
 
+def valid_routes(routes) -> list[tuple[tuple[int, int], ...]]:
+    """Condition the real reference on observed connected road evidence."""
+    return [tuple(route) for route in routes
+            if route and all(left[1] == right[0] for left, right in zip(route, route[1:]))]
+
+
 def route_counters(routes, cache) -> dict:
     outdegree = {int(k): int(v) for k, v in cache["outdegree"].items()}
-    labels = cache["labels96"]
-    result = {name: Counter() for name in ("edge", "turn", "decision", "family")}
+    labels = {int(node): int(region) for node, region in cache["labels96"].items()}
+    result = {name: Counter() for name in ("edge", "turn", "decision", "decision_unit", "family")}
     valid = 0
     decision_slots = 0
     for route in routes:
@@ -66,8 +72,18 @@ def route_counters(routes, cache) -> dict:
         result["turn"].update(zip(route, route[1:]))
         decisions = [(a, b) for a, b in zip(route, route[1:]) if outdegree.get(a[1], 0) > 1]
         result["decision"].update(decisions)
+        if decisions:
+            # Full-road BTF gives each public slot at most unit turn mass.
+            # Occurrence-weighted CPC is retained as a separate metric.
+            mass = 1.0 / (max(len(routes), 1) * len(decisions))
+            for decision in decisions:
+                result["decision_unit"][decision] += mass
         decision_slots += bool(decisions)
-        result["family"][_compress(labels.get(edge, -1) for edge in route)] += 1
+        # labels96 maps road *nodes* to regions. A route is a sequence of
+        # directed (source, target) edges, so include both endpoints.
+        regions = [labels.get(int(route[0][0]), -1)]
+        regions.extend(labels.get(int(target), -1) for _, target in route)
+        result["family"][_compress(regions)] += 1
     result["valid"] = valid
     result["decision_slots"] = decision_slots
     return result
@@ -79,13 +95,16 @@ def evaluate_routes(routes, real_routes, cache, reference=None) -> dict[str, flo
     slots = max(len(routes), 1)
     real_decision_yield = reference["decision_slots"] / max(len(real_routes), 1)
     decision_overlap = _cpc(reference["decision"], synthetic["decision"])
-    # The published BTF contract includes the public real-evidence yield.
-    btf = min(1.0, decision_overlap / real_decision_yield) if real_decision_yield else 0.0
+    bounded_overlap = sum(min(reference["decision_unit"][key], synthetic["decision_unit"][key])
+                          for key in reference["decision_unit"].keys() | synthetic["decision_unit"].keys())
+    # The published BTF contract divides subprobability overlap by public
+    # real-evidence yield; missing synthetic slots cannot be renormalized away.
+    btf = min(1.0, bounded_overlap / real_decision_yield) if real_decision_yield else 0.0
     return {
         "RoadYield": synthetic["valid"] / slots,
         "BTF": btf,
         "RC-CPC": decision_overlap,
         "EdgeCPC": _cpc(reference["edge"], synthetic["edge"]),
         "TurnCPC": _cpc(reference["turn"], synthetic["turn"]),
-        "FamilyCPC": _cpc(reference["family"], synthetic["family"]),
+        "FamilyCPC": _cpc(reference["family"], synthetic["family"]) * synthetic["valid"] / slots,
     }

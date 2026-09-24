@@ -16,8 +16,8 @@
     },
     {
       "path": "README_CN.md",
-      "size": 23758,
-      "sha256": "eaf85d4db465d39104bb76f6aec61ee5535abbba0ee091b6e19371977f154435",
+      "size": 23955,
+      "sha256": "03bd9c521744f2ad090bbdf373e07f7c2407b61ac5c31a72663400de30f95b7a",
       "role": "source_or_documentation"
     },
     {
@@ -202,8 +202,8 @@
     },
     {
       "path": "docs/COMMAND_PARAMETERS_CN.md",
-      "size": 11086,
-      "sha256": "cda032af005f96c03fdf7a133ae45f79583d09d775a2829d2d54e15f461bcda7",
+      "size": 11310,
+      "sha256": "66d82ee44e1bffa267ea7c4befb53aae7ea6c00fa6cb7bfa2e9f5313955a09e4",
       "role": "source_or_documentation"
     },
     {
@@ -214,8 +214,8 @@
     },
     {
       "path": "docs/RELEASE_ISSUE_AUDIT_20260924.md",
-      "size": 2066,
-      "sha256": "ee8be442d8faea4cf85d01a2b169a489788acd0eef8ef0e9692d26a39ce9a7ab",
+      "size": 4489,
+      "sha256": "075b23b28a1e4a525a9df0f2c412c81c1ed66e12ad37a3a5be99b7014c7d4aba",
       "role": "source_or_documentation"
     },
     {
@@ -562,26 +562,26 @@
     },
     {
       "path": "evaluation/route_metric_core.py",
-      "size": 3540,
-      "sha256": "33151d4e114dcefb6a0ca3e1ad8c8114db5e2584d4256b718f99e8c416b9e616",
+      "size": 4771,
+      "sha256": "bcac204c2bad967f7219d1f0af3b0a7c0b5ec06aed1d80fc0c8299fee3d178a1",
       "role": "source_or_documentation"
     },
     {
       "path": "evaluation/run_ablation_experiment.py",
-      "size": 9273,
-      "sha256": "417cb1e35a1e641223ab7cb1d35242cfb41b3c7cdff9db3c005f292a278e9284",
+      "size": 9301,
+      "sha256": "4e72cbfe4ba7671ede852e9f08cabc918e02d41afa44fd9b1f9bd208f2412486",
       "role": "source_or_documentation"
     },
     {
       "path": "evaluation/run_framework_experiment.py",
-      "size": 2517,
-      "sha256": "f242f9a8f5c9e04df1823e226c77c13e31c8cf41465b7f1d72bdce7d980d0308",
+      "size": 2545,
+      "sha256": "4181ae4e5e81f57d1dfdf4d6f275f5f256118bc0c6619b9fe393581f17b2c7ef",
       "role": "source_or_documentation"
     },
     {
       "path": "evaluation/run_mr_experiment.py",
-      "size": 2990,
-      "sha256": "c07c7d17ada1b99456292452a357e8fd873f00741e732e9e8b0cdba556d31dd3",
+      "size": 3018,
+      "sha256": "035c7ce72768bf824697162f4f0d95df437097c165ca547ce6d8db26a06d6a44",
       "role": "source_or_documentation"
     },
     {
@@ -1794,6 +1794,18 @@
       "path": "run.ps1",
       "size": 644,
       "sha256": "3334a20dfaf5612f10a9b07e862f4f8b91b6d2c9b2586fe9e46ff7c7a9e604ea",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "tests/test_frozen_metric_consistency.py",
+      "size": 1693,
+      "sha256": "db7ca511edbbe61fbb037288452cb4c343d8d40eed44e6c6e9c902b9a739c87b",
+      "role": "source_or_documentation"
+    },
+    {
+      "path": "tests/test_route_metric_core.py",
+      "size": 1598,
+      "sha256": "c03d1accef2aad53c9390e104e8417f7af9606f2556df90d2a9ef842a3340b68",
       "role": "source_or_documentation"
     }
   ]

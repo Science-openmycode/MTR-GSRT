@@ -28,14 +28,14 @@ python commands/reproduce.py verify-matcher -- --runtime-dir "C:\fmm-runtime"
 需要道路级真实参考时，可由同一真实轨迹和公共道路图生成：
 
 ```powershell
-python commands/reproduce.py prepare-road-reference -- --dataset-config geolife --real "C:\data\real.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir "C:\fmm-runtime" --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 5000 --out-dir "C:\runs\real_road_reference"
+python commands/reproduce.py prepare-road-reference -- --dataset-config geolife --real "C:\data\real.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir "C:\fmm-runtime" --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 20000 --omp-threads-per-worker 8 --out-dir "C:\runs\real_road_reference"
 ```
 
 该命令生成 `C:\runs\real_road_reference\matched_paths\Real.pkl.gz` 及其 manifest，可直接传给下文的 `--real-routes`。`--dataset-config` 提供公开槽位数和城市配置；`--network` 与匹配器参数决定公共地图匹配过程。预计算 baseline 合成数据已经随本仓库发布；需要从源码重新生成四种 baseline 时使用包含 baseline 源码的完整复现目录。
 
 ## 1. 从统计发布到道路轨迹
 
-这一实验先得到 SPRT、PrivTrace、DPTraj-PM 和 DPStd 的统计式合成轨迹，再比较它们的原生输出与加入 MTR 公共道路路由后的输出。比较保持私有测量不变，只改变道路重建过程，因此直接展示 MTR 路由带来的 RoadYield、BTF 和 FamilyCPC 变化。
+这一实验先得到 SPRT、PrivTrace、DPTraj-PM 和 DPStd 的统计式合成轨迹，再比较它们的原生输出与加入 MTR 公共道路路由后的输出。比较保持私有测量不变，只改变道路重建过程，因此直接展示 MTR 路由带来的 RoadYield、BTF 和 FamilyCPC 变化。真实道路参考只取成功匹配的连通路线；合成结果仍保留所有公开输出槽位，匹配失败的槽位在 RoadYield、BTF 和 FamilyCPC 中计零。
 
 四份已经生成的统计式 DP 合成数据位于：
 

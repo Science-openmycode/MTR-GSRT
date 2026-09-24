@@ -5,7 +5,7 @@ import csv
 import json
 from pathlib import Path
 
-from route_metric_core import evaluate_routes, load_pickle, normalize_routes, route_counters
+from route_metric_core import evaluate_routes, load_pickle, normalize_routes, route_counters, valid_routes
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,7 +27,7 @@ def main() -> None:
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
     cache = load_pickle(Path(args.edge_cache).resolve())
-    real = normalize_routes(load_pickle(Path(args.real_routes).resolve()), cache)
+    real = valid_routes(normalize_routes(load_pickle(Path(args.real_routes).resolve()), cache))
     reference = route_counters(real, cache)
     rows = []
     for name, path in args.routed:

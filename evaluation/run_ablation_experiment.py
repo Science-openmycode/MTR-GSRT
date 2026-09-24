@@ -12,7 +12,7 @@ from pathlib import Path
 
 import numpy as np
 
-from route_metric_core import evaluate_routes, load_pickle, normalize_routes, route_counters
+from route_metric_core import evaluate_routes, load_pickle, normalize_routes, route_counters, valid_routes
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -112,7 +112,7 @@ def dfr(args: argparse.Namespace, output: Path) -> None:
     module.NETWORK = Path(args.network).resolve()
     module.SLOTS = int(args.public_slot_count)
     cache, real_raw = module.load_private_inputs()
-    real = normalize_routes(real_raw, cache)
+    real = valid_routes(normalize_routes(real_raw, cache))
 
     router = module.EdgeStateRouter(module.NETWORK, cache["edge_nodes"],
                                     {None: {}}, {None: {}}, 0.0, 0.0)
