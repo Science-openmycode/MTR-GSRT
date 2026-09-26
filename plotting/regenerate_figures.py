@@ -58,7 +58,7 @@ def plot_profile() -> None:
     table = read_table("profile", "metrics.csv")
     table = table[table["status"].eq("VALID")].copy()
     frame = table.pivot_table(index="algorithm", columns="metric", values="value", aggfunc="first")
-    preferred = ["RoadYield", "DirValid", "WitnessValid", "DemandFid", "GridSim",
+    preferred = ["RoadYield", "DirValid", "WitnessValid", "DemandFid", "TripSim", "GridSim",
                  "LengthSim", "NextRoadAcc", "RouteMRR", "RouteBest5F1", "EdgeF1",
                  "BTF", "RC-CPC", "RC_CPC", "EdgeCPC", "TurnCPC", "FamilyCPC"]
     columns = [column for column in preferred if column in frame.columns]

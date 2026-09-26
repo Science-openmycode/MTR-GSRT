@@ -6,10 +6,14 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "evaluation"))
-from run_profile_experiment import publication_road_metrics
+from run_profile_experiment import ROOT, publication_road_metrics, resolve_input
 
 
 class PublicationRoadMetricTests(unittest.TestCase):
+    def test_relative_input_is_package_relative(self):
+        self.assertEqual(resolve_input("public_assets/example.osm"),
+                         (ROOT / "public_assets" / "example.osm").resolve())
+
     def test_coordinate_only_retains_projection_metrics(self):
         metrics = {"route_compatible_yield": 0.25, "directed_road_validity": 0.75}
         self.assertEqual(publication_road_metrics(metrics, Path("synthetic.pkl"), None),

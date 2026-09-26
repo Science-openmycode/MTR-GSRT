@@ -30,7 +30,7 @@ def main() -> None:
     parser.add_argument("--real-routes", required=True)
     parser.add_argument("--edge-cache", default=str(ROOT / "public_assets" / "ordered_portal_route_cache.pkl.gz"))
     parser.add_argument("--route", action="append", type=parse_item, default=[], help="M::R=PATH; repeat")
-    parser.add_argument("--route-dir", default="datasets/synthetic/route_experiments")
+    parser.add_argument("--route-dir", help="Load this route directory; defaults to packaged routes only when no --route is supplied")
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
 
@@ -38,12 +38,13 @@ def main() -> None:
     real = valid_routes(normalize_routes(load_pickle(Path(args.real_routes).resolve()), cache))
     reference = route_counters(real, cache)
     items = list(args.route)
-    route_dir = Path(args.route_dir)
-    if not route_dir.is_absolute():
-        route_dir = ROOT / route_dir
-    for path in sorted(route_dir.glob("*/*")):
-        if path.is_file() and (path.suffix == ".pkl" or path.name.endswith(".pkl.gz")):
-            items.append((path.parent.name, path.name.replace(".pkl.gz", "").replace(".pkl", ""), path))
+    if args.route_dir or not items:
+        route_dir = Path(args.route_dir or "datasets/synthetic/route_experiments")
+        if not route_dir.is_absolute():
+            route_dir = ROOT / route_dir
+        for path in sorted(route_dir.glob("*/*")):
+            if path.is_file() and (path.suffix == ".pkl" or path.name.endswith(".pkl.gz")):
+                items.append((path.parent.name, path.name.replace(".pkl.gz", "").replace(".pkl", ""), path))
     if not items:
         parser.error("no --route entries and no packaged route datasets")
 
