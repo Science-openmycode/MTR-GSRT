@@ -37,8 +37,40 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def publication_road_metrics(metrics: dict, synthetic: Path, witness: Path | None) -> tuple[float, float, str]:
+def publication_road_metrics(
+    metrics: dict, synthetic: Path, witness: Path | None,
+    road_routes: Path | None = None, edge_cache: Path | None = None,
+    expected_count: int | None = None,
+) -> tuple[float, float, str]:
     """Score the delivered road object; keep coordinate-subsampling diagnostics separate."""
+    if witness is not None and road_routes is not None:
+        raise ValueError("supply one road-object representation per synthetic release")
+    if road_routes is not None:
+        if edge_cache is None:
+            raise ValueError("directed road routes require a public --edge-cache")
+        derivation = synthetic.parent / (synthetic.name + ".manifest.json")
+        if not derivation.is_file():
+            raise FileNotFoundError(f"road-route coordinates require a derivation manifest: {derivation}")
+        record = json.loads(derivation.read_text(encoding="utf-8"))
+        if record.get("schema") != "road-route-coordinate-derivation-v1":
+            raise ValueError("unknown road-route coordinate derivation schema")
+        for label, path in (("coordinates", synthetic), ("route_source", road_routes),
+                            ("edge_cache", edge_cache)):
+            item = record.get(label)
+            if not isinstance(item, dict) or item.get("sha256", "").lower() != _sha256(path).lower():
+                raise RuntimeError(f"road-route derivation hash mismatch: {label}")
+        from route_metric_core import load_pickle, normalize_routes
+        cache = load_pickle(edge_cache)
+        routes = normalize_routes(load_pickle(road_routes), cache)
+        expected_count = int(record["record_count"]) if expected_count is None else int(expected_count)
+        if len(routes) != expected_count or int(record["record_count"]) != expected_count:
+            raise ValueError("road-route slot count differs from coordinate release")
+        public_edges = {tuple(map(int, edge)) for edge in cache["edge_nodes"].values()}
+        valid = sum(bool(route) and all(edge in public_edges for edge in route)
+                    and all(a[1] == b[0] for a, b in zip(route, route[1:]))
+                    for route in routes)
+        score = valid / max(expected_count, 1)
+        return score, score, "derived_directed_routes"
     if witness is None:
         return (float(metrics["route_compatible_yield"]),
                 float(metrics["directed_road_validity"]), "coordinate_projection")
@@ -65,6 +97,8 @@ def main() -> None:
     parser.add_argument("--real", required=True)
     parser.add_argument("--synthetic", action="append", type=named_path, required=True)
     parser.add_argument("--witness", action="append", type=named_path, default=[])
+    parser.add_argument("--road-routes", action="append", type=named_path, default=[])
+    parser.add_argument("--edge-cache")
     parser.add_argument("--dataset-config")
     parser.add_argument("--bbox", nargs=4, type=float)
     parser.add_argument("--public-slot-count", type=int)
@@ -72,6 +106,21 @@ def main() -> None:
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
     witnesses = dict(args.witness)
+    road_routes = dict(args.road_routes)
+    synthetic_names = [name for name, _ in args.synthetic]
+    if len(set(synthetic_names)) != len(synthetic_names):
+        parser.error("each synthetic method name must be unique")
+    if len(witnesses) != len(args.witness) or len(road_routes) != len(args.road_routes):
+        parser.error("duplicate road-object method name")
+    if (set(witnesses) | set(road_routes)) - set(synthetic_names):
+        parser.error("road-object method name has no corresponding --synthetic")
+    if set(witnesses) & set(road_routes):
+        parser.error("one method cannot provide both --witness and --road-routes")
+    if road_routes and not args.edge_cache:
+        parser.error("--road-routes requires --edge-cache")
+    edge_cache = resolve_input(args.edge_cache) if args.edge_cache else None
+    if edge_cache is not None and not edge_cache.is_file():
+        parser.error(f"public edge cache not found: {edge_cache}")
     output = args.out_dir if args.out_dir.is_absolute() else ROOT / args.out_dir
     output.mkdir(parents=True, exist_ok=True)
 
@@ -94,15 +143,17 @@ def main() -> None:
             command += ["--witness", str(witnesses[name])]
         print("RUN:", subprocess.list2cmdline(command), flush=True)
         subprocess.run(command, cwd=ROOT, check=True)
-        metrics = json.loads((raw / "metrics.json").read_text(encoding="utf-8"))["metrics"]
+        evaluation = json.loads((raw / "metrics.json").read_text(encoding="utf-8"))
+        metrics = evaluation["metrics"]
         road_yield, dir_valid, road_source = publication_road_metrics(
-            metrics, synthetic, witnesses.get(name)
+            metrics, synthetic, witnesses.get(name), road_routes.get(name), edge_cache,
+            evaluation["protocol"]["synthetic_count"],
         )
         road_sources[name] = road_source
         values = {
             "RoadYield": road_yield,
             "DirValid": dir_valid,
-            "WitnessValid": metrics.get("witness_valid", 0.0),
+            "WitnessValid": (road_yield if name in road_routes else metrics.get("witness_valid")),
             "TripSim": similarity(metrics.get("trip_error", 1.0)),
             "GridSim": similarity(metrics.get("grid_density_jsd", 1.0)),
             "LengthSim": similarity(metrics.get("path_length_jsd", 1.0)),
@@ -112,7 +163,7 @@ def main() -> None:
         }
         for metric, value in values.items():
             rows.append({"algorithm": name, "layer": "executed_unified_evaluation", "metric": metric,
-                         "value": value, "status": "VALID"})
+                         "value": value, "status": "VALID" if value is not None else "NOT_EMITTED"})
 
     result = output / "results.csv"
     with result.open("w", encoding="utf-8", newline="") as handle:
@@ -122,6 +173,14 @@ def main() -> None:
         "protocol": "executed_full_population_profile_v1",
         "corpora": [name for name, _ in args.synthetic],
         "road_metric_source": road_sources,
+        "road_route_inputs": {
+            name: {"path": str(path), "sha256": _sha256(path)}
+            for name, path in road_routes.items()
+        },
+        "witness_inputs": {
+            name: {"path": str(path), "sha256": _sha256(path)}
+            for name, path in witnesses.items()
+        },
         "coordinate_projection_diagnostics": {
             name: str((output / "raw" / name.replace(" ", "_") / "metrics.json").resolve())
             for name, _ in args.synthetic
