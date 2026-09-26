@@ -172,7 +172,7 @@ python commands/reproduce.py plot -- --figure profile --data-root experiment_res
 
 参数说明：`--real` 是真实参考；每个 `--synthetic NAME=PATH` 加入一份待评估合成数据；`--witness NAME=PATH` 只为发布 witness 的同名方法提供；`--bbox/--osm-cache` 定义同城公共道路；`--public-slot-count` 是预声明评估条数；`--out-dir` 保存逐方法指标。已有注册数据集也可用 `--dataset-config` 作为快捷方式。
 
-统一评估器为每份合成数据生成 `raw/<方法>/metrics.json`，汇总为 `profile/results.csv`，然后生成效用热力图。RoadYield 与 DirValid 评价发布的道路对象：附带道路 witness 的发布先核对同目录 manifest 中坐标和 witness 的 SHA-256，再验证完整有向边序列；仅有坐标的发布使用坐标到道路图的投影。原始 `metrics.json` 另保留最多 256 点采样的坐标投影诊断，不将它误写为完整 witness 的道路有效性。
+统一评估器为每份合成数据生成 `raw/<方法>/metrics.json`，汇总为 `profile/results.csv`，然后生成效用热力图。RoadYield 与 DirValid 评价发布的道路对象：附带道路 witness 的发布先核对同目录 manifest 中坐标和 witness 的 SHA-256，再验证完整有向边序列；仅有坐标的发布使用坐标到道路图的投影。原始 `metrics.json` 另保留最多 256 点采样的坐标投影诊断，不将它误写为完整 witness 的道路有效性。重新计算的 `TripSim=1-trip_error` 是端点分布相似度；冻结综合表的 `DemandFid` 是道路需求覆盖率，定义不同，不能将两列数值直接比较。
 
 ![MTR-GSRT 完整道路效用](experiment_results/published_figures/01_overall_profile.png)
 

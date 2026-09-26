@@ -12,13 +12,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def resolve_input(value: str) -> Path:
+    path = Path(value)
+    return (path if path.is_absolute() else ROOT / path).resolve()
+
+
 def named_path(text: str) -> tuple[str, Path]:
     try:
         name, value = text.split("=", 1)
     except ValueError as exc:
         raise argparse.ArgumentTypeError("expected NAME=PATH") from exc
-    path = Path(value)
-    return name, (path if path.is_absolute() else ROOT / path).resolve()
+    return name, resolve_input(value)
 
 
 def similarity(value: float) -> float:
@@ -77,8 +81,8 @@ def main() -> None:
         raw = output / "raw" / name.replace(" ", "_")
         command = [
             sys.executable, str(ROOT / "evaluation" / "evaluation" / "evaluate_all.py"),
-            "--real", str(Path(args.real).resolve()), "--synthetic", str(synthetic),
-            "--osm-cache", str(Path(args.osm_cache).resolve()), "--out-dir", str(raw),
+            "--real", str(resolve_input(args.real)), "--synthetic", str(synthetic),
+            "--osm-cache", str(resolve_input(args.osm_cache)), "--out-dir", str(raw),
         ]
         if args.dataset_config:
             command += ["--dataset-config", args.dataset_config]
@@ -99,7 +103,7 @@ def main() -> None:
             "RoadYield": road_yield,
             "DirValid": dir_valid,
             "WitnessValid": metrics.get("witness_valid", 0.0),
-            "DemandFid": similarity(metrics.get("trip_error", 1.0)),
+            "TripSim": similarity(metrics.get("trip_error", 1.0)),
             "GridSim": similarity(metrics.get("grid_density_jsd", 1.0)),
             "LengthSim": similarity(metrics.get("path_length_jsd", 1.0)),
             "NextRoadAcc": metrics.get("B2_next_region_accuracy", 0.0),
