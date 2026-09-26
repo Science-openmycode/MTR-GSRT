@@ -126,6 +126,32 @@ def _real_input_metadata(spec: str, count: int) -> dict:
     }
 
 
+def _score_published_road_object(
+    metrics: dict, synthetic_path: Path, witness_path: Path | None
+) -> str:
+    """Use the delivered witness for road validity; retain the coordinate proxy."""
+    if witness_path is None:
+        return "coordinate_projection"
+    if witness_path.parent != synthetic_path.parent:
+        raise ValueError("witness and coordinates must come from the same release directory")
+    release_manifest = synthetic_path.parent / "manifest.json"
+    if not release_manifest.is_file():
+        raise FileNotFoundError(f"witness release requires a hash manifest: {release_manifest}")
+    outputs = json.loads(release_manifest.read_text(encoding="utf-8")).get("outputs", {})
+    for path in (synthetic_path, witness_path):
+        expected = outputs.get(path.name)
+        if not isinstance(expected, str) or expected.lower() != sha256_file(path).lower():
+            raise RuntimeError(f"release manifest hash mismatch: {path}")
+    validity = metrics.get("witness_valid")
+    if validity is None:
+        raise RuntimeError("witness validation did not produce a road validity score")
+    metrics["coordinate_projection_directed_road_validity"] = metrics["directed_road_validity"]
+    metrics["coordinate_projection_route_compatible_yield"] = metrics["route_compatible_yield"]
+    metrics["directed_road_validity"] = float(validity)
+    metrics["route_compatible_yield"] = float(validity)
+    return "directed_witness"
+
+
 def main() -> None:
     args = build_parser().parse_args()
     add_runtime_paths()
@@ -188,6 +214,7 @@ def main() -> None:
         sha256_file(config["osm"]),
         sha256_file(synthetic_path),
     )
+    road_object_source = _score_published_road_object(metrics, synthetic_path, witness_path)
 
     logger.info("running retrospective query, OD, destination and grid-route tasks")
     split = int(len(real) * 0.8)
@@ -228,6 +255,7 @@ def main() -> None:
         "epsilon_total_rational": generator.get("privacy", {}).get("epsilon_total_rational"),
         "noise_seed": generator.get("privacy", {}).get("noise_seed"),
         "algorithm_id": generator.get("algorithm_id"),
+        "road_object_source": road_object_source,
         "evaluator": {
             "entrypoint": str(Path(__file__).resolve()),
             "entrypoint_sha256": sha256_file(Path(__file__).resolve()),

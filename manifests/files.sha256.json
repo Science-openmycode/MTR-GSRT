@@ -334,8 +334,8 @@
     },
     {
       "path": "evaluation/evaluation/evaluate_all.py",
-      "size": 11634,
-      "sha256": "1c9b974b2d16d514b35e48e0b645fccbf042e721572228807066e3efe04b225a",
+      "size": 13223,
+      "sha256": "5af1cb542d232d4c46071f359050b1935ede78752f0bd6d58d9316b2add43d6e",
       "role": "source_or_documentation"
     },
     {
@@ -1841,8 +1841,8 @@
     {
       "path": "tests/test_profile_road_publication.py",
       "role": "source_or_documentation",
-      "size": 3246,
-      "sha256": "9d3595011ac32fa73bf5e2197cf147f88480c617a1926cc678757098f74c12b8"
+      "size": 4697,
+      "sha256": "e286db521ebea4d55be130f7267d8cf0d918ed85a4a34382ba352c979c7967a3"
     },
     {
       "path": "tests/test_route_metric_core.py",
