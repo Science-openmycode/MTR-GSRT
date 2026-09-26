@@ -1726,8 +1726,8 @@
     },
     {
       "path": "plotting/regenerate_figures.py",
-      "size": 11619,
-      "sha256": "e36200f4db390887b2be219cec563bd1f69a0e4d6c14df6462ff0c99a6dda701",
+      "size": 11930,
+      "sha256": "8bbb33d22f4b558e0441fb64a388a1f6311b82db8b9aa22ac687882937fc637c",
       "role": "source_or_documentation"
     },
     {

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import json
 import shutil
 from pathlib import Path
@@ -32,8 +33,12 @@ def read_table(experiment: str, fallback: str, **kwargs) -> pd.DataFrame:
 
 
 def save(fig: plt.Figure, name: str) -> None:
-    fig.savefig(OUT / f"{name}.png", dpi=240, bbox_inches="tight")
-    fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight")
+    fig.savefig(OUT / f"{name}.png", dpi=240, bbox_inches="tight",
+                metadata={"Software": "MTR reproducibility plots"})
+    fixed_time = datetime(2000, 1, 1, tzinfo=timezone.utc)
+    fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight",
+                metadata={"Creator": "MTR reproducibility plots",
+                          "CreationDate": fixed_time, "ModDate": fixed_time})
     plt.close(fig)
 
 
