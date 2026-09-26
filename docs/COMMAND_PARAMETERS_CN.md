@@ -96,7 +96,8 @@
 | `evaluate --out-dir/--log-file` | 指标目录和可选日志文件。 |
 | `run-profile --real` | 统一真实参考。 |
 | `run-profile --synthetic` | `NAME=PATH`，每个方法重复一次。 |
-| `run-profile --witness` | `NAME=PATH`，只为有 witness 的同名方法提供。 |
+| `run-profile --witness` | `NAME=PATH`，只为有 witness 的同名方法提供；坐标与 witness 必须位于同一发布目录且通过其 manifest 哈希核对。 |
+| `run-profile --road-routes/--edge-cache` | `--road-routes NAME=PATH` 提供与坐标文件对应的有向道路路线，`--edge-cache` 指定同一道路图的公共边缓存；需要由 `routes-to-coordinates` 生成的同名 derivation manifest 绑定两者。 |
 | `run-profile --dataset-config/--bbox/--osm-cache/--public-slot-count` | 注册数据集可用配置键；任意新数据集显式给出范围、同城道路缓存和评估条数。 |
 | `run-profile --out-dir` | 逐方法 raw 指标与汇总 CSV 目录。 |
 | `run-framework --real-routes` | 真实匹配道路路线参考。 |
@@ -106,7 +107,7 @@
 | `run-mr --real-routes` | 真实匹配道路路线。 |
 | `run-mr --edge-cache` | 与所有路线对象共享边 ID 的公共缓存。 |
 | `run-mr --route` | `M::R=PATH`，显式加入一个测量—路由组合，可重复。 |
-| `run-mr --route-dir` | 批量扫描 `<M>/<R>.pkl[.gz]` 的根目录；缺省为包内冻结路线目录。 |
+| `run-mr --route-dir` | 批量扫描 `<M>/<R>.pkl[.gz]` 的根目录；只有未给 `--route` 时才默认读取包内路线。显式 `--route` 不自动混入历史缓存。 |
 | `run-mr --out-dir` | M×R 原始值和矩阵目录。 |
 | `run-ablation --data/--dataset-config/--bbox/--osm-cache` | GSRT 消融的显式真实坐标数据和同城公共配置。 |
 | `run-ablation --epsilon-total/--noise-seed/--decoder-seed/--request-seed/--public-slot-count` | GSRT 各臂共用的隐私预算、随机种子和固定输出规模。 |
