@@ -100,17 +100,17 @@
     {
       "method": "SPRT",
       "path": "datasets/synthetic/train_only_baselines/sprt_train.pkl",
-      "source": "public_release/outputs/kdd_revised/task_releases_certified/sprt_paper_structured_train_release.pkl",
-      "sha256": "037bfc5e4eb15baa56758262e4513b44013336612da44afd2ca0ea52e1220c3e",
-      "size": 1004033,
+      "source": "public_release/outputs/kdd_revised/task_releases/sprt_train_release.pkl",
+      "sha256": "ac55dd6d93901e511af70e3f7937d9b7f43afd7aaa9974f7804003c7bc4012c4",
+      "size": 20616528,
       "kind": "train_only_synthetic_trajectory_dataset"
     },
     {
       "method": "PrivTrace",
       "path": "datasets/synthetic/train_only_baselines/privtrace_train.pkl",
-      "source": "public_release/outputs/kdd_revised/task_releases_certified/privtrace_official_stagea_train_release.pkl",
-      "sha256": "806bc513cd285649c565351f462bac5f435cdc51c6af59c45011a58239473f70",
-      "size": 1111434,
+      "source": "public_release/outputs/kdd_revised/task_releases/privtrace_train_release.pkl",
+      "sha256": "9abac0aea13667a0b4fa478bae9c276d05133ab5b2708600363386a92d33fef6",
+      "size": 10228292,
       "kind": "train_only_synthetic_trajectory_dataset"
     },
     {
@@ -119,6 +119,14 @@
       "source": "public_release/outputs/kdd_revised/task_releases/dptrajpm_train_release.pkl",
       "sha256": "9dca8a40453270cbf21205589794f21530aaec27e4d8837ca88f3ba1c6035c68",
       "size": 11872309,
+      "kind": "train_only_synthetic_trajectory_dataset"
+    },
+    {
+      "method": "DPStd",
+      "path": "datasets/synthetic/train_only_baselines/dpstd_train.pkl",
+      "source": "seed_20260713 train-only release documented by dpstd_train_protocol.json",
+      "sha256": "2caf95766cd9be83aec00f57d448002551687aac674f3a2c8f05bdf331fe2441",
+      "size": 60909376,
       "kind": "train_only_synthetic_trajectory_dataset"
     },
     {
