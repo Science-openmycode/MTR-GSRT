@@ -67,6 +67,15 @@ class RouteRegionTest(unittest.TestCase):
         value = evaluate_routes([loop, loop], [self.upper, loop], self.cache)
         self.assertAlmostEqual(value["RC-CPC"], 0.75)
 
+    def test_shape_retention_decomposes_closed_and_repeated_edges(self) -> None:
+        route = ((0, 1), (1, 2), (2, 1), (1, 2), (2, 1), (1, 4))
+        lengths = {edge: 100.0 for edge in route}
+        value = evaluate_routes([route], [route], self.cache, lengths=lengths)
+        for name in ("TotalLengthRetention", "BackboneLengthRetention",
+                     "ClosedLengthRetention", "ClosedSegmentRetention",
+                     "RepeatedEdgeRetention"):
+            self.assertAlmostEqual(value[name], 1.0)
+
 
 if __name__ == "__main__":
     unittest.main()

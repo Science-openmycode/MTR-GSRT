@@ -16,8 +16,8 @@
     },
     {
       "path": "README_CN.md",
-      "size": 30400,
-      "sha256": "d4c43b6b2c57a8b6f30a2cd0f8229056948884dbf14e2f8fd9bb1d56db4861d7",
+      "size": 31298,
+      "sha256": "c78828cbb9e6630198f73551451098213dd83d128593ba6fdc463b22bd6bdf2b",
       "role": "source_or_documentation"
     },
     {
@@ -28,8 +28,8 @@
     },
     {
       "path": "commands/reproduce.py",
-      "size": 11291,
-      "sha256": "f8313d70136ba9241acfc8084a7e836a90e02a1adfdc7ae0e65e6524c1371570",
+      "size": 11324,
+      "sha256": "a734f7f35ba78bd9a5d36a8407e8bd1700df3c7fdf8c7b15a08cfb0f565962bc",
       "role": "source_or_documentation"
     },
     {
@@ -208,8 +208,8 @@
     },
     {
       "path": "docs/COMMAND_PARAMETERS_CN.md",
-      "size": 14866,
-      "sha256": "eb9d43fc17560a84d127ca7a4ee5dcc401be98e6dad95e7b77acfe3efc3087ba",
+      "size": 16222,
+      "sha256": "d0805a3e6ffd7afd4f72d3daf55c038278fb48ff73fc0d506fcb1369f1a95b44",
       "role": "source_or_documentation"
     },
     {
@@ -568,14 +568,14 @@
     },
     {
       "path": "evaluation/route_metric_core.py",
-      "size": 10078,
-      "sha256": "6731fc145d6589ae2ab05f525f3e941505d5f43e9e9078cafd0bdb980c94f381",
+      "size": 12315,
+      "sha256": "0763042441993a52c2093b74268a279221d0e6ef1398d2ed6591f94f58c9be9f",
       "role": "source_or_documentation"
     },
     {
       "path": "evaluation/run_ablation_experiment.py",
-      "size": 9301,
-      "sha256": "4e72cbfe4ba7671ede852e9f08cabc918e02d41afa44fd9b1f9bd208f2412486",
+      "size": 13380,
+      "sha256": "16e09a39000fdcdecb2e52fd8df8c053a9441c2b50b52641cfb4d73f72f68ae1",
       "role": "source_or_documentation"
     },
     {
@@ -586,9 +586,15 @@
     },
     {
       "path": "evaluation/run_mr_experiment.py",
-      "size": 3168,
-      "sha256": "dca4488e46cd8d54f7626278b5bbe3afc8c62575343bc045def1096bc0172fff",
+      "size": 3874,
+      "sha256": "d29aa1dc7a9889439f934550680090fd3768f950c890016340245dffc1f47cab",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "evaluation/run_physical_experiment.py",
+      "role": "source_or_documentation",
+      "size": 9404,
+      "sha256": "d91a568d26bf288e544615a3360d895610195e6fc2cb308bb2f80e55bd762005"
     },
     {
       "path": "evaluation/run_privacy_experiment.py",
@@ -1720,8 +1726,8 @@
     },
     {
       "path": "plotting/regenerate_figures.py",
-      "size": 10992,
-      "sha256": "9a735aece2dd9f9e086458630821048c872836e17ca3fb09d6f031e55806b158",
+      "size": 11619,
+      "sha256": "e36200f4db390887b2be219cec563bd1f69a0e4d6c14df6462ff0c99a6dda701",
       "role": "source_or_documentation"
     },
     {
@@ -1827,6 +1833,12 @@
       "role": "source_or_documentation"
     },
     {
+      "path": "tests/test_physical_route_mass.py",
+      "role": "source_or_documentation",
+      "size": 928,
+      "sha256": "46d471edd87d543da6953382a5e1a9ad3db0d397737a956787eba9fa810e3b34"
+    },
+    {
       "path": "tests/test_prepare_geolife.py",
       "role": "source_or_documentation",
       "size": 1688,
@@ -1846,8 +1858,8 @@
     },
     {
       "path": "tests/test_route_metric_core.py",
-      "size": 3357,
-      "sha256": "adca2eeef4fb6c7565426249f0d5e0e348ef89853a46e5b401635beb0d5ba6cb",
+      "size": 3877,
+      "sha256": "c462d62296854cd5e4e596dc11cdd7fde47b7296ca6e606b3e9c9432246cfa52",
       "role": "source_or_documentation"
     }
   ]

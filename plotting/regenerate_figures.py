@@ -105,7 +105,17 @@ def plot_mr() -> None:
 
 
 def plot_ablation() -> None:
-    table = read_table("ablation", "ablation.csv")
+    current = ROOT / "experiment_results" / "executed_reference" / "ablation" / "results.csv"
+    table = (pd.read_csv(current) if DATA_ROOT is None and current.is_file()
+             else read_table("ablation", "ablation.csv"))
+    if "Ablation arm" in table.columns:
+        preferred = ["BTF", "RC-CPC", "EdgeCPC", "TurnCPC", "FamilyCPC",
+                     "ODPF384", "NextRoadAcc"]
+        columns = [name for name in preferred if name in table.columns]
+        if columns:
+            frame = table.set_index("Ablation arm")[columns].apply(pd.to_numeric, errors="raise")
+            annotated_heatmap(frame, "Algorithm-level ablation", "05_ablation")
+            return
     first = table.columns[0]
     if str(first).startswith("Unnamed") or first in {"metric", "component", "ablation", "Ablation arm"}:
         table = table.set_index(first)

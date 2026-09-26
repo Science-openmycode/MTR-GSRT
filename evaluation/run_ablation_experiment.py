@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import csv
 import gzip
+import hashlib
 import importlib
 import json
 import pickle
@@ -22,6 +23,34 @@ CONFIG = json.loads((ROOT / "config" / "package.json").read_text(encoding="utf-8
 def run(command: list[str]) -> None:
     print("RUN:", subprocess.list2cmdline(command), flush=True)
     subprocess.run(command, cwd=ROOT, check=True)
+
+
+def verify_saved_gsrt_arm(arm: Path, evaluated: Path, mode: str, args: argparse.Namespace) -> None:
+    protocol = json.loads((arm / "protocol.json").read_text(encoding="utf-8"))
+    expected = (
+        (protocol["postprocessing"], "component_mode", mode),
+        (protocol["postprocessing"], "decoder_seed", args.decoder_seed),
+        (protocol["privacy"], "noise_seed", args.noise_seed),
+        (protocol["privacy"], "epsilon_total_rational", args.epsilon_total),
+    )
+    for settings, key, value in expected:
+        if settings.get(key) != value:
+            raise ValueError(f"saved ablation arm has different {key}: {arm}")
+    if protocol["public_slot_count"] != args.public_slot_count:
+        raise ValueError(f"saved ablation arm has different public slot count: {arm}")
+    if Path(protocol["data_spec"]).resolve() != Path(args.data).resolve():
+        raise ValueError(f"saved ablation arm has different real input path: {arm}")
+    ledger = json.loads((evaluated / "manifest.json").read_text(encoding="utf-8"))
+    checks = [
+        (Path(args.data).resolve(), ledger["inputs"]["real"]["sha256"]),
+        (arm / "trajectories.pkl", ledger["inputs"]["synthetic"]["sha256"]),
+        (arm / "road_witnesses.pkl", ledger["inputs"]["witness"]["sha256"]),
+        (evaluated / "metrics.json", ledger["outputs"]["metrics.json"]),
+    ]
+    for path, expected_hash in checks:
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual.lower() != expected_hash.lower():
+            raise ValueError(f"saved ablation hash mismatch: {path}")
 
 
 def write(rows: list[dict], output: Path, protocol: str, extra: dict | None = None) -> None:
@@ -51,8 +80,13 @@ def gsrt(args: argparse.Namespace, output: Path) -> None:
         "WitnessValid": "witness_valid", "NextRoadAcc": "B2_next_region_accuracy",
         "NextRoadNLL": "B2_next_region_nll",
     }
+    cache = load_pickle(Path(args.edge_cache).resolve()) if args.real_routes else None
+    real = (valid_routes(normalize_routes(load_pickle(Path(args.real_routes).resolve()), cache))
+            if args.real_routes else None)
+    reference = route_counters(real, cache) if real is not None else None
     for mode in modes:
         arm = output / "arms" / mode
+        evaluated = output / "raw" / mode
         generation = [
             sys.executable, str(ROOT / CONFIG["main_generation_entry"]),
             "--data", str(Path(args.data).resolve()),
@@ -72,8 +106,8 @@ def gsrt(args: argparse.Namespace, output: Path) -> None:
             generation += ["--request-seed", str(args.request_seed)]
         if args.limit is not None:
             generation += ["--limit", str(args.limit)]
-        run(generation)
-        evaluated = output / "raw" / mode
+        if not args.reuse_generated:
+            run(generation)
         evaluation = [
             sys.executable, str(ROOT / "evaluation" / "evaluation" / "evaluate_all.py"),
             "--real", str(Path(args.data).resolve()),
@@ -87,12 +121,25 @@ def gsrt(args: argparse.Namespace, output: Path) -> None:
             evaluation += ["--dataset-config", args.dataset_config]
         if args.bbox:
             evaluation += ["--bbox", *(str(value) for value in args.bbox)]
-        run(evaluation)
+        if args.reuse_generated:
+            verify_saved_gsrt_arm(arm, evaluated, mode, args)
+        else:
+            run(evaluation)
         metrics = json.loads((evaluated / "metrics.json").read_text(encoding="utf-8"))["metrics"]
-        rows.append({"Ablation arm": labels[mode], **{label: metrics[key] for label, key in keys.items()}})
+        row = {"Ablation arm": labels[mode], **{label: metrics[key] for label, key in keys.items()}}
+        if real is not None:
+            routes = normalize_routes(load_pickle(arm / "road_witnesses.pkl"), cache)
+            scored = evaluate_routes(routes, real, cache, reference)
+            row.update({key: scored[key] for key in (
+                "RoadYield", "DemandFid", "BTF", "RC-CPC",
+                "EdgeCPC", "TurnCPC", "FamilyCPC", "BranchCPC", "ExitAcc",
+                "ODPF96", "ODPF384")})
+        rows.append(row)
     write(rows, output, "generated_mtr_gsrt_algorithm_ablation_v2", {
         "component_modes": modes,
         "generation": "each arm was synthesized from the supplied dataset",
+        "reuse_generated": bool(args.reuse_generated),
+        "real_routes": str(Path(args.real_routes).resolve()) if args.real_routes else None,
     })
 
 
@@ -103,6 +150,30 @@ def save_routes(path: Path, routes) -> None:
 
 
 def dfr(args: argparse.Namespace, output: Path) -> None:
+    if args.reuse_generated:
+        cache = load_pickle(Path(args.edge_cache).resolve())
+        real = valid_routes(normalize_routes(load_pickle(Path(args.real_routes).resolve()), cache))
+        reference = route_counters(real, cache)
+        selected = args.variants or [
+            "no-endpoint-measurement", "endpoint-measurement-only",
+            "family-measured-unmatched-router", "full"]
+        rows, hashes = [], {}
+        for name in selected:
+            path = output / "arms" / f"{name}.pkl.gz"
+            raw = load_pickle(path)
+            routes = normalize_routes(raw, cache)
+            if len(routes) != args.public_slot_count:
+                raise ValueError(f"saved DFR arm has wrong public slot count: {path}")
+            hashes[name] = hashlib.sha256(path.read_bytes()).hexdigest()
+            rows.append({"Ablation arm": name,
+                         **evaluate_routes(routes, real, cache, reference)})
+        write(rows, output, "generated_mtr_dfr_algorithm_ablation_v2", {
+            "variants": selected, "reuse_generated": True,
+            "arm_sha256": hashes,
+            "real_routes_sha256": hashlib.sha256(
+                Path(args.real_routes).resolve().read_bytes()).hexdigest(),
+        })
+        return
     algorithm = ROOT / "generation" / "mtr_dfr" / "algorithm"
     dependencies = ROOT / "generation" / "mtr_dfr" / "dependencies"
     sys.path[:0] = [str(dependencies), str(algorithm)]
@@ -178,7 +249,9 @@ def main() -> None:
                         help="Smoke-test only; must equal --public-slot-count.")
     parser.add_argument("--component-modes", nargs="+", choices=(
         "full", "no-portal-fiber", "no-graph-flow", "demand-only"))
-    parser.add_argument("--real-routes", help="Real matched road routes for MTR-DFR.")
+    parser.add_argument("--reuse-generated", action="store_true",
+                        help="re-evaluate existing saved arms without synthesizing them again")
+    parser.add_argument("--real-routes", help="Real matched road routes for MTR-DFR or optional GSRT road-choice ablation.")
     parser.add_argument("--edge-cache", default=str(
         ROOT / "public_assets" / "ordered_portal_route_cache.pkl.gz"))
     parser.add_argument("--network", default=str(

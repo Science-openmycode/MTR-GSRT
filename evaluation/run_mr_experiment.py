@@ -5,6 +5,8 @@ import csv
 import json
 from pathlib import Path
 
+import geopandas as gpd
+
 from route_metric_core import evaluate_routes, load_pickle, normalize_routes, route_counters, valid_routes
 
 
@@ -29,12 +31,24 @@ def main() -> None:
     )
     parser.add_argument("--real-routes", required=True)
     parser.add_argument("--edge-cache", default=str(ROOT / "public_assets" / "ordered_portal_route_cache.pkl.gz"))
+    parser.add_argument("--network", default=str(ROOT / "public_assets" / "beijing_network" / "network.shp"),
+                        help="public directed road shapefile with id and length_m")
     parser.add_argument("--route", action="append", type=parse_item, default=[], help="M::R=PATH; repeat")
     parser.add_argument("--route-dir", help="Load this route directory; defaults to packaged routes only when no --route is supplied")
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
 
     cache = load_pickle(Path(args.edge_cache).resolve())
+    frame = gpd.read_file(Path(args.network).resolve())[["id", "length_m"]]
+    edge_nodes = {int(key): tuple(value) for key, value in cache["edge_nodes"].items()}
+    lengths = {}
+    for row in frame.itertuples(index=False):
+        edge = edge_nodes.get(int(row.id))
+        if edge is None:
+            continue
+        length = max(float(row.length_m), 1e-3)
+        if edge not in lengths or length < lengths[edge]:
+            lengths[edge] = length
     real = valid_routes(normalize_routes(load_pickle(Path(args.real_routes).resolve()), cache))
     reference = route_counters(real, cache)
     items = list(args.route)
@@ -56,7 +70,8 @@ def main() -> None:
             continue
         seen.add(key)
         routes = normalize_routes(load_pickle(path), cache)
-        rows.append({"M": measurement, "R": router, **evaluate_routes(routes, real, cache, reference)})
+        rows.append({"M": measurement, "R": router,
+                     **evaluate_routes(routes, real, cache, reference, lengths)})
 
     output = args.out_dir if args.out_dir.is_absolute() else ROOT / args.out_dir
     output.mkdir(parents=True, exist_ok=True)
