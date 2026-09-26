@@ -54,6 +54,16 @@ def stage_verify() -> int:
     actual_data = [p for p in (ROOT / "datasets" / "synthetic").rglob("*") if p.is_file()]
     if not actual_data:
         failures.append("no packaged synthetic datasets")
+    provenance_path = ROOT / "manifests" / "synthetic_data_provenance.json"
+    provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+    for entry in provenance["datasets"]:
+        path = (ROOT / entry["path"]).resolve()
+        if not path.is_relative_to(ROOT.resolve()) or not path.is_file():
+            failures.append(f"provenance missing/unsafe: {entry['path']}")
+            continue
+        data = path.read_bytes()
+        if len(data) != entry["size"] or hashlib.sha256(data).hexdigest() != entry["sha256"]:
+            failures.append(f"provenance size/sha256: {entry['path']}")
     forbidden_data_names = {"real.pkl", "real.pkl.gz", "real_full_frozen.pkl", "raw.pkl"}
     for path in actual_data:
         if path.name.lower() in forbidden_data_names:
