@@ -62,7 +62,7 @@ def plot_profile() -> None:
                  "LengthSim", "NextRoadAcc", "RouteMRR", "RouteBest5F1", "EdgeF1",
                  "BTF", "RC-CPC", "RC_CPC", "EdgeCPC", "TurnCPC", "FamilyCPC"]
     columns = [column for column in preferred if column in frame.columns]
-    annotated_heatmap(frame[columns], "Full-metric profile", "01_overall_profile")
+    annotated_heatmap(frame[columns], "Road-object and task profile", "01_overall_profile")
 
 
 def plot_framework() -> None:
