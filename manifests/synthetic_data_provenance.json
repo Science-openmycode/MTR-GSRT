@@ -1,5 +1,6 @@
 {
   "schema_version": 1,
+  "hash_policy": "text files use LF-normalized bytes; binary files use exact bytes",
   "datasets": [
     {
       "method": "SPRT",
@@ -157,8 +158,8 @@
       "method": "MTR-GSRT",
       "path": "datasets/synthetic/mtr_gsrt/protocol.isolated.json",
       "source": "public_release/outputs/synthetic_releases/current_best/active_hierarchy_release_v1_20260726/protocol.isolated.json",
-      "sha256": "a9c5fa673f3f1d25bb4211eae20ee61958257ebb99584fb4b1e035984b33307a",
-      "size": 3348,
+      "sha256": "fffb1658daff86620eedc53a6ee56431d3a4826c60208525eb76d245fed762c0",
+      "size": 3252,
       "kind": "release_metadata"
     },
     {

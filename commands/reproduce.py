@@ -61,7 +61,7 @@ def stage_verify() -> int:
         if not path.is_relative_to(ROOT.resolve()) or not path.is_file():
             failures.append(f"provenance missing/unsafe: {entry['path']}")
             continue
-        data = path.read_bytes()
+        data = canonical_bytes(path)
         if len(data) != entry["size"] or hashlib.sha256(data).hexdigest() != entry["sha256"]:
             failures.append(f"provenance size/sha256: {entry['path']}")
     forbidden_data_names = {"real.pkl", "real.pkl.gz", "real_full_frozen.pkl", "raw.pkl"}

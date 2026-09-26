@@ -28,8 +28,8 @@
     },
     {
       "path": "commands/reproduce.py",
-      "size": 11931,
-      "sha256": "32364eb2f97c802ffbc9b007cd2c9bbff1ecb7f9ca6fed370195ef7eaf1e5260",
+      "size": 11935,
+      "sha256": "48f0dbfc44d9725500232326ad941ce04fdd29357efb6f2caf84c39a438e79e8",
       "role": "source_or_documentation"
     },
     {
@@ -1720,8 +1720,8 @@
     },
     {
       "path": "manifests/synthetic_data_provenance.json",
-      "size": 8654,
-      "sha256": "e96ea6072c701e5cf7df153f8ae2c0ae14c89fa72db9266803b21419359c7029",
+      "size": 8739,
+      "sha256": "25c4cd9e1198c0ca5e65777ca9b485cb319f252535906569b7fcd82b0bec9c97",
       "role": "source_or_documentation"
     },
     {
