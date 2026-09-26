@@ -233,7 +233,8 @@ def main() -> int:
     for name in ("generate-main", "generate-baselines", "evaluate",
                  "verify-matcher", "prepare-geolife", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
                  "routes-to-coordinates", "run-tstr", "materialize-tstr-mr", "combine-tstr-mr",
-                 "run-ablation", "run-framework", "run-privacy", "run-profile", "run-mr", "run-structure"):
+                 "run-ablation", "run-framework", "run-privacy", "run-profile", "run-mr",
+                 "run-physical", "run-structure"):
         child = sub.add_parser(name)
         child.add_argument("args", nargs=argparse.REMAINDER)
     ns = parser.parse_args()

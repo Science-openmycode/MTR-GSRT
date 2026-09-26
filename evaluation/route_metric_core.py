@@ -133,6 +133,56 @@ def _demand_fidelity(real_routes, synthetic_routes, cache, synthetic_slots):
                      for key in real.keys() | synthetic.keys()))
 
 
+def _canonical_decompose(route):
+    """Chronologically erase directed closed walks from one route."""
+    if not route:
+        return (), ()
+    stack_nodes = [route[0][0]]
+    stack_edges = []
+    positions = {stack_nodes[0]: 0}
+    excursions = []
+    for edge in route:
+        u, v = edge
+        if u != stack_nodes[-1]:
+            raise ValueError("route is not a continuous directed walk")
+        if v not in positions:
+            stack_edges.append(edge)
+            stack_nodes.append(v)
+            positions[v] = len(stack_nodes) - 1
+            continue
+        anchor = positions[v]
+        excursion = tuple(stack_edges[anchor:] + [edge])
+        excursions.append((v, excursion))
+        for node in stack_nodes[anchor + 1:]:
+            positions.pop(node, None)
+        del stack_nodes[anchor + 1:]
+        del stack_edges[anchor:]
+    return tuple(stack_edges), tuple(excursions)
+
+
+def _shape_retention(real_routes, synthetic_routes, lengths):
+    def totals(routes):
+        result = Counter()
+        for route in routes:
+            if not route:
+                continue
+            backbone, loops = _canonical_decompose(route)
+            result["TotalLengthRetention"] += sum(lengths.get(edge, 0.0) for edge in route)
+            result["BackboneLengthRetention"] += sum(lengths.get(edge, 0.0) for edge in backbone)
+            result["ClosedLengthRetention"] += sum(
+                lengths.get(edge, 0.0) for _, loop in loops for edge in loop)
+            result["ClosedSegmentRetention"] += len(loops)
+            result["RepeatedEdgeRetention"] += len(route) - len(set(route))
+        return result
+    real, synthetic = totals(real_routes), totals(synthetic_routes)
+    real_n, synthetic_n = max(len(real_routes), 1), max(len(synthetic_routes), 1)
+    return {name: ((synthetic[name] / synthetic_n) / (real[name] / real_n)
+                   if real[name] else 0.0)
+            for name in ("TotalLengthRetention", "BackboneLengthRetention",
+                         "ClosedLengthRetention", "ClosedSegmentRetention",
+                         "RepeatedEdgeRetention")}
+
+
 def valid_routes(routes) -> list[tuple[tuple[int, int], ...]]:
     """Condition the real reference on observed connected road evidence."""
     return [tuple(route) for route in routes
@@ -171,7 +221,7 @@ def route_counters(routes, cache) -> dict:
     return result
 
 
-def evaluate_routes(routes, real_routes, cache, reference=None) -> dict[str, float]:
+def evaluate_routes(routes, real_routes, cache, reference=None, lengths=None) -> dict[str, float]:
     reference = reference or route_counters(real_routes, cache)
     synthetic = route_counters(routes, cache)
     slots = max(len(routes), 1)
@@ -192,7 +242,7 @@ def evaluate_routes(routes, real_routes, cache, reference=None) -> dict[str, flo
     branch_cpc, exit_acc = _branch_scores(valid_routes(real_routes), valid_routes(routes))
     valid_real, valid_synthetic = valid_routes(real_routes), valid_routes(routes)
     road_yield = synthetic["valid"] / slots
-    return {
+    result = {
         "RoadYield": road_yield,
         "DemandFid": _demand_fidelity(valid_real, valid_synthetic, cache, slots),
         "BTF": btf,
@@ -213,3 +263,6 @@ def evaluate_routes(routes, real_routes, cache, reference=None) -> dict[str, flo
         "ODPF96": _od_prefix_fidelity(valid_real, valid_synthetic, cache, 96, road_yield),
         "ODPF384": _od_prefix_fidelity(valid_real, valid_synthetic, cache, 384, road_yield),
     }
+    if lengths is not None:
+        result.update(_shape_retention(valid_real, routes, lengths))
+    return result

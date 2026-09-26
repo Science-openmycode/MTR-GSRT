@@ -191,12 +191,20 @@ python commands/reproduce.py plot -- --figure mr --data-root experiment_results/
 
 ![MTR-GSRT 的测量—路由矩阵](experiment_results/published_figures/04_mr_matrix_mtr_gsrt.png)
 
+同一真实道路参考还可直接计算有序道路公里数、转向和消环骨干的物理质量恢复率；每个公开 OD 层最多取 20 条路线，抽样和精确质量传输均由命令重算。为与归档的 GSRT 六列数值逐位对应，保留当时的抽样标签：
+
+```powershell
+python commands/reproduce.py run-physical -- --real-routes "C:\runs\real_road_reference\matched_paths\Real.pkl.gz" --synthetic-routes "C:\runs\mtr_gsrt\road_witnesses.pkl" --method MTR-GSRT --sampling-label "Old MTR-GSRT" --edge-cache public_assets\ordered_portal_route_cache.pkl.gz --network public_assets\beijing_network\network.shp --cap-per-stratum 20 --out-dir experiment_results/recomputed/physical
+```
+
+运行后生成 `physical/results.csv`（Road/Turn/Backbone 的 Recovery 和 Support）及带输入哈希的 `manifest.json`。
+
 ## 5. MTR-GSRT 算法级消融
 
 消融实验保持数据、预算和评估方法一致，只移除或替换算法级测量与路由模块。它给出完整方案与各消融臂在路线选择指标上的差异。
 
 ```powershell
-python commands/reproduce.py run-ablation -- --data "C:\data\real_full_frozen.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 17123 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-modes full no-portal-fiber no-graph-flow demand-only --out-dir experiment_results/recomputed/ablation
+python commands/reproduce.py run-ablation -- --data "C:\data\real_full_frozen.pkl" --real-routes "C:\runs\real_road_reference\matched_paths\Real.pkl.gz" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 17123 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-modes full no-portal-fiber no-graph-flow demand-only --out-dir experiment_results/recomputed/ablation
 python commands/reproduce.py plot -- --figure ablation --data-root experiment_results/recomputed
 ```
 
@@ -204,7 +212,7 @@ python commands/reproduce.py plot -- --figure ablation --data-root experiment_re
 
 第一条命令对每个指定算法臂重新执行私有测量和公共路由，将新合成数据写入 `ablation/arms/`，将逐臂指标写入 `ablation/raw/`，再形成 `ablation/results.csv` 和参数 manifest；第二条命令只读取这些新结果生成 `05_ablation.png` 和 `05_ablation.pdf`。
 
-![MTR-GSRT 算法级消融](experiment_results/published_figures/05_portal_fiber_ablation.png)
+![MTR-GSRT 算法级消融](experiment_results/regenerated_figures/05_ablation.png)
 
 ## 6. 严格 train-only TSTR 测量—路由实验
 

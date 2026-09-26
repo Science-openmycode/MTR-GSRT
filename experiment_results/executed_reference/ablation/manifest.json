@@ -1,5 +1,45 @@
 {
-  "protocol": "executed_mtr_gsrt_algorithm_ablation_v1",
-  "rows": 2,
-  "result": ".\\experiment_results\\executed_reference\\ablation\\results.csv"
+  "protocol": "full_corpus_algorithm_ablation_20260926",
+  "algorithm": "gsrt",
+  "public_slots": 17123,
+  "rows": 4,
+  "metrics": [
+    "Grid",
+    "Trip",
+    "Len",
+    "WitnessValid",
+    "NextRoadAcc",
+    "NextRoadNLL",
+    "RoadYield",
+    "DemandFid",
+    "BTF",
+    "RC-CPC",
+    "EdgeCPC",
+    "TurnCPC",
+    "FamilyCPC",
+    "BranchCPC",
+    "ExitAcc",
+    "ODPF96",
+    "ODPF384"
+  ],
+  "results_sha256": "6b225841a657841d844068fc0b45c67dee83963b31098729c5f7d199437d0d70",
+  "generated_arm_sha256": {
+    "full": {
+      "trajectories.pkl": "34de44012537557783a0ecf375c33145c13b2a75cd06b733fa2fdadbb26cdac7",
+      "road_witnesses.pkl": "ee87aef1c919244bc47fefcbb376bb9652a18b0231c1beb12498bd8bb9aea001"
+    },
+    "no-portal-fiber": {
+      "trajectories.pkl": "304a3ea42463feba9bd9c8eb683749400adaeb241b889f0c64e6fa4f00307b92",
+      "road_witnesses.pkl": "0da64d4d5601d068d110f7d3a03004c378ad53b0eb798a5dbf180179c33cb8a4"
+    },
+    "no-graph-flow": {
+      "trajectories.pkl": "f216d2cc4ca13cc7d2362bad9c08616aac32384ee4a9246dcc02f07c0eee15f8",
+      "road_witnesses.pkl": "0e63dd93a195c8f63fa0eb1afb82b8ac534950c34eaddf2ffa5ffcf6acb84a4e"
+    },
+    "demand-only": {
+      "trajectories.pkl": "4eaeffa32dace97be3ca7c2703ee4907cd93bef4fce5f4fe82b328d5479a2b19",
+      "road_witnesses.pkl": "756b4cfc263b8cd8cdfeced0b46901d915270776f8fe889036d0ce763aece3a2"
+    }
+  },
+  "reuse": "saved generated arms were evaluated without resynthesis"
 }
