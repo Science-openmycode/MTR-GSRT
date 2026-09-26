@@ -1,5 +1,6 @@
 import hashlib
 import json
+import pickle
 import sys
 import tempfile
 import unittest
@@ -36,6 +37,28 @@ class PublicationRoadMetricTests(unittest.TestCase):
             witness.write_bytes(b"tampered witness")
             with self.assertRaisesRegex(RuntimeError, "hash mismatch"):
                 publication_road_metrics(metrics, synthetic, witness)
+
+    def test_derived_route_checks_public_edges_and_hashes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            synthetic = root / "coordinates.pkl"
+            routes = root / "routes.pkl"
+            cache = root / "edge_cache.pkl"
+            synthetic.write_bytes(b"derived coordinates")
+            routes.write_bytes(pickle.dumps([[(1, 2), (2, 3)], [(1, 9)]]))
+            cache.write_bytes(pickle.dumps({"edge_nodes": {1: (1, 2), 2: (2, 3)}}))
+            payload = {
+                "schema": "road-route-coordinate-derivation-v1",
+                "record_count": 2,
+                "coordinates": {"sha256": hashlib.sha256(synthetic.read_bytes()).hexdigest()},
+                "route_source": {"sha256": hashlib.sha256(routes.read_bytes()).hexdigest()},
+                "edge_cache": {"sha256": hashlib.sha256(cache.read_bytes()).hexdigest()},
+            }
+            (root / "coordinates.pkl.manifest.json").write_text(json.dumps(payload))
+            self.assertEqual(publication_road_metrics({}, synthetic, None, routes, cache, 2),
+                             (0.5, 0.5, "derived_directed_routes"))
+            with self.assertRaisesRegex(ValueError, "slot count"):
+                publication_road_metrics({}, synthetic, None, routes, cache, 3)
 
 
 if __name__ == "__main__":
