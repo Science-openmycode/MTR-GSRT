@@ -141,6 +141,8 @@ def main() -> None:
             command += ["--public-slot-count", str(args.public_slot_count)]
         if name in witnesses:
             command += ["--witness", str(witnesses[name])]
+        if name in road_routes:
+            command += ["--road-routes", str(road_routes[name]), "--edge-cache", str(edge_cache)]
         print("RUN:", subprocess.list2cmdline(command), flush=True)
         subprocess.run(command, cwd=ROOT, check=True)
         evaluation = json.loads((raw / "metrics.json").read_text(encoding="utf-8"))

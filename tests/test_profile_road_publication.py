@@ -80,8 +80,16 @@ class PublicationRoadMetricTests(unittest.TestCase):
             (root / "coordinates.pkl.manifest.json").write_text(json.dumps(payload))
             self.assertEqual(publication_road_metrics({}, synthetic, None, routes, cache, 2),
                              (0.5, 0.5, "derived_directed_routes"))
+            metrics = {"route_compatible_yield": 0.01, "directed_road_validity": 0.33}
+            self.assertEqual(_score_published_road_object(metrics, synthetic, None, routes, cache, 2),
+                             "derived_directed_routes")
+            self.assertEqual(metrics["road_route_valid"], 0.5)
+            self.assertEqual(metrics["route_compatible_yield"], 0.5)
+            self.assertEqual(metrics["coordinate_projection_route_compatible_yield"], 0.01)
             with self.assertRaisesRegex(ValueError, "slot count"):
                 publication_road_metrics({}, synthetic, None, routes, cache, 3)
+            with self.assertRaisesRegex(ValueError, "slot count"):
+                _score_published_road_object(metrics, synthetic, None, routes, cache, 3)
 
 
 if __name__ == "__main__":
