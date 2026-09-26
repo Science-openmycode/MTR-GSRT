@@ -119,7 +119,7 @@ experiment_results/regenerated_figures/
 ```powershell
 python commands/reproduce.py prepare-split -- --data "C:\data\real_full_frozen.pkl" --input-order --train-fraction 0.8 --seed 20260713 --out-dir "C:\runs\strict_split"
 python commands/reproduce.py prepare-attack-split -- --split-dir "C:\runs\strict_split" --out-dir "C:\runs\attack_split"
-python commands/reproduce.py run-privacy -- --members "C:\runs\attack_split\member_candidates.pkl" --nonmembers "C:\runs\attack_split\nonmember_candidates.pkl" --reference "C:\runs\attack_split\reference.pkl" --release "SPRT=datasets\synthetic\baselines\sprt_native.pkl" --release "PrivTrace=datasets\synthetic\baselines\privtrace_native.pkl" --release "DPTraj-PM=datasets\synthetic\baselines\dptrajpm_native.pkl" --release "DPStd=datasets\synthetic\baselines\dpstd_native.pkl" --release "MTR-GSRT=datasets\synthetic\mtr_gsrt\trajectories.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir experiment_results/recomputed/privacy
+python commands/reproduce.py run-privacy -- --members "C:\runs\attack_split\member_candidates.pkl" --nonmembers "C:\runs\attack_split\nonmember_candidates.pkl" --reference "C:\runs\attack_split\reference.pkl" --release "SPRT=datasets\synthetic\baselines\sprt_native.pkl" --release "PrivTrace=datasets\synthetic\baselines\privtrace_native.pkl" --release "DPTraj-PM=datasets\synthetic\baselines\dptrajpm_native.pkl" --release "DPStd=datasets\synthetic\baselines\dpstd_native.pkl" --release "MTR-GSRT=C:\runs\mtr_gsrt\trajectories.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir experiment_results/recomputed/privacy
 python commands/reproduce.py plot -- --figure privacy --data-root experiment_results/recomputed
 ```
 
