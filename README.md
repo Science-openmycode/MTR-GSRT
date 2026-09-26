@@ -43,17 +43,24 @@ python commands/reproduce.py generate-main -- `
 `no-portal-fiber`, `no-graph-flow`, and `demand-only`. Each arm reruns synthesis
 and writes its own trajectories, witnesses, transcript, metrics, and manifest.
 
-Road-reference and FMM/STMatch experiments additionally need binary-compatible
-`gdal204.dll` and `boost_serialization.dll` for the bundled Windows matchers.
-These DLLs are not included. Put them in a runtime directory and check it first:
+Road-reference and FMM/STMatch experiments use the bundled Windows matchers.
+Create their tested GDAL/Boost runtime with conda-forge, then point the matcher
+at the prefix containing the two required DLLs:
 
 ```powershell
+conda create --prefix "C:\fmm-runtime" --override-channels --channel conda-forge --repodata-fn repodata.json libgdal=2.4.4 boost-cpp=1.75.0 --yes
+$runtime = "C:\fmm-runtime"
+$runtimeBin = "$runtime\Library\bin"
+Copy-Item "$runtimeBin\gdal204.dll" $runtime -Force
+Copy-Item "$runtimeBin\boost_serialization.dll" $runtime -Force
+$env:PATH = "$runtimeBin;$env:PATH"
+$env:GDAL_DATA = "$runtime\Library\share\gdal"
+$env:PROJ_LIB = "$runtime\Library\share\proj"
 python commands/reproduce.py verify-matcher -- --runtime-dir "C:\fmm-runtime"
 ```
 
-The matchers come from [FMM](https://github.com/cyang-kth/fmm). Use libraries
-from a compatible build; an arbitrary newer GDAL DLL is not interchangeable.
-The Chinese guide gives the complete road-reference command and output path.
+The matchers come from [FMM](https://github.com/cyang-kth/fmm). The Chinese
+guide gives the complete road-reference command and output path.
 
 The complete experiment-by-experiment guide, expected output trees, all command
 parameters, and cross-dataset migration rules are documented in

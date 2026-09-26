@@ -15,6 +15,21 @@ python -m pip install -r requirements.txt
 
 安装完成后，本目录中的生成、评估和作图命令均使用这个 Python 3.11 环境。
 
+Windows 道路匹配器依赖 GDAL 与 Boost 运行库。使用 conda-forge 按已验证版本建立独立运行时；此环境只提供随包 FMM/STMatch 所需的 DLL，不替代上面的 Python 环境：
+
+```powershell
+conda create --prefix "C:\fmm-runtime" --override-channels --channel conda-forge --repodata-fn repodata.json libgdal=2.4.4 boost-cpp=1.75.0 --yes
+$runtime = "C:\fmm-runtime"
+$runtimeBin = "$runtime\Library\bin"
+Copy-Item "$runtimeBin\gdal204.dll" $runtime -Force
+Copy-Item "$runtimeBin\boost_serialization.dll" $runtime -Force
+$env:PATH = "$runtimeBin;$env:PATH"
+$env:GDAL_DATA = "$runtime\Library\share\gdal"
+$env:PROJ_LIB = "$runtime\Library\share\proj"
+```
+
+下文 `--runtime-dir` 和 `--fmm-runtime-dir` 均使用 `$runtime`。这些版本已与仓库内 Windows 匹配器实测兼容。
+
 每条命令的全部参数、默认行为、物理含义和跨数据集替换规则见 [`docs/COMMAND_PARAMETERS_CN.md`](docs/COMMAND_PARAMETERS_CN.md)。所有 `commands/reproduce.py` 入口都按脚本自身位置定位文件夹，因此可以从任意当前目录用绝对脚本路径调用。
 
 仓库提供两条复现路径：直接运行 `python commands/reproduce.py all-precomputed` 可校验已发布合成数据并重画全部论文图；重新生成或重新评价时，由使用者通过 `--data` 提供同格式真实轨迹。北京输入不随代码复制发布，但可从 [Microsoft GeoLife GPS Trajectories 1.3](https://www.microsoft.com/en-us/download/details.aspx?id=52367) 的公开 `.plt` 文件重建。解压后在本目录运行：
@@ -25,16 +40,16 @@ python commands/reproduce.py prepare-geolife -- --source-dir "C:\data\Geolife Tr
 
 命令按北京边界框筛选 17,123 条轨迹，以公开种子 `20260713` 划分并按训练部分、测试部分的顺序拼接，生成 298,170,617 字节的论文输入。哈希不符时不写文件；换数据集时取消 `--expected-sha256` 并按需设置 `--bbox`、`--seed`。下文 `C:\data\real_full_frozen.pkl` 均可替换成这里生成的路径。
 
-道路匹配使用 [FMM/STMatch](https://github.com/cyang-kth/fmm)。包内提供 `fmm.exe`、`stmatch.exe` 和 `FMMLIB.dll`；Windows 用户还需提供与这些二进制兼容的 `gdal204.dll`、`boost_serialization.dll`，放在例如 `C:\fmm-runtime`。这两个 DLL 不在仓库中。运行道路实验前检查二进制能否启动：
+道路匹配使用 [FMM/STMatch](https://github.com/cyang-kth/fmm)。包内提供 `fmm.exe`、`stmatch.exe` 和 `FMMLIB.dll`；上面的 conda 命令生成兼容的 `gdal204.dll`、`boost_serialization.dll` 及 GDAL/PROJ 数据文件。运行道路实验前检查二进制能否启动：
 
 ```powershell
-python commands/reproduce.py verify-matcher -- --runtime-dir "C:\fmm-runtime"
+python commands/reproduce.py verify-matcher -- --runtime-dir $runtime
 ```
 
 需要道路级真实参考时，可由同一真实轨迹和公共道路图生成：
 
 ```powershell
-python commands/reproduce.py prepare-road-reference -- --dataset-config geolife --real "C:\data\real_full_frozen.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir "C:\fmm-runtime" --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 20000 --omp-threads-per-worker 8 --out-dir "C:\runs\real_road_reference"
+python commands/reproduce.py prepare-road-reference -- --dataset-config geolife --real "C:\data\real_full_frozen.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir $runtime --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 20000 --omp-threads-per-worker 8 --out-dir "C:\runs\real_road_reference"
 ```
 
 该命令生成 `C:\runs\real_road_reference\matched_paths\Real.pkl.gz` 及其 manifest，可直接传给下文的 `--real-routes`。`--dataset-config` 提供公开槽位数和城市配置；`--network` 与匹配器参数决定公共地图匹配过程。预计算 baseline 合成数据已经随本仓库发布；需要从源码重新生成四种 baseline 时使用包含 baseline 源码的完整复现目录。
@@ -42,6 +57,12 @@ python commands/reproduce.py prepare-road-reference -- --dataset-config geolife 
 ## 1. 从统计发布到道路轨迹
 
 这一实验先得到 SPRT、PrivTrace、DPTraj-PM 和 DPStd 的统计式合成轨迹，再比较它们的原生输出与加入 MTR 公共道路路由后的输出。比较保持私有测量不变，只改变道路重建过程，因此直接展示 MTR 路由带来的 RoadYield、BTF 和 FamilyCPC 变化。真实道路参考只取成功匹配的连通路线；合成结果仍保留所有公开输出槽位，匹配失败的槽位在 RoadYield、BTF 和 FamilyCPC 中计零。
+
+先生成本工程的 MTR-GSRT 发布，供下文道路匹配、攻击和主方案比较共用：
+
+```powershell
+python commands/reproduce.py generate-main -- --data "C:\data\real_full_frozen.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 17123 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\mtr_gsrt"
+```
 
 四份已经生成的统计式 DP 合成数据位于：
 
@@ -55,10 +76,25 @@ datasets/synthetic/baselines/
 
 每份数据均包含 17,123 条合成轨迹，后续实验直接读取这四份数据。
 
-四种统计发布经过同一公共路由器得到的合成路线对象位于 `datasets/synthetic/route_experiments/`。第一条命令逐条读取这些合成路线，重新检查有向连续性，并从用户提供的真实道路参考重新计算 RoadYield、BTF 和 FamilyCPC；第二条命令只作图：
+包内带有已缓存的统计发布路线对象。需要从本轮新合成轨迹重新建立 M×R 矩阵时，先用同一公共道路图分别生成 FMM 和 STMatch 路线缓存，再计算指标。以下例子以四种 baseline 和新生成的 MTR-GSRT 为输入；baseline 路径在无源码包中指向随包数据，在完整源码包中替换成刚生成的 `.pkl`。
 
 ```powershell
-python commands/reproduce.py run-framework -- --real-routes "C:\runs\real_road_reference\matched_paths\Real.pkl.gz" --routed "SPRT=datasets\synthetic\route_experiments\SPRT\STMatch.pkl.gz" --routed "PrivTrace=datasets\synthetic\route_experiments\PrivTrace\STMatch.pkl.gz" --routed "DPTraj-PM=datasets\synthetic\route_experiments\DPTraj-PM\STMatch.pkl.gz" --routed "DPStd=datasets\synthetic\route_experiments\DPStd\STMatch.pkl.gz" --out-dir experiment_results/recomputed/framework
+python evaluation/evaluation/cache_common_road_matches.py --dataset-config geolife --real "C:\data\real_full_frozen.pkl" --corpus "SPRT=datasets\synthetic\baselines\sprt_native.pkl" --corpus "PrivTrace=datasets\synthetic\baselines\privtrace_native.pkl" --corpus "DPTraj-PM=datasets\synthetic\baselines\dptrajpm_native.pkl" --corpus "DPStd=datasets\synthetic\baselines\dpstd_native.pkl" --corpus "MTR-GSRT=C:\runs\mtr_gsrt\trajectories.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir "C:\fmm-runtime" --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 20000 --out-dir "C:\runs\mtr_routes\stmatch"
+python evaluation/evaluation/prepare_road_evaluation_network.py --dataset-config geolife --out-dir "C:\runs\fmm_network" --ubodt-format csv --ubodt-delta-m 1000 --ubodt-bin public_assets\matcher\ubodt_gen.exe --fmm-runtime-dir "C:\fmm-runtime"
+python evaluation/evaluation/explore_fmm_road_alignment.py --method "SPRT=datasets\synthetic\baselines\sprt_native.pkl" --method "PrivTrace=datasets\synthetic\baselines\privtrace_native.pkl" --method "DPTraj-PM=datasets\synthetic\baselines\dptrajpm_native.pkl" --method "DPStd=datasets\synthetic\baselines\dpstd_native.pkl" --method "MTR-GSRT=C:\runs\mtr_gsrt\trajectories.pkl" --network "C:\runs\fmm_network\network.shp" --ubodt "C:\runs\fmm_network\ubodt.txt" --fmm public_assets\matcher\fmm.exe --fmm-runtime-dir "C:\fmm-runtime" --limit 17123 --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --routes-out-dir "C:\runs\mtr_routes\fmm" --out-dir "C:\runs\mtr_routes\fmm_audit"
+```
+
+三条命令先生成有向分段道路网及 CSV UBODT，再分别写出 `C:\runs\mtr_routes\stmatch\matched_paths\<方法>.pkl.gz` 和 `C:\runs\mtr_routes\fmm\matched_paths\<方法>.pkl.gz`。UBODT 使用 1,000 m 邻接搜索半径，与随包 FMM 二进制兼容；每条路线保留 `cpath`、连通性和匹配接受状态。将两类路由结果与 MTR-GSRT 的消费者 witness 合并评估：
+
+```powershell
+python commands/reproduce.py run-mr -- --real-routes "C:\runs\real_road_reference\matched_paths\Real.pkl.gz" --route "SPRT::FMM=C:\runs\mtr_routes\fmm\matched_paths\SPRT.pkl.gz" --route "SPRT::STMatch=C:\runs\mtr_routes\stmatch\matched_paths\SPRT.pkl.gz" --route "PrivTrace::FMM=C:\runs\mtr_routes\fmm\matched_paths\PrivTrace.pkl.gz" --route "PrivTrace::STMatch=C:\runs\mtr_routes\stmatch\matched_paths\PrivTrace.pkl.gz" --route "DPTraj-PM::FMM=C:\runs\mtr_routes\fmm\matched_paths\DPTraj-PM.pkl.gz" --route "DPTraj-PM::STMatch=C:\runs\mtr_routes\stmatch\matched_paths\DPTraj-PM.pkl.gz" --route "DPStd::FMM=C:\runs\mtr_routes\fmm\matched_paths\DPStd.pkl.gz" --route "DPStd::STMatch=C:\runs\mtr_routes\stmatch\matched_paths\DPStd.pkl.gz" --route "MTR-GSRT::FMM=C:\runs\mtr_routes\fmm\matched_paths\MTR-GSRT.pkl.gz" --route "MTR-GSRT::STMatch=C:\runs\mtr_routes\stmatch\matched_paths\MTR-GSRT.pkl.gz" --route "MTR-GSRT::Native=C:\runs\mtr_gsrt\road_witnesses.pkl" --edge-cache public_assets\ordered_portal_route_cache.pkl.gz --out-dir experiment_results/recomputed/mr
+python commands/reproduce.py plot -- --figure mr --data-root experiment_results/recomputed
+```
+
+`run-framework` 可使用同一 STMatch 缓存中的四个 baseline 文件重算框架比较：
+
+```powershell
+python commands/reproduce.py run-framework -- --real-routes "C:\runs\real_road_reference\matched_paths\Real.pkl.gz" --routed "SPRT=C:\runs\mtr_routes\stmatch\matched_paths\SPRT.pkl.gz" --routed "PrivTrace=C:\runs\mtr_routes\stmatch\matched_paths\PrivTrace.pkl.gz" --routed "DPTraj-PM=C:\runs\mtr_routes\stmatch\matched_paths\DPTraj-PM.pkl.gz" --routed "DPStd=C:\runs\mtr_routes\stmatch\matched_paths\DPStd.pkl.gz" --edge-cache public_assets\ordered_portal_route_cache.pkl.gz --out-dir experiment_results/recomputed/framework
 python commands/reproduce.py plot -- --figure framework --data-root experiment_results/recomputed
 ```
 
@@ -83,7 +119,7 @@ experiment_results/regenerated_figures/
 ```powershell
 python commands/reproduce.py prepare-split -- --data "C:\data\real_full_frozen.pkl" --input-order --train-fraction 0.8 --seed 20260713 --out-dir "C:\runs\strict_split"
 python commands/reproduce.py prepare-attack-split -- --split-dir "C:\runs\strict_split" --out-dir "C:\runs\attack_split"
-python commands/reproduce.py run-privacy -- --method MTR-GSRT --members "C:\runs\attack_split\member_candidates.pkl" --nonmembers "C:\runs\attack_split\nonmember_candidates.pkl" --reference "C:\runs\attack_split\reference.pkl" --release "datasets\synthetic\mtr_gsrt\trajectories.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir experiment_results/recomputed/privacy
+python commands/reproduce.py run-privacy -- --members "C:\runs\attack_split\member_candidates.pkl" --nonmembers "C:\runs\attack_split\nonmember_candidates.pkl" --reference "C:\runs\attack_split\reference.pkl" --release "SPRT=datasets\synthetic\baselines\sprt_native.pkl" --release "PrivTrace=datasets\synthetic\baselines\privtrace_native.pkl" --release "DPTraj-PM=datasets\synthetic\baselines\dptrajpm_native.pkl" --release "DPStd=datasets\synthetic\baselines\dpstd_native.pkl" --release "MTR-GSRT=datasets\synthetic\mtr_gsrt\trajectories.pkl" --bbox 39.75 40.15 116.10 116.65 --out-dir experiment_results/recomputed/privacy
 python commands/reproduce.py plot -- --figure privacy --data-root experiment_results/recomputed
 ```
 
@@ -95,11 +131,7 @@ python commands/reproduce.py plot -- --figure privacy --data-root experiment_res
 
 ## 3. 从道路合法性到路线选择保真度
 
-先运行 MTR-GSRT，生成本文具体方案的合成道路轨迹：
-
-```powershell
-python commands/reproduce.py generate-main -- --data "C:\data\real_full_frozen.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 17123 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\mtr_gsrt"
-```
+第 1 节已生成 `C:\runs\mtr_gsrt`；此处用相同发布评估道路合法性、统计保真度和路线选择。
 
 参数说明：`--data` 指定任意坐标轨迹；`--epsilon-total` 是总隐私预算；`--noise-seed/--decoder-seed` 分别固定 DP 噪声和公共路由；`--public-slot-count` 是预声明输出数；`--bbox` 为 `lat_min lat_max lon_min lon_max`；`--osm-cache` 是同城公共道路缓存；`--component-mode full` 启用全部组件；`--out-dir` 是本轮独立输出目录。
 
@@ -199,11 +231,12 @@ python commands/reproduce.py generate-main -- --data "C:\runs\strict_split\train
 ### 6.2 执行两种公共道路重建
 
 ```powershell
-python evaluation/evaluation/explore_fmm_road_alignment.py --method "SPRT=datasets\synthetic\train_only_baselines\sprt_train.pkl" --method "PrivTrace=datasets\synthetic\train_only_baselines\privtrace_train.pkl" --method "DPTraj-PM=datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --method "DPStd=datasets\synthetic\train_only_baselines\dpstd_train.pkl" --method "MTR-GSRT=C:\runs\tstr_mr\mtr_gsrt\trajectories.pkl" --network public_assets\beijing_network\network.shp --fmm public_assets\matcher\fmm.exe --fmm-runtime-dir "C:\fmm-runtime" --out-dir "C:\runs\tstr_mr\fmm"
+python evaluation/evaluation/prepare_road_evaluation_network.py --dataset-config geolife --out-dir "C:\runs\fmm_network" --ubodt-format csv --ubodt-delta-m 1000 --ubodt-bin public_assets\matcher\ubodt_gen.exe --fmm-runtime-dir "C:\fmm-runtime"
+python evaluation/evaluation/explore_fmm_road_alignment.py --method "SPRT=datasets\synthetic\train_only_baselines\sprt_train.pkl" --method "PrivTrace=datasets\synthetic\train_only_baselines\privtrace_train.pkl" --method "DPTraj-PM=datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --method "DPStd=datasets\synthetic\train_only_baselines\dpstd_train.pkl" --method "MTR-GSRT=C:\runs\tstr_mr\mtr_gsrt\trajectories.pkl" --network "C:\runs\fmm_network\network.shp" --ubodt "C:\runs\fmm_network\ubodt.txt" --fmm public_assets\matcher\fmm.exe --fmm-runtime-dir "C:\fmm-runtime" --limit 13698 --routes-out-dir "C:\runs\tstr_mr\fmm" --out-dir "C:\runs\tstr_mr\fmm_audit"
 python evaluation/evaluation/cache_common_road_matches.py --dataset-config geolife --real "C:\runs\strict_split\train.pkl" --corpus "SPRT=datasets\synthetic\train_only_baselines\sprt_train.pkl" --corpus "PrivTrace=datasets\synthetic\train_only_baselines\privtrace_train.pkl" --corpus "DPTraj-PM=datasets\synthetic\train_only_baselines\dptrajpm_train.pkl" --corpus "DPStd=datasets\synthetic\train_only_baselines\dpstd_train.pkl" --corpus "MTR-GSRT=C:\runs\tstr_mr\mtr_gsrt\trajectories.pkl" --network public_assets\beijing_network\network.shp --stmatch-bin public_assets\matcher\stmatch.exe --runtime-dir "C:\fmm-runtime" --limit 13698 --max-points 32 --radius-m 200 --gps-error-m 50 --candidates 8 --batch-size 5000 --out-dir "C:\runs\tstr_mr\stmatch"
 ```
 
-`--method/--corpus NAME=PATH` 指定待路由的训练侧发布；`--network`、匹配器二进制和运行库均为公共资源；`--limit 13698` 与冻结训练侧输出规模一致；`--max-points` 控制每条输入用于匹配的公共采样上限；`--radius-m`、`--gps-error-m` 和 `--candidates` 控制候选道路搜索。两个输出目录都包含 `matched_paths/<方法>.pkl.gz` 和运行 manifest。
+`--method/--corpus NAME=PATH` 指定待路由的训练侧发布；`--network`、匹配器二进制和运行库均为公共资源；`--limit 13698` 与冻结训练侧输出规模一致；`--max-points` 控制每条输入用于匹配的公共采样上限；`--radius-m`、`--gps-error-m` 和 `--candidates` 控制候选道路搜索。STMatch 可追加 `--parallel-workers 3 --corpus-workers 2 --omp-threads-per-worker 2 --resume` 并行处理：前两项分别控制每个语料的分块进程数和同时处理的语料数，第三项限制每个进程的线程数，`--resume` 复用已完成语料。本机按这组参数复现，不改变道路匹配参数。两个输出目录都包含 `matched_paths/<方法>.pkl.gz` 和运行 manifest。
 
 ### 6.3 生成双视图并执行六项任务
 

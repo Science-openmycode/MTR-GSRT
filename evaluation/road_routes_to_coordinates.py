@@ -19,16 +19,29 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Convert directed-road routes to WGS84 coordinate trajectories.")
     parser.add_argument("--routes", type=Path, required=True)
     parser.add_argument("--network", type=Path, required=True)
+    parser.add_argument("--edge-cache", type=Path,
+                        help="Public edge cache; maps canonical route endpoints to network edge IDs.")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     frame = gpd.read_file(args.network)
     if frame.crs is None:
         raise RuntimeError("network CRS is missing")
     frame = frame.to_crs(4326)
-    geometry = {
-        (int(row.source), int(row.target)): row.geometry
-        for row in frame.itertuples()
-    }
+    if args.edge_cache:
+        edge_cache = load(args.edge_cache)
+        edge_nodes = edge_cache.get("edge_nodes")
+        if not isinstance(edge_nodes, dict):
+            raise ValueError("edge cache must contain an edge_nodes mapping")
+        geometry = {
+            tuple(map(int, edge_nodes[int(row.id)])): row.geometry
+            for row in frame.itertuples()
+            if int(row.id) in edge_nodes
+        }
+    else:
+        geometry = {
+            (int(row.source), int(row.target)): row.geometry
+            for row in frame.itertuples()
+        }
     trajectories = []
     for route in load(args.routes):
         coordinates = []

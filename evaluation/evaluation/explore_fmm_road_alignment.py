@@ -8,8 +8,10 @@ consumer-visible WitnessValid certificate.
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import math
+import pickle
 import sys
 from collections import Counter
 from pathlib import Path
@@ -75,8 +77,11 @@ def main() -> None:
     parser.add_argument("--real-calibration-offset", type=int, default=None, help="Optional disjoint real slice offset for finite-sample calibration.")
     parser.add_argument("--network", required=True)
     parser.add_argument("--fmm", required=True)
+    parser.add_argument("--ubodt", required=True, help="UBODT table generated for this exact FMM network.")
     parser.add_argument("--fmm-runtime-dir", default=None, help="Directory containing FMM runtime DLLs.")
     parser.add_argument("--out-dir", required=True)
+    parser.add_argument("--routes-out-dir", default=None,
+                        help="Optional directory for reusable per-method MatchRecord route pickles.")
     parser.add_argument("--limit", type=int, default=300)
     parser.add_argument("--max-points", type=int, default=32)
     parser.add_argument("--radius-m", type=float, default=200.0)
@@ -120,7 +125,7 @@ def main() -> None:
     records, invocation = run_fmm(
         combined,
         public_path(args.network),
-        None,
+        public_path(args.ubodt),
         public_path(args.fmm),
         None,
         public_path(args.fmm_runtime_dir) if args.fmm_runtime_dir else None,
@@ -138,6 +143,24 @@ def main() -> None:
     for index, name in enumerate(names):
         start = offset + index * args.limit
         method_records = records[start:start + args.limit]
+        if args.routes_out_dir:
+            route_root = public_path(args.routes_out_dir) / "matched_paths"
+            if not route_root.exists():
+                route_root.mkdir(parents=True)
+            route_path = route_root / f"{name}.pkl.gz"
+            if route_path.exists():
+                raise FileExistsError(f"refusing to overwrite route cache: {route_path}")
+            with gzip.open(route_path, "wb", compresslevel=6) as handle:
+                pickle.dump([
+                    {"source_index": int(record.source_index),
+                     "cpath": tuple(int(value) for value in record.cpath),
+                     "opath": tuple(int(value) for value in record.opath),
+                     "residual_m": tuple(float(value) for value in record.residual_m),
+                     "connected": bool(record.connected),
+                     "observation_share": float(record.observation_share),
+                     "accepted": bool(record.accepted)}
+                    for record in method_records
+                ], handle, pickle.HIGHEST_PROTOCOL)
         results[name] = _summarize(method_records, args.tau_m)
         if real_records is not None:
             results[name]["completed_edge_flow_jsd"] = _jsd_counters(_edge_counts(real_records), _edge_counts(method_records))
@@ -154,6 +177,7 @@ def main() -> None:
             "limit": args.limit, "max_points": args.max_points, "radius_m": args.radius_m,
             "gps_error_m": args.gps_error_m, "candidates": args.candidates,
             "min_observation_share": args.min_observation_share, "tau_m": args.tau_m,
+            "routes_out_dir": str(public_path(args.routes_out_dir)) if args.routes_out_dir else None,
         },
         "methods": {name: str(path) for name, path in methods.items()},
         "real": str(public_path(args.real)) if args.real else None,

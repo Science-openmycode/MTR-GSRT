@@ -56,22 +56,31 @@
 | `prepare-attack-split --seed` | 攻击候选抽样种子，默认 `20260715`。 |
 | `prepare-attack-split --out-dir` | member、nonmember、reference 文件输出目录。 |
 | `prepare-road-reference --dataset-config` | 数据集注册名，用于读取公开槽位数和城市配置。 |
-| `verify-matcher --runtime-dir` | 在道路实验前检查外部 FMM/STMatch 运行库目录；随包的 Windows 可执行文件需要兼容的 `gdal204.dll` 与 `boost_serialization.dll`，仓库未包含这两个 DLL。验证还会实际启动 `fmm.exe` 与 `stmatch.exe`。 |
+| `verify-matcher --runtime-dir` | 指向 conda-forge 环境前缀（README 中为 `C:\fmm-runtime`）；创建方式为 `conda create --prefix C:\fmm-runtime --override-channels --channel conda-forge --repodata-fn repodata.json libgdal=2.4.4 boost-cpp=1.75.0 --yes`。README 同时设置 GDAL/PROJ 数据目录并把 DLL 复制到前缀根目录。验证会实际启动 `fmm.exe` 与 `stmatch.exe`。 |
 | `verify-matcher --fmm-bin/--stmatch-bin` | 可覆盖随包匹配器路径；两个可执行文件均须与其 `FMMLIB.dll` 配套。 |
 | `prepare-road-reference --real` | 用户提供的真实坐标轨迹文件。 |
 | `prepare-road-reference --network` | 与轨迹同城的公共有向道路图。 |
-| `prepare-road-reference --stmatch-bin/--runtime-dir` | STMatch 可执行文件及兼容运行库目录；先运行 `verify-matcher`，不要把不含依赖 DLL 的 `public_assets/matcher` 当作运行库目录。 |
+| `prepare-road-reference --stmatch-bin/--runtime-dir` | STMatch 可执行文件及 conda-forge 运行库前缀；先运行 `verify-matcher`。 |
 | `prepare-road-reference --max-points/--radius-m/--gps-error-m/--candidates` | 每条轨迹的采样上限与公共地图匹配参数。 |
 | `prepare-road-reference --batch-size/--omp-threads-per-worker` | 每次调用匹配器的记录数与该进程使用的 CPU 线程数；北京全量参考已用 `20000/8` 实测，改变线程数不改变匹配参数。 |
 | `prepare-road-reference --out-dir` | 写出 `matched_paths/Real.pkl.gz` 与匹配 manifest 的目录。 |
-| `run-privacy --method` | 图表中的方法名。 |
+| `cache_common_road_matches.py --batch-size/--parallel-workers/--corpus-workers/--omp-threads-per-worker/--resume` | STMatch 分块大小、每个语料的并发分块数、同时处理的语料数、单进程线程数及已完成语料的复用；只控制执行资源。内存有限时降低并发数。 |
+| `explore_fmm_road_alignment.py --routes-out-dir` | 可选目录，将每个 `--method NAME=PATH` 的匹配结果保存为可供 `run-mr`/`run-framework` 复用的 `NAME.pkl.gz`。 |
+| `run-privacy --method` | 单个无名称 `--release PATH` 的图表方法名；批量输入时用 `NAME=PATH`，无需该项。 |
 | `run-privacy --members/--nonmembers/--reference` | 三个互斥攻击集合。 |
-| `run-privacy --release` | 被攻击的合成发布。 |
+| `run-privacy --release` | 被攻击的合成发布；可重复传入 `NAME=PATH`，每个发布独立运行并汇总到 `results.csv`。 |
 | `run-privacy --bbox` | 四项顺序为 `lat_min lat_max lon_min lon_max`。 |
 | `run-privacy --seed` | 攻击模型随机种子，默认 `20260724`。 |
 | `run-privacy --out-dir` | 新攻击结果目录。 |
 
 ## 5. 统一评估与实验参数
+
+### FMM 路线重建
+
+- `prepare_road_evaluation_network.py --dataset-config/--out-dir`：从配置中的公共 OSM 缓存生成 FMM 专用有向分段路网；输出目录必须是新目录。
+- `--ubodt-format csv --ubodt-delta-m 1000 --ubodt-bin public_assets\matcher\ubodt_gen.exe`：生成 FMM 可读取的 CSV UBODT。路网与 UBODT 必须来自同一次构建。
+- `explore_fmm_road_alignment.py --network/--ubodt/--fmm/--fmm-runtime-dir`：分别指定上述路网、配套 UBODT、FMM 可执行文件和运行库目录。
+- `--routes-out-dir DIR`：把新匹配路线写到 `DIR\matched_paths\<方法>.pkl.gz`，供 M×R/TSTR 后续步骤直接读取；`--out-dir` 单独保存诊断结果。
 
 | 入口与参数 | 含义与迁移规则 |
 |---|---|
