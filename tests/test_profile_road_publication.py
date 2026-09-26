@@ -8,6 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "evaluation"))
 from run_profile_experiment import ROOT, publication_road_metrics, resolve_input
+from evaluation.evaluate_all import _score_published_road_object
 
 
 class PublicationRoadMetricTests(unittest.TestCase):
@@ -37,6 +38,28 @@ class PublicationRoadMetricTests(unittest.TestCase):
             witness.write_bytes(b"tampered witness")
             with self.assertRaisesRegex(RuntimeError, "hash mismatch"):
                 publication_road_metrics(metrics, synthetic, witness)
+
+    def test_all_metrics_uses_witness_and_retains_coordinate_proxy(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            synthetic = root / "trajectories.pkl"
+            witness = root / "road_witnesses.pkl"
+            synthetic.write_bytes(b"coordinate release")
+            witness.write_bytes(b"directed witness")
+            outputs = {path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+                       for path in (synthetic, witness)}
+            (root / "manifest.json").write_text(json.dumps({"outputs": outputs}))
+            metrics = {"route_compatible_yield": 0.01,
+                       "directed_road_validity": 0.33, "witness_valid": 1.0}
+            self.assertEqual(_score_published_road_object(metrics, synthetic, witness),
+                             "directed_witness")
+            self.assertEqual(metrics["route_compatible_yield"], 1.0)
+            self.assertEqual(metrics["directed_road_validity"], 1.0)
+            self.assertEqual(metrics["coordinate_projection_route_compatible_yield"], 0.01)
+            self.assertEqual(metrics["coordinate_projection_directed_road_validity"], 0.33)
+            witness.write_bytes(b"tampered witness")
+            with self.assertRaisesRegex(RuntimeError, "hash mismatch"):
+                _score_published_road_object(metrics, synthetic, witness)
 
     def test_derived_route_checks_public_edges_and_hashes(self):
         with tempfile.TemporaryDirectory() as directory:
