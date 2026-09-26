@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import gzip
 import pickle
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 
@@ -51,6 +51,88 @@ def _compress(values) -> tuple:
     return tuple(out)
 
 
+def _support_scores(real: Counter, synthetic: Counter) -> tuple[float, float, float]:
+    real_support, synthetic_support = set(real), set(synthetic)
+    common = len(real_support & synthetic_support)
+    recall = common / len(real_support) if real_support else 1.0
+    precision = common / len(synthetic_support) if synthetic_support else 0.0
+    f1 = 2 * recall * precision / (recall + precision) if recall + precision else 0.0
+    return recall, precision, f1
+
+
+def _branch_scores(real_routes, synthetic_routes) -> tuple[float, float]:
+    """Conditional branch overlap and dominant-exit accuracy on real branch mass."""
+    counters = []
+    for routes in (real_routes, synthetic_routes):
+        choices = defaultdict(Counter)
+        for route in routes:
+            weight = 1.0 / max(len(route) - 1, 1)
+            for left, right in zip(route, route[1:]):
+                choices[left][right] += weight
+        counters.append(choices)
+    real, synthetic = counters
+    branches = [entry for entry in real if len(real[entry]) > 1]
+    evidence = sum(sum(real[entry].values()) for entry in branches)
+    overlap = dominant = 0.0
+    for entry in branches:
+        mass = sum(real[entry].values())
+        synthetic_mass = sum(synthetic[entry].values())
+        if synthetic_mass:
+            real_probability = {key: value / mass for key, value in real[entry].items()}
+            synthetic_probability = {key: value / synthetic_mass
+                                     for key, value in synthetic[entry].items()}
+            overlap += mass * sum(min(real_probability.get(key, 0.0),
+                                      synthetic_probability.get(key, 0.0))
+                                  for key in real_probability.keys() | synthetic_probability.keys())
+            dominant += mass * float(max(real_probability, key=real_probability.get)
+                                     == max(synthetic_probability, key=synthetic_probability.get))
+    return overlap / max(evidence, 1e-12), dominant / max(evidence, 1e-12)
+
+
+def _od_prefix_workload(routes, od_labels, route_labels):
+    groups = defaultdict(Counter)
+    od_counts = Counter()
+    for route in routes:
+        if not route:
+            continue
+        od = (int(od_labels.get(route[0][0], -1)),
+              int(od_labels.get(route[-1][1], -1)))
+        path = _compress([int(route_labels.get(route[0][0], -1))] +
+                         [int(route_labels.get(edge[1], -1)) for edge in route])
+        if len(path) < 2:
+            continue
+        weight = 1.0 / (len(path) - 1)
+        for length in range(2, len(path) + 1):
+            groups[od][path[:length]] += weight
+        od_counts[od] += 1
+    return groups, od_counts
+
+
+def _od_prefix_fidelity(real_routes, synthetic_routes, cache, resolution, route_yield):
+    od_labels = {int(k): int(v) for k, v in cache["labels24"].items()}
+    route_labels = {int(k): int(v) for k, v in cache[f"labels{resolution}"].items()}
+    real_groups, real_counts = _od_prefix_workload(real_routes, od_labels, route_labels)
+    synthetic_groups, _ = _od_prefix_workload(synthetic_routes, od_labels, route_labels)
+    total = sum(real_counts.values())
+    if not total:
+        return 0.0
+    fidelity = sum((count / total) * _cpc(real_groups[od], synthetic_groups.get(od, Counter()))
+                   for od, count in real_counts.items())
+    return fidelity * route_yield
+
+
+def _demand_fidelity(real_routes, synthetic_routes, cache, synthetic_slots):
+    labels = {int(k): int(v) for k, v in cache["labels24"].items()}
+    def counts(routes):
+        return Counter((labels.get(route[0][0], -1), labels.get(route[-1][1], -1))
+                       for route in routes if route)
+    real, synthetic = counts(real_routes), counts(synthetic_routes)
+    real_n = max(len(real_routes), 1)
+    synthetic_n = max(synthetic_slots, 1)
+    return float(sum(min(real[key] / real_n, synthetic[key] / synthetic_n)
+                     for key in real.keys() | synthetic.keys()))
+
+
 def valid_routes(routes) -> list[tuple[tuple[int, int], ...]]:
     """Condition the real reference on observed connected road evidence."""
     return [tuple(route) for route in routes
@@ -94,17 +176,40 @@ def evaluate_routes(routes, real_routes, cache, reference=None) -> dict[str, flo
     synthetic = route_counters(routes, cache)
     slots = max(len(routes), 1)
     real_decision_yield = reference["decision_slots"] / max(len(real_routes), 1)
-    decision_overlap = _cpc(reference["decision"], synthetic["decision"])
+    # The frozen RC-CPC normalizes each contributing route to unit decision
+    # mass before comparing the conditional distributions. Raw occurrence CPC
+    # weights long routes more heavily and is a different estimand.
+    decision_overlap = _cpc(reference["decision_unit"], synthetic["decision_unit"])
     bounded_overlap = sum(min(reference["decision_unit"][key], synthetic["decision_unit"][key])
                           for key in reference["decision_unit"].keys() | synthetic["decision_unit"].keys())
     # The published BTF contract divides subprobability overlap by public
     # real-evidence yield; missing synthetic slots cannot be renormalized away.
     btf = min(1.0, bounded_overlap / real_decision_yield) if real_decision_yield else 0.0
+    edge_cpc = _cpc(reference["edge"], synthetic["edge"])
+    turn_cpc = _cpc(reference["turn"], synthetic["turn"])
+    edge_recall, edge_precision, edge_f1 = _support_scores(reference["edge"], synthetic["edge"])
+    turn_recall, turn_precision, turn_f1 = _support_scores(reference["turn"], synthetic["turn"])
+    branch_cpc, exit_acc = _branch_scores(valid_routes(real_routes), valid_routes(routes))
+    valid_real, valid_synthetic = valid_routes(real_routes), valid_routes(routes)
+    road_yield = synthetic["valid"] / slots
     return {
-        "RoadYield": synthetic["valid"] / slots,
+        "RoadYield": road_yield,
+        "DemandFid": _demand_fidelity(valid_real, valid_synthetic, cache, slots),
         "BTF": btf,
         "RC-CPC": decision_overlap,
-        "EdgeCPC": _cpc(reference["edge"], synthetic["edge"]),
-        "TurnCPC": _cpc(reference["turn"], synthetic["turn"]),
+        "EdgeCPC": edge_cpc,
+        "TurnCPC": turn_cpc,
         "FamilyCPC": _cpc(reference["family"], synthetic["family"]) * synthetic["valid"] / slots,
+        "EdgeRecall": edge_recall,
+        "EdgePrecision": edge_precision,
+        "EdgeF1": edge_f1,
+        "TurnRecall": turn_recall,
+        "TurnPrecision": turn_precision,
+        "TurnF1": turn_f1,
+        "EdgeIoU": edge_cpc / (2.0 - edge_cpc),
+        "TurnIoU": turn_cpc / (2.0 - turn_cpc),
+        "BranchCPC": branch_cpc,
+        "ExitAcc": exit_acc,
+        "ODPF96": _od_prefix_fidelity(valid_real, valid_synthetic, cache, 96, road_yield),
+        "ODPF384": _od_prefix_fidelity(valid_real, valid_synthetic, cache, 384, road_yield),
     }

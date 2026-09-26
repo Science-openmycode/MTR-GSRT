@@ -208,8 +208,8 @@
     },
     {
       "path": "docs/COMMAND_PARAMETERS_CN.md",
-      "size": 14078,
-      "sha256": "c1d51deac8b294e6f8be3480753f85166aab9f8a1bf2d927ef521c77e4152311",
+      "size": 14866,
+      "sha256": "eb9d43fc17560a84d127ca7a4ee5dcc401be98e6dad95e7b77acfe3efc3087ba",
       "role": "source_or_documentation"
     },
     {
@@ -568,8 +568,8 @@
     },
     {
       "path": "evaluation/route_metric_core.py",
-      "size": 4771,
-      "sha256": "bcac204c2bad967f7219d1f0af3b0a7c0b5ec06aed1d80fc0c8299fee3d178a1",
+      "size": 10078,
+      "sha256": "6731fc145d6589ae2ab05f525f3e941505d5f43e9e9078cafd0bdb980c94f381",
       "role": "source_or_documentation"
     },
     {
@@ -1846,8 +1846,8 @@
     },
     {
       "path": "tests/test_route_metric_core.py",
-      "size": 1598,
-      "sha256": "c03d1accef2aad53c9390e104e8417f7af9606f2556df90d2a9ef842a3340b68",
+      "size": 3357,
+      "sha256": "adca2eeef4fb6c7565426249f0d5e0e348ef89853a46e5b401635beb0d5ba6cb",
       "role": "source_or_documentation"
     }
   ]

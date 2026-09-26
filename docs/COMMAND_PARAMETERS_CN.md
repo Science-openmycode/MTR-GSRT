@@ -86,6 +86,7 @@
 |---|---|
 | `evaluate --real/--synthetic` | 真实参考与一份合成轨迹。两者必须为同一城市和坐标系。 |
 | `evaluate --witness` | 可选道路 witness；只有发布 witness 的方法传入。 |
+| `evaluate --road-routes/--edge-cache` | 可选有向道路路线与公共边缓存；用于由 `routes-to-coordinates` 派生坐标的发布，要求同名 derivation manifest 的哈希和槽位数一致。与 `--witness` 互斥。 |
 | `evaluate --dataset-config` | 可选数据集配置键；注册数据集用它加载冻结公共设置。任意新数据集可省略并显式提供后述三项。 |
 | `evaluate --bbox/--osm-cache/--public-slot-count` | 任意新数据集必须显式给出城市范围、公共道路缓存和预声明评估条数。 |
 | `evaluate --task-mode` | 当前为 `retrospective`；严格泛化任务使用独立的 `run-tstr`。 |
@@ -109,6 +110,9 @@
 | `run-mr --route` | `M::R=PATH`，显式加入一个测量—路由组合，可重复。 |
 | `run-mr --route-dir` | 批量扫描 `<M>/<R>.pkl[.gz]` 的根目录；只有未给 `--route` 时才默认读取包内路线。显式 `--route` 不自动混入历史缓存。 |
 | `run-mr --out-dir` | M×R 原始值和矩阵目录。 |
+
+`run-mr` 的 `results.csv` 直接从输入路线重新计算道路有效率、OD24 需求覆盖率 `DemandFid`、BTF、RC/Edge/Turn/Family CPC、道路边和转向的召回率/精确率/F1/IoU、分支条件保真度 `BranchCPC`、主导出口准确率 `ExitAcc`，以及 OD 条件化区域前缀保真度 `ODPF96/ODPF384`。这些列使用同一组显式提供的路线对象，不从冻结表摘取。
+`RC-CPC` 与 BTF 对同一条轨迹的路口选择赋单位总质量；长轨迹不会因路口较多而在条件分布比较中被额外加权。
 | `run-ablation --data/--dataset-config/--bbox/--osm-cache` | GSRT 消融的显式真实坐标数据和同城公共配置。 |
 | `run-ablation --epsilon-total/--noise-seed/--decoder-seed/--request-seed/--public-slot-count` | GSRT 各臂共用的隐私预算、随机种子和固定输出规模。 |
 | `run-ablation --limit` | 仅用于小规模功能检查，且必须等于 `--public-slot-count`；正式实验不使用。 |
