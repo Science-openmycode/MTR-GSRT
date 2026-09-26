@@ -107,7 +107,7 @@ def plot_mr() -> None:
 def plot_ablation() -> None:
     table = read_table("ablation", "ablation.csv")
     first = table.columns[0]
-    if str(first).startswith("Unnamed") or first in {"metric", "component", "ablation"}:
+    if str(first).startswith("Unnamed") or first in {"metric", "component", "ablation", "Ablation arm"}:
         table = table.set_index(first)
     if "metric" in table.index.names or table.index.name == "metric":
         table = table.T
