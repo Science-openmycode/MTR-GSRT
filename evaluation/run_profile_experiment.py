@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import subprocess
 import sys
@@ -24,6 +25,35 @@ def similarity(value: float) -> float:
     return max(0.0, min(1.0, 1.0 - float(value)))
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def publication_road_metrics(metrics: dict, synthetic: Path, witness: Path | None) -> tuple[float, float, str]:
+    """Score the delivered road object; keep coordinate-subsampling diagnostics separate."""
+    if witness is None:
+        return (float(metrics["route_compatible_yield"]),
+                float(metrics["directed_road_validity"]), "coordinate_projection")
+    if witness.parent != synthetic.parent:
+        raise ValueError("witness and coordinates must come from the same release directory")
+    manifest_path = synthetic.parent / "manifest.json"
+    if not manifest_path.is_file():
+        raise FileNotFoundError(f"witness release requires a hash manifest: {manifest_path}")
+    outputs = json.loads(manifest_path.read_text(encoding="utf-8")).get("outputs", {})
+    for path in (synthetic, witness):
+        expected = outputs.get(path.name)
+        if not isinstance(expected, str) or expected.lower() != _sha256(path).lower():
+            raise RuntimeError(f"release manifest hash mismatch: {path}")
+    validity = metrics.get("witness_valid")
+    if validity is None:
+        raise RuntimeError("witness validation did not produce a road validity score")
+    return float(validity), float(validity), "directed_witness"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Execute the unified evaluator for every synthetic corpus and aggregate a fresh profile."
@@ -42,6 +72,7 @@ def main() -> None:
     output.mkdir(parents=True, exist_ok=True)
 
     rows = []
+    road_sources = {}
     for name, synthetic in args.synthetic:
         raw = output / "raw" / name.replace(" ", "_")
         command = [
@@ -60,9 +91,13 @@ def main() -> None:
         print("RUN:", subprocess.list2cmdline(command), flush=True)
         subprocess.run(command, cwd=ROOT, check=True)
         metrics = json.loads((raw / "metrics.json").read_text(encoding="utf-8"))["metrics"]
+        road_yield, dir_valid, road_source = publication_road_metrics(
+            metrics, synthetic, witnesses.get(name)
+        )
+        road_sources[name] = road_source
         values = {
-            "RoadYield": metrics.get("route_compatible_yield", 0.0),
-            "DirValid": metrics.get("directed_road_validity", 0.0),
+            "RoadYield": road_yield,
+            "DirValid": dir_valid,
             "WitnessValid": metrics.get("witness_valid", 0.0),
             "DemandFid": similarity(metrics.get("trip_error", 1.0)),
             "GridSim": similarity(metrics.get("grid_density_jsd", 1.0)),
@@ -82,6 +117,11 @@ def main() -> None:
     (output / "manifest.json").write_text(json.dumps({
         "protocol": "executed_full_population_profile_v1",
         "corpora": [name for name, _ in args.synthetic],
+        "road_metric_source": road_sources,
+        "coordinate_projection_diagnostics": {
+            name: str((output / "raw" / name.replace(" ", "_") / "metrics.json").resolve())
+            for name, _ in args.synthetic
+        },
         "result": str(result.resolve()),
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {len(rows)} freshly evaluated metric rows to {result}")
