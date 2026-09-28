@@ -104,7 +104,7 @@ def main() -> None:
     binary = public_path(args.stmatch_bin) if args.stmatch_bin else public_path(
         "third_party/fmm-v0.1.1/cyang-kth-fmm-344fb8c/build/Release/stmatch.exe"
     )
-    runtime_dir = Path(args.runtime_dir).resolve() if args.runtime_dir else None
+    runtime_dir = public_path(args.runtime_dir) if args.runtime_dir else None
     registered = {str(config["name"]).lower(), *[str(value).lower() for value in config.get("aliases", [])]}
     real_spec = config["data"] if args.real.lower() in registered else args.real
     corpora: list[tuple[str, str]] = [("Real", real_spec)]

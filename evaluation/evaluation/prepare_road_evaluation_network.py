@@ -253,8 +253,8 @@ def main() -> None:
         invocation = _run_ubodt(
             network,
             ubodt,
-            binary.resolve(),
-            args.fmm_runtime_dir.resolve() if args.fmm_runtime_dir else None,
+            public_path(binary),
+            public_path(args.fmm_runtime_dir) if args.fmm_runtime_dir else None,
             args.ubodt_delta_m,
         )
     manifest = {
