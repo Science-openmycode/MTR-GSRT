@@ -44,6 +44,9 @@ class CityInputTest(unittest.TestCase):
             command = [sys.executable, str(ROOT/"commands/prepare_sf_trips.py"),
                        "--source-dir", str(source), "--out", str(folder/"sf.pkl"),
                        "--count","1","--min-points","2","--min-length-km","0.01"]
+            bad = subprocess.run(command+["--expected-sha256","0"*64], capture_output=True)
+            self.assertNotEqual(bad.returncode, 0)
+            self.assertFalse((folder/"sf.pkl").exists())
             result = subprocess.run(command, cwd=folder, capture_output=True)
             self.assertEqual(result.returncode, 0, result.stderr.decode(errors="replace"))
             with (folder/"sf.pkl").open("rb") as handle:

@@ -47,8 +47,8 @@
     {
       "path": "commands/prepare_sf_trips.py",
       "role": "source_or_documentation",
-      "size": 8013,
-      "sha256": "823bc70d991d7e30ba25bbeb920295aee67cc0463aae44d82b24a0507ce86d4d"
+      "size": 8357,
+      "sha256": "681d366c6421fe9a3b2ffe5de9bd63f4a7deafee50ec8f2b7b880c5ed4452ac4"
     },
     {
       "path": "commands/reproduce.py",
@@ -239,8 +239,8 @@
     {
       "path": "docs/CROSS_CITY_COMMANDS_CN.md",
       "role": "source_or_documentation",
-      "size": 5488,
-      "sha256": "1039749aad2b0c4ac4c86a26aba59e2db771b7df9b67cee58c6bdc557fc4cdc2"
+      "size": 5993,
+      "sha256": "50d17d614751ab03c7b0664c8ef1c3d36a9299eb73a6511907c97e4b61ab4ee7"
     },
     {
       "path": "docs/FROZEN_EXPERIMENT_REPORT_CN.md",
@@ -1925,8 +1925,8 @@
     {
       "path": "tests/test_prepare_city_inputs.py",
       "role": "source_or_documentation",
-      "size": 2723,
-      "sha256": "e6bdbf53236c5e2928984aa39d68b7b01eae22b597b925668a1b682d67d0ae5c"
+      "size": 2923,
+      "sha256": "05c4dfc049c3f5737286ab3e8453229cab82d6d0aea5483233019b5cef068aad"
     },
     {
       "path": "tests/test_prepare_geolife.py",

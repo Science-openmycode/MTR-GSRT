@@ -119,6 +119,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--source-dir", type=Path, required=True)
+    parser.add_argument("--expected-sha256", help="Require this frozen output hash before writing")
     parser.add_argument("--count", type=int, default=20_000)
     parser.add_argument("--bbox", nargs=4, type=float, default=DEFAULT_BBOX)
     parser.add_argument("--max-gap-seconds", type=float, default=300.0)
@@ -160,9 +161,13 @@ def main() -> None:
         raise RuntimeError(f"only {len(candidates)} eligible trips for {args.count} fixed slots")
     selected = candidates[: args.count]
     trajectories = [item[2] for item in selected]
+    serialized = pickle.dumps(trajectories, protocol=pickle.HIGHEST_PROTOCOL)
+    output_hash = hashlib.sha256(serialized).hexdigest()
+    if args.expected_sha256 and output_hash != args.expected_sha256.lower():
+        raise ValueError(f"frozen SF output hash mismatch: {output_hash}")
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.open("wb") as handle:
-        pickle.dump(trajectories, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        handle.write(serialized)
 
     selected_digest = hashlib.sha256()
     for _, identifier, _, _, _ in selected:

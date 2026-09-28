@@ -14,6 +14,8 @@ python commands/reproduce.py prepare-porto -- --source-csv "C:\data\porto\train.
 
 San Francisco 使用解压后的 Cabspotting 原始 taxi 文本目录，而不是下载页附件中的分析脚本 ZIP。每行格式是 lat lon occupied timestamp。按时间排序后切分载客行程，输出单位是一段载客行程。
 
+原始数据入口为 [CRAWDAD epfl/mobility（IEEE DataPort）](https://ieee-dataport.org/open-access/crawdad-epflmobility)，下载文件名为 cabspottingdata.tar.gz；需要按数据站点要求登录取得下载链接。解压后目录应包含 new_*.txt 等出租车记录文件。以下命令增加 --expected-sha256 544cc51b459554d52bebe0f881c58f4aa6896ae2a319f5b23c048d7ec415511e 可要求输出与本文冻结输入一致；不一致时不会写文件。新数据集不使用此冻结哈希。
+
 ```powershell
 python commands/reproduce.py prepare-sf -- --source-dir "C:\data\cabspotting" --count 20000 --bbox 37.60 37.85 -122.55 -122.30 --max-gap-seconds 300 --max-speed-kmh 160 --min-points 5 --min-duration-seconds 120 --min-length-km 0.5 --out "C:\runs\sf\real.pkl"
 ```
