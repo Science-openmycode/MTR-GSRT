@@ -24,7 +24,7 @@ if __package__ in {None, ""}:
             sys.path.insert(0, str(candidate))
             break
 
-from generation.common.runtime import dataset_config, public_path, write_json  # noqa: E402
+from generation.common.runtime import dataset_config, public_path, sha256_file, write_json  # noqa: E402
 from metric_suites.road_route import _jsd_counters, od_conditioned_transition_jsd, run_fmm  # noqa: E402
 
 
@@ -161,6 +161,19 @@ def main() -> None:
                      "accepted": bool(record.accepted)}
                     for record in method_records
                 ], handle, pickle.HIGHEST_PROTOCOL)
+            write_json(route_root / f"{name}.manifest.json", {
+                "classification": "COMMON_MAP_MATCH_CACHE_NO_SYNTHESIS",
+                "router": "FMM",
+                "input_sha256": sha256_file(methods[name]),
+                "network_sha256": sha256_file(public_path(args.network)),
+                "output_sha256": sha256_file(route_path),
+                "record_count": len(method_records),
+                "parameters": {
+                    "limit": args.limit, "max_points": args.max_points,
+                    "radius_m": args.radius_m, "gps_error_m": args.gps_error_m,
+                    "candidates": args.candidates,
+                },
+            })
         results[name] = _summarize(method_records, args.tau_m)
         if real_records is not None:
             results[name]["completed_edge_flow_jsd"] = _jsd_counters(_edge_counts(real_records), _edge_counts(method_records))

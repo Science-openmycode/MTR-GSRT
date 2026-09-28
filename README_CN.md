@@ -1,6 +1,6 @@
 # MTR-GSRT 公开代码与论文实验复现
 
-本目录包含 MTR-GSRT、四种统计式 DP baseline 的合成数据、统一指标结果和论文图片。下面按照实验章节的叙述顺序运行，每一步都会在 `experiment_results/regenerated_figures/` 产生对应的 PNG 和 PDF。
+本目录包含 MTR-GSRT、四种统计式 DP baseline 的合成数据、统一指标结果和论文图片。下面按照实验章节的叙述顺序执行合成、道路重建、指标与任务评估，最后调用对应作图命令，在 `experiment_results/regenerated_figures/` 产生 PNG 和 PDF。
 
 ![MTR-GSRT 实验顺序](experiment_results/published_figures/00_ordered_evidence_chain.png)
 
@@ -301,3 +301,11 @@ python commands/reproduce.py plot -- --figure all --data-root experiment_results
 前六个 `run-*` 入口和 `run-structure` 分别生成七个实验子目录；上述命令从这些结果统一生成八张 PNG 和 PDF。
 
 完整数值分析见 `docs/FROZEN_EXPERIMENT_REPORT_CN.md`。
+## 发布批次与实验输入
+
+保存数据与新生成数据分开评估；全量拟合任务与严格 train-only TSTR 分开报告。逐文件预算来源、批次核查命令、三路由聚合检查和跨城市参数见 [数据批次与评估流程](docs/RELEASE_BATCHES_AND_PROTOCOLS_CN.md)。
+
+`all-precomputed` 只校验保存数据并重画已有结果，不执行合成、攻击或下游训练，也不表示已从零复现整篇论文。保存的 PrivTrace 是 epsilon=1 的 official-stageA+p30 批次，本轮按要求不更换其预算；新的 privtrace-native 发布是独立批次。
+# Porto、San Francisco 与自定义数据
+
+输入准备、公共道路图、合成、重新评分和图片输入的逐步命令见 [跨城市运行](docs/CROSS_CITY_COMMANDS_CN.md)。Porto 与 SF 公共 OSM cache 已随目录提供；真实轨迹从公开原始数据准备。新的实验使用新的输出目录。

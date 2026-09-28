@@ -8,13 +8,18 @@ from pathlib import Path
 
 
 HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent
+
+
+def rooted(path: Path) -> Path:
+    return (path if path.is_absolute() else ROOT / path).resolve()
 
 
 def named_path(value: str) -> tuple[str, Path]:
     if "=" not in value:
         raise argparse.ArgumentTypeError("expected NAME=PATH")
     name, path = value.split("=", 1)
-    return name, Path(path).resolve()
+    return name, rooted(Path(path))
 
 
 def slug(name: str) -> str:
@@ -36,6 +41,11 @@ def main() -> None:
     parser.add_argument("--network", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
+    for key in ("fmm_dir", "stmatch_dir", "network", "out_dir"):
+        setattr(args, key, rooted(getattr(args, key)))
+    names = [name for name, _ in args.source]
+    if len(set(names)) != len(names) or len({slug(name) for name in names}) != len(names):
+        parser.error("source method names and their filename slugs must be unique")
     for router, match_root in (("FMM", args.fmm_dir), ("STMatch", args.stmatch_dir)):
         for name, source in args.source:
             matches = match_root.resolve() / "matched_paths" / f"{name}.pkl.gz"

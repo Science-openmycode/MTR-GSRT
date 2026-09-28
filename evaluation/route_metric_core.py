@@ -16,19 +16,26 @@ def normalize_routes(raw, cache) -> list[tuple[tuple[int, int], ...]]:
     """Convert every supported saved route representation to directed edges."""
     edge_nodes = {int(k): tuple(v) for k, v in cache.get("edge_nodes", {}).items()}
     routes: list[tuple[tuple[int, int], ...]] = []
+    def edge_path(values):
+        ids = tuple(int(value) for value in values)
+        missing = set(ids).difference(edge_nodes)
+        if missing:
+            raise ValueError(f"Route edge IDs absent from public cache: {sorted(missing)[:5]}")
+        return tuple(edge_nodes[value] for value in ids)
+
     for row in raw:
         if isinstance(row, dict):
             if row.get("node_sequence"):
                 nodes = [int(v) for v in row["node_sequence"]]
                 route = tuple(zip(nodes, nodes[1:]))
             elif row.get("accepted") and row.get("cpath"):
-                route = tuple(edge_nodes[int(e)] for e in row["cpath"] if int(e) in edge_nodes)
+                route = edge_path(row["cpath"])
             else:
                 route = ()
         else:
             seq = tuple(row or ())
             if seq and isinstance(seq[0], (int, float)):
-                route = tuple(edge_nodes[int(e)] for e in seq if int(e) in edge_nodes)
+                route = edge_path(seq)
             else:
                 route = tuple(tuple(map(int, edge)) for edge in seq)
         routes.append(route)

@@ -150,3 +150,12 @@
 4. 所有 `--real-routes`、`--real-matched` 和 `--routed/--route` 文件必须由同一图产生。
 5. 预先声明 `--public-slot-count`，记录全部随机种子、隐私预算和输出目录。
 6. 先运行 `--check-only`（DFR）或小规模 smoke test，再执行完整生成；随后依次运行评估、实验聚合与作图。
+## 发布来源与矩阵输入检查
+
+每个 `run-tstr` 名称必须唯一，与重复的 `--synthetic` 一一对应。`--road-synthetic` 可为道路任务提供完整边顶点坐标视图；若提供，次数须等于 `--synthetic`，且每对视图的路由前发布 SHA 相同。
+
+`evaluation/combine_tstr_mr.py` 的 `--native/--fmm/--stmatch` 是三次任务评分生成的 results.csv；`--out-dir` 是六指标矩阵、七指标长表与输入绑定 manifest 的输出目录。相对路径以本独立目录为根。三个输入必须共享 train/test、bbox、seed、OSM 和 base_releases。生成器的训练数据谱系是另一个检查项，不由评分文件名代替。
+
+`commands/audit_release_batches.py --out-dir <目录>` 校验保存数据并输出逐文件批次与预算来源。默认目录为 experiment_results/release_inventory；相对路径以本独立目录为根。
+
+`subset-routes` 的 `--matched-full` 是完整匹配路线，`--split-manifest` 提供训练索引，`--out` 为训练侧路线子集；三项都支持绝对路径与相对本目录的路径。负索引、重复索引、测试重叠及数量不符会报错。

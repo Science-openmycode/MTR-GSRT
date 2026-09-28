@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 from pathlib import Path
 
@@ -11,6 +12,24 @@ from route_metric_core import evaluate_routes, load_pickle, normalize_routes, ro
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+def rooted(value):
+    path = Path(value)
+    return path.resolve() if path.is_absolute() else (ROOT / path).resolve()
+
+def binding(path, network):
+    output_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+    side = path.with_name(path.name.replace(".pkl.gz", ".manifest.json"))
+    record = {"path": str(path), "sha256": output_hash}
+    if side != path and side.is_file():
+        metadata = json.loads(side.read_text(encoding="utf-8"))
+        if metadata.get("output_sha256") != output_hash:
+            raise ValueError(f"Route cache output hash mismatch: {path}")
+        if metadata.get("network_sha256") != hashlib.sha256(network.read_bytes()).hexdigest():
+            raise ValueError(f"Route cache network mismatch: {path}")
+        record.update(cache_manifest=str(side), source_sha256=metadata.get("input_sha256"),
+                      parameters=metadata.get("parameters"), record_count=metadata.get("record_count"))
+    return record
 
 
 def parse_item(text: str) -> tuple[str, str, Path]:
@@ -38,8 +57,10 @@ def main() -> None:
     parser.add_argument("--out-dir", type=Path, required=True)
     args = parser.parse_args()
 
-    cache = load_pickle(Path(args.edge_cache).resolve())
-    frame = gpd.read_file(Path(args.network).resolve())[["id", "length_m"]]
+    cache_path, network_path, real_path = rooted(args.edge_cache), rooted(args.network), rooted(args.real_routes)
+    cache = load_pickle(cache_path)
+    real_binding = binding(real_path, network_path)
+    frame = gpd.read_file(network_path)[["id", "length_m"]]
     edge_nodes = {int(key): tuple(value) for key, value in cache["edge_nodes"].items()}
     lengths = {}
     for row in frame.itertuples(index=False):
@@ -49,7 +70,7 @@ def main() -> None:
         length = max(float(row.length_m), 1e-3)
         if edge not in lengths or length < lengths[edge]:
             lengths[edge] = length
-    real = valid_routes(normalize_routes(load_pickle(Path(args.real_routes).resolve()), cache))
+    real = valid_routes(normalize_routes(load_pickle(real_path), cache))
     reference = route_counters(real, cache)
     items = list(args.route)
     if args.route_dir or not items:
@@ -63,12 +84,14 @@ def main() -> None:
         parser.error("no --route entries and no packaged route datasets")
 
     rows = []
+    inputs = []
     seen = set()
     for measurement, router, path in items:
         key = (measurement, router)
         if key in seen:
-            continue
+            raise ValueError(f"Duplicate M×R entry: {key}")
         seen.add(key)
+        inputs.append({"M": measurement, "R": router, **binding(path, network_path)})
         routes = normalize_routes(load_pickle(path), cache)
         rows.append({"M": measurement, "R": router,
                      **evaluate_routes(routes, real, cache, reference, lengths)})
@@ -81,7 +104,12 @@ def main() -> None:
         writer.writeheader(); writer.writerows(rows)
     (output / "manifest.json").write_text(json.dumps({
         "protocol": "executed_route_object_m_by_r_v1",
-        "real_routes": str(Path(args.real_routes).resolve()),
+        "real_routes": str(real_path),
+        "real_input": real_binding,
+        "route_inputs": inputs,
+        "edge_cache_sha256": hashlib.sha256(cache_path.read_bytes()).hexdigest(),
+        "network_sha256": hashlib.sha256(network_path.read_bytes()).hexdigest(),
+        "results_sha256": hashlib.sha256(result.read_bytes()).hexdigest(),
         "rows": len(rows),
         "result": str(result.resolve()),
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

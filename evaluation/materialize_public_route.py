@@ -76,13 +76,29 @@ def main() -> None:
     parser.add_argument("--router", required=True)
     parser.add_argument("--sampling", choices=("source-count", "edge-vertices"), default="source-count")
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--allow-unbound-cache", action="store_true",
+                        help="Historical diagnostic only: allow a cache lacking input/network/output hashes.")
     args = parser.parse_args()
+    root = Path(__file__).resolve().parents[1]
+    for key in ("source", "matches", "network", "out"):
+        path = getattr(args, key)
+        setattr(args, key, (path if path.is_absolute() else root / path).resolve())
+    cache_name = args.matches.name.removesuffix(".pkl.gz").removesuffix(".pkl")
+    cache_manifest = args.matches.with_name(cache_name + ".manifest.json")
+    cache_bound = cache_manifest.is_file()
+    if cache_bound:
+        binding = json.loads(cache_manifest.read_text(encoding="utf-8-sig"))
+        for key, path in (("input_sha256", args.source), ("network_sha256", args.network),
+                          ("output_sha256", args.matches)):
+            if binding.get(key) != sha256(path):
+                raise ValueError(f"Map-match cache binding mismatch: {key}")
+    elif not args.allow_unbound_cache:
+        raise FileNotFoundError(f"Match cache provenance missing: {cache_manifest}; regenerate the cache")
 
     source = load_pickle(args.source)
     matches = load_pickle(args.matches)
-    if len(source) < len(matches):
+    if len(source) != len(matches):
         raise RuntimeError(f"count mismatch: source={len(source)}, matches={len(matches)}")
-    source = source[: len(matches)]
 
     frame = gpd.read_file(args.network)
     if frame.crs is None:
@@ -114,7 +130,8 @@ def main() -> None:
         pickle.dump(output, handle, pickle.HIGHEST_PROTOCOL)
     manifest = {
         "schema_version": 1,
-        "classification": "PUBLIC_POSTPROCESSING_OF_TRAIN_ONLY_SYNTHETIC_RELEASE",
+        "classification": "PUBLIC_POSTPROCESSING_OF_SYNTHETIC_RELEASE",
+        "cache_input_binding_verified": cache_bound,
         "router": args.router,
         "policy": (
             "connected nonempty cpath, resampled to source coordinate count; otherwise source trajectory fallback"

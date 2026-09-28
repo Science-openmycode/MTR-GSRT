@@ -16,9 +16,15 @@
     },
     {
       "path": "README_CN.md",
-      "size": 31298,
-      "sha256": "c78828cbb9e6630198f73551451098213dd83d128593ba6fdc463b22bd6bdf2b",
+      "size": 32268,
+      "sha256": "65be69675ab63dddb891c5762de5765215266f9a3fe5acb1830f4bca8b9e8c94",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "commands/audit_release_batches.py",
+      "role": "source_or_documentation",
+      "size": 3878,
+      "sha256": "33148bac407b66ee10fe5505b5c3671734723ee7c480116853392c7459da56ab"
     },
     {
       "path": "commands/prepare_geolife_beijing.py",
@@ -27,9 +33,27 @@
       "sha256": "68808119c0e577de288b748b09b3cf087131103a3f6a6089b890dbe86f7be9db"
     },
     {
+      "path": "commands/prepare_porto.py",
+      "role": "source_or_documentation",
+      "size": 3303,
+      "sha256": "8c9e7f699cce5125597954bd4e1e2120d25484986e1baf34a849182b78475ae0"
+    },
+    {
+      "path": "commands/prepare_public_route_support.py",
+      "role": "source_or_documentation",
+      "size": 2846,
+      "sha256": "c8100f122ea59111962f9ffc932b4d761e223540ecc875578c661d872a917071"
+    },
+    {
+      "path": "commands/prepare_sf_trips.py",
+      "role": "source_or_documentation",
+      "size": 8013,
+      "sha256": "823bc70d991d7e30ba25bbeb920295aee67cc0463aae44d82b24a0507ce86d4d"
+    },
+    {
       "path": "commands/reproduce.py",
-      "size": 11935,
-      "sha256": "48f0dbfc44d9725500232326ad941ce04fdd29357efb6f2caf84c39a438e79e8",
+      "size": 12127,
+      "sha256": "dbaf81ae4def4cff85b6fd680f18a2f2754f40d763c5d6e26ff891e9222149cd",
       "role": "source_or_documentation"
     },
     {
@@ -208,15 +232,27 @@
     },
     {
       "path": "docs/COMMAND_PARAMETERS_CN.md",
-      "size": 16222,
-      "sha256": "d0805a3e6ffd7afd4f72d3daf55c038278fb48ff73fc0d506fcb1369f1a95b44",
+      "size": 17378,
+      "sha256": "bb073eca746899065939054315b73f97ddf35cf5313dcdf51b0cdc8730f81b85",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "docs/CROSS_CITY_COMMANDS_CN.md",
+      "role": "source_or_documentation",
+      "size": 5488,
+      "sha256": "1039749aad2b0c4ac4c86a26aba59e2db771b7df9b67cee58c6bdc557fc4cdc2"
     },
     {
       "path": "docs/FROZEN_EXPERIMENT_REPORT_CN.md",
       "size": 8816,
       "sha256": "b2d2e4cfdcfa6c2510a9b993c73782e2555a2051e2d218a1724672f911fc1674",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "docs/RELEASE_BATCHES_AND_PROTOCOLS_CN.md",
+      "role": "source_or_documentation",
+      "size": 5234,
+      "sha256": "dad06bfb220dcd24e78b08089b5ed0ee50e135f06ca94178abeb6b08a846c13c"
     },
     {
       "path": "docs/RELEASE_ISSUE_AUDIT_20260924.md",
@@ -238,8 +274,8 @@
     },
     {
       "path": "evaluation/combine_tstr_mr.py",
-      "size": 3361,
-      "sha256": "dc821696fb494ed7c11768dfa7e35852d80d508c76f2a987c9e5544dda0da619",
+      "size": 6221,
+      "sha256": "ca9cdd44cfcc887f03ae2c72c4228d009b283749710ce71f2c401f5573c20fa8",
       "role": "source_or_documentation"
     },
     {
@@ -289,6 +325,30 @@
       "size": 10401969,
       "sha256": "7159e12ab8712338b4ff5a2859c68b158e1374504f999dc44080c2fe2d53a5c5",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "evaluation/data/osm/osm_cache_porto.manifest.json",
+      "role": "source_or_documentation",
+      "size": 351,
+      "sha256": "0ca685b6572ca2c033a3de24a9ff211c26e38f660a9290fae112ab53895434dc"
+    },
+    {
+      "path": "evaluation/data/osm/osm_cache_porto.pkl",
+      "role": "source_or_documentation",
+      "size": 14854915,
+      "sha256": "584569f48998eff2f8a36cc52563e04023b22436395d2279f555c3ca5d7b68ee"
+    },
+    {
+      "path": "evaluation/data/osm/osm_cache_sf_bay.manifest.json",
+      "role": "source_or_documentation",
+      "size": 534,
+      "sha256": "2268c1f1d0d321760457c59898c53231573372c1ff56ec8bea70f4ce627ebaad"
+    },
+    {
+      "path": "evaluation/data/osm/osm_cache_sf_bay.pkl",
+      "role": "source_or_documentation",
+      "size": 6727710,
+      "sha256": "e1d0c190237b695ae03d6130de251c992ef2186bbf5338c3a32abc34b50805dd"
     },
     {
       "path": "evaluation/evaluation/__init__.py",
@@ -394,8 +454,8 @@
     },
     {
       "path": "evaluation/evaluation/explore_fmm_road_alignment.py",
-      "size": 10176,
-      "sha256": "44a183fda7a006c0e4a3bba25df15505a33596c8c163f268b79e4087fb495d30",
+      "size": 10872,
+      "sha256": "8d5001e99fbccf889443db72932e8a536ccb7b85a1489c30c505eac4437ed890",
       "role": "source_or_documentation"
     },
     {
@@ -502,14 +562,14 @@
     },
     {
       "path": "evaluation/materialize_public_route.py",
-      "size": 5556,
-      "sha256": "fc160a046b31af41f422bfceaa83ca137e68c742bfe31751caf342e979c30fa9",
+      "size": 6683,
+      "sha256": "923e399d24296c2c3f6db9f685fea669d598292c7acb844a5fcfc490228cd69b",
       "role": "source_or_documentation"
     },
     {
       "path": "evaluation/materialize_tstr_mr.py",
-      "size": 2006,
-      "sha256": "729fcfe59ffee81129850d268ae3fc2b2209b980a7b67ac056f55265bfd07922",
+      "size": 2465,
+      "sha256": "18c3f1391a09ba673dcf4e4833ec1d27fa3e77bd5bee3f800fd8c4ef30f8e0e3",
       "role": "source_or_documentation"
     },
     {
@@ -562,14 +622,14 @@
     },
     {
       "path": "evaluation/road_routes_to_coordinates.py",
-      "size": 3495,
-      "sha256": "6a2ca40f9fccb9ede90656c0019912bc52638035171f1b157d0af19b0526f83c",
+      "size": 3752,
+      "sha256": "6ea846859a88dcddae5d4653d021222a5eda4ea325e41a10678474aec3875ceb",
       "role": "source_or_documentation"
     },
     {
       "path": "evaluation/route_metric_core.py",
-      "size": 12315,
-      "sha256": "0763042441993a52c2093b74268a279221d0e6ef1398d2ed6591f94f58c9be9f",
+      "size": 12522,
+      "sha256": "2f7b1f10e00c33c66c525d339ac73869150d3fc3b506bfa99a85625eba1e7933",
       "role": "source_or_documentation"
     },
     {
@@ -586,8 +646,8 @@
     },
     {
       "path": "evaluation/run_mr_experiment.py",
-      "size": 3874,
-      "sha256": "d29aa1dc7a9889439f934550680090fd3768f950c890016340245dffc1f47cab",
+      "size": 5377,
+      "sha256": "111f6c45bec8d133ff03637ad681be30d8df024eb42e8394cc668e13c0dcb9c9",
       "role": "source_or_documentation"
     },
     {
@@ -616,8 +676,8 @@
     },
     {
       "path": "evaluation/run_tstr_experiment.py",
-      "size": 6050,
-      "sha256": "4ceed2c50452a1b8fbdfebdbae628795f875405fadd6ae5eb735987c54a2a242",
+      "size": 9666,
+      "sha256": "1d8864ae7564f58ab58a7dc67a6e8f7157c9c10ed8801ff1e190bf0d9d5a9df2",
       "role": "source_or_documentation"
     },
     {
@@ -886,8 +946,8 @@
     },
     {
       "path": "evaluation/subset_matched_routes.py",
-      "size": 1309,
-      "sha256": "61b2e077f9e695f9b403468f3b9530aad6b1e857dc390d28940ae2742a123b45",
+      "size": 2857,
+      "sha256": "9f03c38fc7439d53ee7b4f7f9285cc345b529c678bdaf717df37152df58172d4",
       "role": "source_or_documentation"
     },
     {
@@ -1384,8 +1444,8 @@
     },
     {
       "path": "generation/mtr_gsrt/configs/datasets.json",
-      "size": 2446,
-      "sha256": "1ede368d49b7f7f72ca1fa1c2809bfbcf2efd926b8454e2d295b6ea36accc0e6",
+      "size": 2526,
+      "sha256": "1db78aab6a656f960ff2a1ab7eabb44b6264147ec4d524660cee5ac564dbf095",
       "role": "source_or_documentation"
     },
     {
@@ -1429,6 +1489,30 @@
       "size": 10401969,
       "sha256": "7159e12ab8712338b4ff5a2859c68b158e1374504f999dc44080c2fe2d53a5c5",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "generation/mtr_gsrt/data/osm/osm_cache_porto.manifest.json",
+      "role": "public_osm_asset",
+      "size": 351,
+      "sha256": "0ca685b6572ca2c033a3de24a9ff211c26e38f660a9290fae112ab53895434dc"
+    },
+    {
+      "path": "generation/mtr_gsrt/data/osm/osm_cache_porto.pkl",
+      "role": "public_osm_asset",
+      "size": 14854915,
+      "sha256": "584569f48998eff2f8a36cc52563e04023b22436395d2279f555c3ca5d7b68ee"
+    },
+    {
+      "path": "generation/mtr_gsrt/data/osm/osm_cache_sf_bay.manifest.json",
+      "role": "public_osm_asset",
+      "size": 534,
+      "sha256": "2268c1f1d0d321760457c59898c53231573372c1ff56ec8bea70f4ce627ebaad"
+    },
+    {
+      "path": "generation/mtr_gsrt/data/osm/osm_cache_sf_bay.pkl",
+      "role": "public_osm_asset",
+      "size": 6727710,
+      "sha256": "e1d0c190237b695ae03d6130de251c992ef2186bbf5338c3a32abc34b50805dd"
     },
     {
       "path": "generation/mtr_gsrt/generation/common/__init__.py",
@@ -1726,8 +1810,8 @@
     },
     {
       "path": "plotting/regenerate_figures.py",
-      "size": 11930,
-      "sha256": "8bbb33d22f4b558e0441fb64a388a1f6311b82db8b9aa22ac687882937fc637c",
+      "size": 12368,
+      "sha256": "8efbf4fe833b65649075a8e7b89cf07ea6faa0c17f5dec75dff8c7ec22e85cd2",
       "role": "source_or_documentation"
     },
     {
@@ -1792,8 +1876,8 @@
     },
     {
       "path": "public_assets/ordered_portal_route_cache.pkl.gz",
-      "size": 6459677,
-      "sha256": "5cc50210ee7fe65782ef2f7d11278bce42ad0eda0539cb728a1123e350b871a1",
+      "size": 2486818,
+      "sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
       "role": "source_or_documentation"
     },
     {
@@ -1839,6 +1923,12 @@
       "sha256": "46d471edd87d543da6953382a5e1a9ad3db0d397737a956787eba9fa810e3b34"
     },
     {
+      "path": "tests/test_prepare_city_inputs.py",
+      "role": "source_or_documentation",
+      "size": 2723,
+      "sha256": "e6bdbf53236c5e2928984aa39d68b7b01eae22b597b925668a1b682d67d0ae5c"
+    },
+    {
       "path": "tests/test_prepare_geolife.py",
       "role": "source_or_documentation",
       "size": 1688,
@@ -1857,10 +1947,28 @@
       "sha256": "af4350d9786e02ebd7e541d1b81ed0a15fce1aabd9bf8f8a1d58a2860a3221e3"
     },
     {
+      "path": "tests/test_public_route_support.py",
+      "role": "source_or_documentation",
+      "size": 1167,
+      "sha256": "24359d787f8203bd1796966b39718979ff9aea2770d66d01de6271ae8447cad8"
+    },
+    {
       "path": "tests/test_route_metric_core.py",
       "size": 3877,
       "sha256": "c462d62296854cd5e4e596dc11cdd7fde47b7296ca6e606b3e9c9432246cfa52",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "tests/test_train_route_split.py",
+      "role": "source_or_documentation",
+      "size": 979,
+      "sha256": "54f464b99164b7085912799b65d6e5cd89c477f2a0a6d5b3ae7aca7fe1df1225"
+    },
+    {
+      "path": "tests/test_tstr_protocol_binding.py",
+      "role": "source_or_documentation",
+      "size": 4107,
+      "sha256": "55de32d4576083ec0d0e727be475975fbc23ccb57e0c24899cbd481b174f697f"
     }
   ]
 }

@@ -33,6 +33,11 @@ def main() -> None:
                         help="Public edge cache; maps canonical route endpoints to network edge IDs.")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
+    root = Path(__file__).resolve().parents[1]
+    for key in ("routes", "network", "edge_cache", "out"):
+        path = getattr(args, key)
+        if path is not None:
+            setattr(args, key, (path if path.is_absolute() else root / path).resolve())
     frame = gpd.read_file(args.network)
     if frame.crs is None:
         raise RuntimeError("network CRS is missing")

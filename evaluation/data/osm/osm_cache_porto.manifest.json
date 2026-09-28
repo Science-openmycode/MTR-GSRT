@@ -1,0 +1,14 @@
+{
+  "classification": "PUBLIC_OSM_ONLY_NO_TRAJECTORY_INPUT",
+  "city": "porto",
+  "source_sha256": "0259f831fba8c761b49b7e533b56d7ebf5b4bd8f74ebca3096b23973294772c9",
+  "sha256": "584569f48998eff2f8a36cc52563e04023b22436395d2279f555c3ca5d7b68ee",
+  "way_count": 44582,
+  "bbox": [
+    41.1,
+    41.2,
+    -8.7,
+    -8.55
+  ],
+  "highway_classes": []
+}

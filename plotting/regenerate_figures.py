@@ -174,7 +174,9 @@ def plot_tstr() -> None:
             ax.set_ylabel("Private measurement / release M")
         colorbar = fig.colorbar(image, ax=axes.ravel().tolist(), shrink=.78, pad=.02)
         colorbar.set_label("Task utility retained relative to Real-train")
-        fig.suptitle("Strict train-only TSTR: measurement × public reconstruction", weight="bold")
+        title = ("Strict train-only TSTR: measurement × public reconstruction" if DATA_ROOT is None
+                 else "Task utility: measurement × public reconstruction")
+        fig.suptitle(title, weight="bold")
         save(fig, "06_strict_tstr")
         return
     if {"metric", "value"}.issubset(table.columns):
@@ -223,7 +225,7 @@ def plot_structure() -> None:
 
 
 def main() -> None:
-    global DATA_ROOT
+    global DATA_ROOT, OUT
     parser = argparse.ArgumentParser(description="Regenerate one experiment figure or the complete sequence.")
     parser.add_argument(
         "--figure",
@@ -231,7 +233,12 @@ def main() -> None:
         default="all",
     )
     parser.add_argument("--data-root", type=Path)
+    parser.add_argument("--out-dir", type=Path,
+                        help="Figure directory; relative paths use this independent repository root.")
     args = parser.parse_args()
+    if args.out_dir is not None:
+        OUT = args.out_dir if args.out_dir.is_absolute() else ROOT / args.out_dir
+        OUT.mkdir(parents=True, exist_ok=True)
     if args.data_root is not None:
         DATA_ROOT = args.data_root if args.data_root.is_absolute() else ROOT / args.data_root
     jobs = {

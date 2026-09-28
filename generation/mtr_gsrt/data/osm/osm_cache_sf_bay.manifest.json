@@ -1,0 +1,25 @@
+{
+  "classification": "PUBLIC_OSM_ONLY_NO_TRAJECTORY_INPUT",
+  "city": "sf",
+  "source_sha256": "c2f3eca3b1ded2e7de30323a88f96957f414b4d18b790cbca25087b46457a65e",
+  "sha256": "e1d0c190237b695ae03d6130de251c992ef2186bbf5338c3a32abc34b50805dd",
+  "way_count": 14114,
+  "bbox": [
+    37.6,
+    37.85,
+    -122.55,
+    -122.3
+  ],
+  "highway_classes": [
+    "motorway",
+    "motorway_link",
+    "trunk",
+    "trunk_link",
+    "primary",
+    "primary_link",
+    "secondary",
+    "secondary_link",
+    "tertiary",
+    "tertiary_link"
+  ]
+}
