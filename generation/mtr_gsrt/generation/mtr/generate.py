@@ -11,6 +11,7 @@ import pickle
 import random
 import shutil
 import sys
+import time
 from fractions import Fraction
 from pathlib import Path
 
@@ -51,6 +52,46 @@ Q5_BLOCK_NAMES = (
     "fine384_flow",
     "portal_fiber_flow",
 )
+
+
+def _peak_rss_bytes() -> int:
+    """OS-reported process peak resident memory for a local, non-release log."""
+    if sys.platform == "win32":
+        import ctypes
+        from ctypes import wintypes
+
+        class ProcessMemoryCounters(ctypes.Structure):
+            _fields_ = [
+                ("cb", wintypes.DWORD), ("PageFaultCount", wintypes.DWORD),
+                ("PeakWorkingSetSize", ctypes.c_size_t),
+                ("WorkingSetSize", ctypes.c_size_t),
+                ("QuotaPeakPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
+                ("PagefileUsage", ctypes.c_size_t),
+                ("PeakPagefileUsage", ctypes.c_size_t),
+            ]
+
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+        psapi = ctypes.WinDLL("psapi", use_last_error=True)
+        kernel.GetCurrentProcess.restype = wintypes.HANDLE
+        psapi.GetProcessMemoryInfo.argtypes = [
+            wintypes.HANDLE, ctypes.POINTER(ProcessMemoryCounters), wintypes.DWORD,
+        ]
+        psapi.GetProcessMemoryInfo.restype = wintypes.BOOL
+        counters = ProcessMemoryCounters()
+        counters.cb = ctypes.sizeof(counters)
+        if not psapi.GetProcessMemoryInfo(
+            kernel.GetCurrentProcess(), ctypes.byref(counters), counters.cb,
+        ):
+            raise OSError(ctypes.get_last_error(), "GetProcessMemoryInfo failed")
+        return int(counters.PeakWorkingSetSize)
+
+    import resource
+
+    peak = int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    return peak if sys.platform == "darwin" else peak * 1024
 
 
 def _canonical_source_sha256(path: Path) -> str:
@@ -123,6 +164,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--osm-cache")
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--log-file")
+    parser.add_argument(
+        "--local-performance-log",
+        help=("Optional local timing/RSS JSON outside --out-dir. It is not part of "
+              "the DP release and must not be published as one."),
+    )
     parser.add_argument("--limit", type=int, help="Smoke-test only; must equal public slot count for full experiments")
     return parser
 
@@ -376,12 +422,19 @@ def main() -> None:
     total_epsilon = parse_fraction(args.epsilon_total)
     budgets = allocate(total_epsilon)
     out_dir = require_new_directory(args.out_dir)
+    performance_path = public_path(args.local_performance_log) if args.local_performance_log else None
+    if performance_path is not None:
+        if performance_path.exists():
+            raise FileExistsError(f"local performance log already exists: {performance_path}")
+        if performance_path == out_dir or out_dir in performance_path.parents:
+            raise ValueError("--local-performance-log must be outside --out-dir")
     log_file = public_path(args.log_file) if args.log_file else out_dir.parent / f"{out_dir.name}.log"
     logger = configure_logging(log_file, "mtr-research-generator")
     work_dir = out_dir.parent / f".{out_dir.name}.research-staging"
     if work_dir.exists():
         raise FileExistsError(f"stale staging directory exists: {work_dir}")
     work_dir.mkdir(parents=True)
+    run_started = time.perf_counter()
     try:
         import audit_two_level_semimarkov_dp as audit
         import compact_graph_flow_experiment as compact
@@ -396,6 +449,7 @@ def main() -> None:
             load_trajectories,
         )
 
+        preparation_started = time.perf_counter()
         logger.info("loading trajectory data: %s", config["data"])
         # File-backed inputs are read in full. Truncating them at m would let
         # output cardinality silently select which private records are measured.
@@ -422,7 +476,9 @@ def main() -> None:
         coarse_coords = coords[np.asarray(coarse_nodes, dtype=int)]
         coarse_tree = cKDTree(coarse_coords)
         fine_to_coarse = np.asarray(coarse_tree.query(fine_coords)[1], dtype=int)
+        preparation_sec = time.perf_counter() - preparation_started
 
+        measurement_started = time.perf_counter()
         original_budgets = geometric.BASE_BUDGETS
         geometric.BASE_BUDGETS = demand_allocation(total_epsilon)
         try:
@@ -452,6 +508,7 @@ def main() -> None:
         transcript.update({f"q5_{k}": v for k, v in q5_release.items()})
         transcript_path = work_dir / "dp_transcript.npz"
         np.savez_compressed(transcript_path, **transcript)
+        private_measurement_sec = time.perf_counter() - measurement_started
 
         # The decoder rebuilds its public graph from ``osm`` and consumes only
         # the released measurements.  Drop raw trajectories and aggregation
@@ -459,6 +516,7 @@ def main() -> None:
         del real, coords, graph, fine_tree, coarse_tree, context96, flow_totals
         gc.collect()
 
+        public_routing_started = time.perf_counter()
         decode_flow = {name: np.asarray(value, dtype=float).copy()
                        for name, value in flow_release.items()}
         decode_q5 = {name: np.asarray(value, dtype=float).copy()
@@ -513,6 +571,7 @@ def main() -> None:
         shutil.copy2(source_witness, work_dir / "road_witnesses.pkl")
         decoder_report = json.loads((decoder_out / "protocol.json").read_text(encoding="utf-8"))
         shutil.rmtree(decoder_out)
+        public_routing_sec = time.perf_counter() - public_routing_started
         (work_dir / "DO_NOT_RELEASE.txt").write_text(
             "Research-only reproducible-noise epsilon sweep artifact. Do not publish as a certified DP release.\n",
             encoding="utf-8",
@@ -609,6 +668,23 @@ def main() -> None:
             },
         })
         os.replace(work_dir, out_dir)
+        if performance_path is not None:
+            performance = {
+                "schema_version": 1,
+                "classification": "LOCAL_PERFORMANCE_DIAGNOSTIC_NOT_DP_RELEASE",
+                "release_protocol_sha256": sha256_file(out_dir / "protocol.json"),
+                "generation_elapsed_sec": time.perf_counter() - run_started,
+                "stages_sec": {
+                    "input_and_public_graph_preparation": preparation_sec,
+                    "private_measurement": private_measurement_sec,
+                    "public_routing_and_serialization": public_routing_sec,
+                },
+                "peak_rss_bytes": _peak_rss_bytes(),
+            }
+            performance_path.parent.mkdir(parents=True, exist_ok=True)
+            with performance_path.open("x", encoding="utf-8") as stream:
+                json.dump(performance, stream, indent=2)
+                stream.write("\n")
         logger.info("wrote research MTR release: %s", out_dir)
     except Exception:
         logger.exception("MTR research generation failed; staging retained at %s", work_dir)

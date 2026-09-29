@@ -35,6 +35,19 @@ python commands/reproduce.py plot-rebuttal-q5-q6 -- `
 
 两城各有五份 ε=7/5 的独立发布与统一指标。聚合入口要求十份协议和十份指标全部存在，不会静默跳过缺失种子；`--sf-seed-suffix` 对应已保存的 `_arterial_v2` 生成批次。使用自己的城市运行时，分别把四个根目录指向相应生成和评分结果。
 
+从零生成时，给每一次 `generate-main` 增加一个位于发布目录**之外**的本地性能文件。例如 Porto 第一种子：
+
+```powershell
+python commands/reproduce.py generate-main -- `
+  --data C:\runs\porto\real.pkl --dataset-config porto `
+  --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 `
+  --public-input-capacity 20000 --public-slot-count 20000 `
+  --out-dir C:\runs\mtr\porto\eps_7_5\seed_20260719 `
+  --local-performance-log C:\runs\mtr\porto\timing\seed_20260719.json
+```
+
+其余种子将两个种子参数同步递增；旧金山相应使用 `--dataset-config sf`、同一公开容量，并将生成目录设为 `seed_20260719_arterial_v2`、性能日志设为 `seed_20260719_arterial_v2.json`。性能 JSON 包括准备、私有测量、公共路由三段耗时及进程峰值 RSS，并以发布协议 SHA-256 绑定到本次运行。它是本地非 DP 性能诊断，不属于合成数据发布物，也不应与 DP transcript 一起公开。耗时因机器而异。生成入口不向公开 `protocol.json` 写入输入相关运行时间。
+
 ```powershell
 python commands/reproduce.py aggregate-rebuttal-q6-multicity -- `
   --porto-generation-root C:\runs\mtr\porto\eps_7_5 `
@@ -44,6 +57,15 @@ python commands/reproduce.py aggregate-rebuttal-q6-multicity -- `
   --sf-metrics-root C:\runs\rebuttal_q6_multicity\sf `
   --out-dir C:\runs\rebuttal_q6_multicity_summary
 ```
+
+上面的命令兼容旧保存协议中的 `elapsed_sec`，重新聚合旧十份结果不会改变历史详细/汇总 CSV。对于新的从零运行，在相同命令中另外加入：
+
+```powershell
+  --porto-performance-root C:\runs\mtr\porto\timing `
+  --sf-performance-root C:\runs\mtr\sf_trip20k\timing `
+```
+
+两项必须一起提供。聚合器核验十份性能日志各自绑定的发布协议哈希；输出详细/汇总 CSV 会额外包含 `peak_rss_bytes`、`preparation_sec`、`private_measurement_sec`、`public_routing_sec`，并将性能日志纳入结果 manifest 的输入哈希。缺少性能日志时，新协议不会退回猜测耗时，而是报错。
 
 每个生成根目录下应有 `seed_<seed><suffix>/protocol.json`，每个指标根目录下有 `seed_<seed>/metrics.json`，五个 seed 固定为 `20260719`—`20260723`。得到 `q6_multicity_five_seed_detailed.csv`、`q6_multicity_five_seed_summary.csv` 与绑定二十份输入哈希的 `manifest.json`。这一步从已有完整发布重算均值和 95% 区间；从零生成两城十份轨迹仍需先按跨城市生成命令完成。
 

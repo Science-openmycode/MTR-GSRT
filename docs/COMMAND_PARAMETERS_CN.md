@@ -33,6 +33,7 @@
 | `--osm-cache` | `osm_cache_beijing.pkl` | 与 bbox/城市一致的公共有向道路缓存。 |
 | `--out-dir` | `C:\runs\mtr_gsrt` | 独立输出目录。相对路径按复现文件夹根目录解释。 |
 | `--log-file` | 可选 | 将运行日志另存到指定文件。 |
+| `--local-performance-log` | 可选 | 在发布目录外保存本地阶段耗时与进程峰值 RSS，并绑定发布协议哈希；它不是 DP 发布物。Q6 从零重跑时为每个种子指定不同路径。 |
 | `--limit` | 不用于正式实验 | 仅 smoke test；正式实验必须与 `--public-slot-count` 相等。 |
 
 ## 3. Baseline 输入
