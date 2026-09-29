@@ -63,6 +63,7 @@ Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先�
 - `generate-main --portal-unit-mode ablated` 在 q5 私有测量中删去 portal-fiber 块，按固定质量重分配其余四块；公共 crossing-edge prior 由单独的 `portal_unit_research_decoder.py` 读取。正式 SOURCE_MANIFEST 中原解码器、默认 `full` 输出和生产账本不变。此开关不同于只在带噪 transcript 后中和信号的 `--component-mode no-portal-fiber`。
 - 锁定 Python 3.11.15 环境以真实训练划分生成 13,698 条 ablated 轨迹和 witness，fallback 0。base/compact-flow 七块与已有 full 臂逐项相同，五块 q5 按定义改变，portal-fiber 块为零。研究解码器哈希与协议绑定一致。
 - 相同未见测试分割的 Full 与 Portal-removed 的 RC-CPC 为 `0.253970/0.296508`，RC-NDCG 为 `0.672019/0.620615`，NextRoadAcc 为 `0.227050/0.153624`，NextRoadNLL 为 `1.961308/1.939319`。两臂呈现排序/判别与分布重合/对数损失之间的权衡，不得写成全指标提升。命令见 `docs/REBUTTAL_Q5_TRAIN_ONLY_DIAGNOSTIC_CN.md`；它不追认旧 PDF 中以全量输入合成、却称严格 TSTR 的历史表。公开测试为 75 passed、119 subtests passed。
+- GitHub 独立克隆取回公共 OSM 的 LFS 实体后，以相同 5 条 fixture、`N=5,m=2` 和研究种子运行 ablated；轨迹/witness/transcript 三件输出的 SHA 与工作克隆逐件相同，分别为 `58C956984CF39E18F4460DAF36B50D9C025DEE432A16B8332CA9A93A1B3FFC00`、`0A9311D4ECC100046BFB53C60220C8344C654BDEB257165D2A815DB5EC6E1CCA`、`FB63FBB2AB1ACAAFEC3C798A8A930D848EE816843E87484866239F97C9A6CE81`。独立克隆完整测试亦为 75 passed、119 subtests passed。
 
 ### Q6：北京七预算×五种子的查询与发布层诊断（2026-09-30）
 
