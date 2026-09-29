@@ -69,6 +69,8 @@ def test_public_graph_semantics_can_match_when_pickle_bytes_differ(tmp_path, mon
     assert current["generation_sec"] == 2.25
     assert current["fallback_matches_historical"] is False
     assert current["generation_cost_source"] == "external_local_performance_log"
+    assert current["public_osm_byte_hash_matches_historical_protocol"] is None
+    assert current["public_osm_byte_hash_matches_release_protocol"] is False
     timing.write_text(json.dumps({
         "classification": "LOCAL_PERFORMANCE_DIAGNOSTIC_NOT_DP_RELEASE",
         "release_protocol_sha256": "bad",

@@ -97,7 +97,8 @@ def audit_one(city: str, release_dir: Path, config: dict,
 
     cache_path = rooted(config["osm_cache"])
     cache_hash = sha256_file(cache_path)
-    historical_cache_hash = protocol["public_osm"]["sha256"]
+    release_cache_hash = protocol["public_osm"]["sha256"]
+    historical_protocol = "elapsed_sec" in protocol
     with cache_path.open("rb") as stream:
         ways = pickle.load(stream)
     bbox_ways = filter_osm_ways_by_bbox(ways, tuple(config["bbox"]))
@@ -133,8 +134,12 @@ def audit_one(city: str, release_dir: Path, config: dict,
         "historical_generation_time_matches": round(elapsed) == EXPECTED[city]["seconds"],
         "selected_public_osm_ways": EXPECTED[city]["ways"],
         "public_osm_sha256": cache_hash,
-        "historical_protocol_osm_sha256": historical_cache_hash,
-        "public_osm_byte_hash_matches_historical_protocol": cache_hash == historical_cache_hash,
+        "release_protocol_osm_sha256": release_cache_hash,
+        "public_osm_byte_hash_matches_release_protocol": cache_hash == release_cache_hash,
+        "historical_protocol_osm_sha256": release_cache_hash if historical_protocol else None,
+        "public_osm_byte_hash_matches_historical_protocol": (
+            cache_hash == release_cache_hash if historical_protocol else None
+        ),
         "selected_public_graph_content_sha256": content_hash,
         "query_dimensions": dimensions,
         "output_sha256": output_hashes,

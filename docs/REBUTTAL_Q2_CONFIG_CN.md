@@ -26,4 +26,6 @@ python evaluation/audit_rebuttal_q2_protocols.py `
 
 `public_osm_byte_hash_matches_historical_protocol` 另行记录公共 OSM pickle 的**字节**哈希是否与旧协议相同。当前公开目录中，波尔图的 pickle 对象逐项等于历史对象，但 pickle 字节哈希不同；旧金山公开 cache 已预先裁成主干机动车道路，历史 cache 则保存完整 OSM 列表。两者按同一固定 bbox 与道路类别过滤后，各自与历史运行的**有序公共道路对象**一致。脚本用 `selected_public_graph_content_sha256` 核验该事实，并保留字节哈希差异，不伪称旧 `protocol.json` 可由现有 cache 逐字节重建。
 
+新版协议对应的字节校验写在 `public_osm_byte_hash_matches_release_protocol`；旧版才填写 `public_osm_byte_hash_matches_historical_protocol`。新版该历史字段为 `null`，防止把“匹配本次协议”误读为“匹配历史 pickle 字节”。跨版本仍用 `selected_public_graph_content_sha256` 比对相同的公共道路对象。
+
 旧协议为保护 add/remove 邻接下的输入接口，明确设置 `private_input_hash_persisted: false`；公开发布不能通过未加噪的私有输入哈希认证。北京与旧金山注册的冻结数据可在运行前用生成器的 `--verify-frozen-input` 做**本地**文件预检；波尔图按原始 CSV、公开解析顺序及准备阶段 manifest 核验。预检不属于 DP 发布机制，也不把输入哈希写回公开发布对象。
