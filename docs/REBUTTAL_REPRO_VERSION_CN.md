@@ -22,6 +22,7 @@
 - 单元测试覆盖内容相同但 pickle 哈希不同的公开图，以及输出文件被改动时拒绝通过。
 - 当前 GitHub 发布不在 DP 协议写入输入相关耗时。Q2 审计入口现接受三个城市各自的 `--CITY-performance-log`，逐个验证外部日志绑定的协议 SHA，历史 `elapsed_sec` 协议仍可直接读取。历史 fallback 数严格校验；新版解码器的 fallback 与历史值并列报告，不拿旧值替代新运行。以新北京 + 旧 Porto/SF 完整协议实际测试了混合版本审计；全部单元测试仍为 75 passed、119 subtests passed。
 - 独立 GitHub 克隆现已用三城本地输入全量生成一次：北京 17,123 条、波尔图和旧金山各 20,000 条，三城 DP transcript SHA 与各自历史发布逐字节相同；三城轨迹/witness 均非旧哈希。新回退数为 `0/11/1`，历史为 `0/14/1`；新生成耗时约 `497/1042/409` 秒，和历史机器时间不应相等。统一 `audit_rebuttal_q2_protocols.py` 已对三份新发布、外部计时日志、公共图、维度与输出哈希通过，结果在本地 `check/rebuttal_public_repro_20260930/q2_three_city_current_clean_clone_audit_v2.json`。字节 OSM 字段现将“当前发布协议匹配”与“历史协议匹配”严格区分；新版历史字段为 `null`，跨版本以所选公共道路对象哈希比对。上述新轨迹是当前源码版本的复现，不是历史解码器的逐字节重建。
+- 三城新旧合成输出又在**同一当前统一评估器**上分别评分。统计需求侧 Trip、OD JSD 三城逐项相同；Grid、Len、RoadSeg 及任务指标有小幅差异，和路由版本不同一致。旧保存 `metrics.json` 中 `directed_road_validity` 曾表示坐标投影有效率（北京约 `0.324`），当前评估器在传入 witness 时把该旧口径保留为 `coordinate_projection_directed_road_validity`，而 `directed_road_validity` / `witness_valid` 表示已验证的有向道路对象，均为 `1.000`。旧值和新值同名不同义，不能直接相减；当前统一评估器对旧北京输出重算，也得到 witness-based `directed_road_validity=1.000`。三城重算结果分别保存在本地 `check/rebuttal_public_repro_20260930/{beijing,porto,sf}_{current_eval_all,historical_eval_current_code}`。
 
 ### 共用 M×R：rebuttal1-Q2 / rebuttal2-Q4（2026-09-30）
 
