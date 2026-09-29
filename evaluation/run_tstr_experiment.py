@@ -176,6 +176,10 @@ def main() -> None:
         parser.error("--names must be unique and must not use the reserved Real-train name")
     if args.road_synthetic is not None and len(args.road_synthetic) != len(args.synthetic):
         parser.error("--road-synthetic must be omitted or repeated once per --synthetic")
+    for value in [*args.synthetic, *(args.road_synthetic or [])]:
+        if Path(value).suffix.lower() not in {".pkl", ".npy", ".npz", ".json"}:
+            parser.error("TSTR requires coordinate views (.pkl/.npy/.npz/.json); "
+                         "convert directed-road objects with routes-to-coordinates first")
     def resolved(value: str) -> str:
         path = Path(value)
         return str((path if path.is_absolute() else ROOT / path).resolve())

@@ -4,6 +4,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,6 +23,23 @@ spec_split.loader.exec_module(split)
 
 
 class SynthesisLineageTests(unittest.TestCase):
+    def test_raw_road_objects_rejected_before_training(self):
+        import contextlib
+        import io
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "scores"
+            argv = ["tasks", "--train-real", "missing_train.pkl", "--test-real", "missing_test.pkl",
+                    "--synthetic", "coordinates.pkl", "--road-synthetic", "road_routes.pkl.gz",
+                    "--names", "M", "--osm-cache", "missing_osm.pkl",
+                    "--bbox", "0", "1", "0", "1", "--out-dir", str(output)]
+            errors = io.StringIO()
+            with patch.object(sys, "argv", argv), contextlib.redirect_stderr(errors):
+                with self.assertRaises(SystemExit) as result:
+                    tasks.main()
+            self.assertEqual(result.exception.code, 2)
+            self.assertIn("routes-to-coordinates", errors.getvalue())
+            self.assertFalse(output.exists())
+
     def fixture(self, root):
         record = root / "record.json"
         data = {"schema": SCHEMA, "status": "passed", "train_sha256": "train",
