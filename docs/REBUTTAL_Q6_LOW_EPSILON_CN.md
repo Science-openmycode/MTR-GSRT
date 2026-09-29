@@ -46,3 +46,16 @@ python commands/reproduce.py aggregate-rebuttal-q6-multicity -- `
 ```
 
 每个生成根目录下应有 `seed_<seed><suffix>/protocol.json`，每个指标根目录下有 `seed_<seed>/metrics.json`，五个 seed 固定为 `20260719`—`20260723`。得到 `q6_multicity_five_seed_detailed.csv`、`q6_multicity_five_seed_summary.csv` 与绑定二十份输入哈希的 `manifest.json`。这一步从已有完整发布重算均值和 95% 区间；从零生成两城十份轨迹仍需先按跨城市生成命令完成。
+
+## 经验攻击的威胁模型表
+
+四组已保存的原始攻击结果与冻结候选划分可以重新组装为回复中的统一威胁模型表：
+
+```powershell
+python commands/reproduce.py assemble-rebuttal-q6-threat-model -- `
+  --attack-root C:\runs\active_hierarchy\privacy_attacks `
+  --split-manifest C:\runs\attack_split\manifest.json `
+  --out-dir C:\runs\rebuttal_q6_threat_model
+```
+
+`--attack-root` 下需有 `domias_v3`、`gda_v3`、`population_linkage_v3`、`ordered_v3` 四个子目录，各含 `results.json`；`--split-manifest` 记录成员、非成员和参考轨迹的冻结划分。输出为 `privacy_attack_results.csv`、`threat_model.md` 和输入/输出 SHA 清单。此命令只汇总已实际完成的攻击，不重新训练攻击器；要从头复现攻击数值，仍需先运行各攻击入口并核对候选划分与受攻击的合成发布。
