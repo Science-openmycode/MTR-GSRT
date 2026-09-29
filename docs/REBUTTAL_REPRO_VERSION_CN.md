@@ -35,6 +35,7 @@ Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先�
 
 - 在独立 GitHub 克隆、Python 3.11.15 锁定环境中，对本地冻结的北京 17,123 条完整输入执行 `generate-main`；先取回公共 OSM 的 Git LFS 实体文件，随后全量完成。输出恰有 17,123 条轨迹和 17,123 个 witness，公共路由回退为 0。
 - 新 DP transcript SHA-256 为 `5343F9BE4F7C0E9EEDC42FC76231931F317C83E76788C5A7B50D40C41D4E4AAD`，与旧保存结果逐字节相同。新轨迹/witness SHA-256 分别为 `34DE44012537557783A0ECF375C33145C13B2A75CD06B733FA2FDADBB26CDAC7` / `EE87AEF1C919244BC47FEFCBB376BB9652A18B0231C1BEB12498BD8BB9AEA001`，与旧保存的 `BBDB4093366A8E6CE8B9018BE0E19AFA63DB1F294938B407D0ED4337D781FBEA` / `AF920F6FF71150AE66BAC7A80F594C1598D2514BC7D8A4D488764520497A23FD` 不同。旧协议记载的解码器源码绑定与当前 GitHub `SOURCE_MANIFEST.json` 不同；此结果是**当前版本**从头生成成功，不能称旧论文生成物逐字节复现。后续效用表需要分别绑定所用版本。
+- 同一真实道路缓存下作回顾式路线选择复评，当前 GitHub/旧保存输出的 RC-CPC 为 `0.264935/0.263674`、RC-NDCG 为 `0.676456/0.671910`、NextRoadAcc 为 `0.237699/0.221148`、NextRoadNLL 为 `1.953299/1.960210`。数值接近但不相同，这不能替代前述哈希差异，也不是严格 train-only 结果。
 
 ### 严格 TSTR 七路由比较（阶段性，2026-09-30）
 
