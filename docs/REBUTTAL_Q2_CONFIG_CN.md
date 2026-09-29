@@ -14,6 +14,8 @@ python evaluation/audit_rebuttal_q2_protocols.py `
 
 `--geolife-release`、`--porto-release`、`--sf-release` 分别指定三份主运行的完整发布目录；`--out` 指定尚不存在的 JSON 文件。相对路径以本文件夹为根。脚本核验预算、公共 bbox、固定输出数量、回退数、三份发布文件的 SHA-256、公共 OSM 选择结果，以及三个带噪查询向量维度；不读取真实轨迹或未加噪查询。缺文件、输出哈希不符或维度不符立即报错。生成耗时受机器影响，输出实际耗时及其是否恰好等于历史表的标志，但不把耗时差异判为算法错误。
 
+对当前 GitHub 生成器的新发布，生成时再传 `--local-performance-log C:\runs\beijing\timing.json`，并在上述审计命令追加对应的 `--geolife-performance-log`；波尔图和旧金山分别是 `--porto-performance-log`、`--sf-performance-log`。审计器检查外部日志绑定的 `protocol.json` SHA-256。旧协议仍可直接读取其中的 `elapsed_sec`。历史回退数会严格核对；当前不同解码器版本的回退数与历史值并列报告，并用 `fallback_matches_historical` 标志差异，不因版本差异掩盖新发布的真实结果。输入相关耗时不写入新的 DP 发布协议。
+
 历史主运行应得到：
 
 | 城市 | 输出数 | 最后一级回退 | 96 区域流维度 | 384 区域流维度 | Portal-Fiber 维度 | 历史生成时间（约） |

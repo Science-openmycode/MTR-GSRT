@@ -50,6 +50,33 @@ def test_public_graph_semantics_can_match_when_pickle_bytes_differ(tmp_path, mon
     row = audit.audit_one("geolife", release, config)
     assert row["public_osm_byte_hash_matches_historical_protocol"] is False
     assert row["selected_public_graph_content_sha256"] == content_hash
+    assert row["fallback_matches_historical"] is True
+
+    # Current releases keep timing outside the DP object and may use a
+    # different audited decoder version from the historical table.
+    del protocol["elapsed_sec"]
+    protocol["decoder"]["fallback_count"] = 1
+    (release / "protocol.json").write_text(json.dumps(protocol), encoding="utf-8")
+    timing = tmp_path / "local_timing.json"
+    timing.write_text(json.dumps({
+        "classification": "LOCAL_PERFORMANCE_DIAGNOSTIC_NOT_DP_RELEASE",
+        "release_protocol_sha256": audit.sha256_file(release / "protocol.json"),
+        "generation_elapsed_sec": 2.25,
+    }), encoding="utf-8")
+    with pytest.raises(ValueError, match="performance-log"):
+        audit.audit_one("geolife", release, config)
+    current = audit.audit_one("geolife", release, config, timing)
+    assert current["generation_sec"] == 2.25
+    assert current["fallback_matches_historical"] is False
+    assert current["generation_cost_source"] == "external_local_performance_log"
+    timing.write_text(json.dumps({
+        "classification": "LOCAL_PERFORMANCE_DIAGNOSTIC_NOT_DP_RELEASE",
+        "release_protocol_sha256": "bad",
+        "generation_elapsed_sec": 2.25,
+    }), encoding="utf-8")
+    with pytest.raises(ValueError, match="performance protocol SHA-256"):
+        audit.audit_one("geolife", release, config, timing)
+
     (release / "trajectories.pkl").write_bytes(b"tampered")
     with pytest.raises(ValueError, match="trajectories.pkl SHA-256"):
         audit.audit_one("geolife", release, config)

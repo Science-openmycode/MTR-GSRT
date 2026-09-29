@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import pickle
 import sys
 from pathlib import Path
@@ -57,7 +58,24 @@ def require_equal(label: str, observed: object, expected: object) -> None:
         raise ValueError(f"{label}: observed {observed!r}, expected {expected!r}")
 
 
-def audit_one(city: str, release_dir: Path, config: dict) -> dict:
+def generation_cost(protocol_path: Path, protocol: dict, performance_path: Path | None) -> float:
+    if performance_path is None:
+        if "elapsed_sec" not in protocol:
+            raise ValueError(f"{protocol_path}: supply an external --CITY-performance-log for a new release")
+        return float(protocol["elapsed_sec"])
+    performance = json.loads(performance_path.read_text(encoding="utf-8"))
+    require_equal("performance classification", performance.get("classification"),
+                  "LOCAL_PERFORMANCE_DIAGNOSTIC_NOT_DP_RELEASE")
+    require_equal("performance protocol SHA-256", performance.get("release_protocol_sha256"),
+                  sha256_file(protocol_path))
+    elapsed = float(performance["generation_elapsed_sec"])
+    if not math.isfinite(elapsed) or elapsed < 0:
+        raise ValueError(f"{performance_path}: invalid generation time")
+    return elapsed
+
+
+def audit_one(city: str, release_dir: Path, config: dict,
+              performance_path: Path | None = None) -> dict:
     protocol_path = release_dir / "protocol.json"
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
     require_equal(f"{city} dataset", protocol["dataset"], city)
@@ -65,7 +83,9 @@ def audit_one(city: str, release_dir: Path, config: dict) -> dict:
     require_equal(f"{city} epsilon", protocol["privacy"]["epsilon_total_rational"], "7/5")
     require_equal(f"{city} output slots", protocol["public_slot_count"], EXPECTED[city]["count"])
     require_equal(f"{city} output count", protocol["output_count"], EXPECTED[city]["count"])
-    require_equal(f"{city} fallback", protocol["decoder"]["fallback_count"], EXPECTED[city]["fallback"])
+    fallback_matches = protocol["decoder"]["fallback_count"] == EXPECTED[city]["fallback"]
+    if "elapsed_sec" in protocol:
+        require_equal(f"{city} historical fallback", fallback_matches, True)
     require_equal(f"{city} delta", protocol["privacy"]["delta"], 0)
 
     output_hashes = {}
@@ -97,15 +117,20 @@ def audit_one(city: str, release_dir: Path, config: dict) -> dict:
         dimensions = {label: int(transcript[key].size) for label, key in QUERY_KEYS.items()}
     for label, actual in dimensions.items():
         require_equal(f"{city} {label} dimension", actual, EXPECTED[city][label])
+    elapsed = generation_cost(protocol_path, protocol, performance_path)
     return {
         "city": city,
         "release_dir": str(release_dir),
         "protocol_sha256": sha256_file(protocol_path),
         "output_count": protocol["output_count"],
         "fallback_count": protocol["decoder"]["fallback_count"],
-        "generation_sec": protocol["elapsed_sec"],
+        "historical_fallback_count": EXPECTED[city]["fallback"],
+        "fallback_matches_historical": fallback_matches,
+        "generation_sec": elapsed,
+        "generation_cost_source": ("external_local_performance_log" if performance_path else
+                                   "historical_protocol_elapsed_sec"),
         "historical_rounded_generation_sec": EXPECTED[city]["seconds"],
-        "historical_generation_time_matches": round(protocol["elapsed_sec"]) == EXPECTED[city]["seconds"],
+        "historical_generation_time_matches": round(elapsed) == EXPECTED[city]["seconds"],
         "selected_public_osm_ways": EXPECTED[city]["ways"],
         "public_osm_sha256": cache_hash,
         "historical_protocol_osm_sha256": historical_cache_hash,
@@ -122,13 +147,19 @@ def main() -> None:
     for city in EXPECTED:
         parser.add_argument(f"--{city}-release", required=True,
                             help=f"{city} main-run directory containing protocol.json and three release files")
+        parser.add_argument(f"--{city}-performance-log",
+                            help=f"{city} separate local timing log for a current release")
     parser.add_argument("--out", required=True, help="new JSON audit path; relative to this repository")
     args = parser.parse_args()
     out = rooted(args.out)
     if out.exists():
         parser.error(f"output already exists: {out}")
     configs = json.loads((GENERATION_ROOT / "configs" / "datasets.json").read_text(encoding="utf-8"))["datasets"]
-    rows = [audit_one(city, rooted(getattr(args, f"{city}_release")), configs[city]) for city in EXPECTED]
+    rows = [audit_one(
+        city, rooted(getattr(args, f"{city}_release")), configs[city],
+        rooted(getattr(args, f"{city}_performance_log"))
+        if getattr(args, f"{city}_performance_log") else None,
+    ) for city in EXPECTED]
     result = {
         "classification": "SAVED_DP_RELEASE_AND_PUBLIC_GRAPH_AUDIT_NO_PRIVATE_INPUT",
         "rebuttal": "reviewer_2/Q2",
