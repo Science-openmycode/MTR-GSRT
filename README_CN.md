@@ -133,7 +133,15 @@ python commands/reproduce.py plot -- --figure privacy --data-root experiment_res
 
 第 1 节已生成 `C:\runs\mtr_gsrt`；此处用相同发布评估道路合法性、统计保真度和路线选择。
 
-参数说明：`--data` 指定任意坐标轨迹；`--epsilon-total` 是总隐私预算；`--noise-seed/--decoder-seed` 分别固定 DP 噪声和公共路由；`--public-slot-count` 是预声明输出数；`--bbox` 为 `lat_min lat_max lon_min lon_max`；`--osm-cache` 是同城公共道路缓存；`--component-mode full` 启用全部组件；`--out-dir` 是本轮独立输出目录。
+参数说明：`--data` 指定任意坐标轨迹；`--epsilon-total` 是总隐私预算；`--noise-seed/--decoder-seed` 分别固定 DP 噪声和公共路由；`--public-input-capacity` 是私有测量阶段预声明的输入容量上界 (N)，`--public-slot-count` 是独立预声明的输出条数 (m)；`--bbox` 为 `lat_min lat_max lon_min lon_max`；`--osm-cache` 是同城公共道路缓存；`--component-mode full` 启用全部组件；`--out-dir` 是本轮独立输出目录。旧命令省略 `--public-input-capacity` 时令 (N=m)，因此冻结的等规模运行命令不变。
+
+下面的 Q1 命令从同一份预处理输入测量最多 20,000 个公开输入槽，再生成 10,000 条合成轨迹。把 `--public-slot-count` 改成 25,000 且使用新的输出目录时，私有测量容量仍为 20,000；输出数变化只进入后续公共路由。输入文件会完整读取，实际有效条数不得超过公开的 (N)，不会按 (m) 截取。邻接数据集应使用相同的预处理规则、公共容量和公共地图，不应将实际有效条数或文件哈希作为公开的分支条件。
+
+```powershell
+python commands/reproduce.py generate-main -- --data "C:\data\real_preprocessed.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-input-capacity 20000 --public-slot-count 10000 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\mtr_q1_10000"
+```
+
+`protocol.json` 记录公开的 (N,m)，不发布实际有效输入条数或处理时间。`--verify-frozen-input` 仅用于本地复现预检：它会检查输入的精确 SHA-256，因此**不属于**可在相邻私有输入上运行的 DP 发布接口。固定 `--noise-seed` 的扫描产物属于可复算研究实验，不能冒充正式随机 DP 发布；多次结果一起公开还须计算隐私预算的顺序组合。
 
 输出结构：
 

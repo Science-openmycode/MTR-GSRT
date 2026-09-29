@@ -11,7 +11,6 @@ import pickle
 import random
 import shutil
 import sys
-import time
 from fractions import Fraction
 from pathlib import Path
 
@@ -89,6 +88,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--data", required=True)
     parser.add_argument("--dataset-config", default=None)
+    parser.add_argument(
+        "--verify-frozen-input", action="store_true",
+        help=("Local reproducibility preflight against the registered private-file "
+              "hash. This exact-input check is outside the DP mechanism and "
+              "must not be treated as a neighboring-input release interface."),
+    )
     parser.add_argument("--epsilon-total", required=True)
     parser.add_argument("--noise-seed", type=int, required=True)
     parser.add_argument("--decoder-seed", type=int, required=True)
@@ -108,6 +113,12 @@ def build_parser() -> argparse.ArgumentParser:
               "Disabled route blocks are replaced by mass-preserving public uniform fields."),
     )
     parser.add_argument("--public-slot-count", type=int)
+    parser.add_argument(
+        "--public-input-capacity", type=int,
+        help=("Public upper bound on occupied input trajectories. Defaults to "
+              "--public-slot-count for legacy runs; set it independently when "
+              "the requested output count is smaller than the input corpus."),
+    )
     parser.add_argument("--bbox", nargs=4, type=float)
     parser.add_argument("--osm-cache")
     parser.add_argument("--out-dir", required=True)
@@ -135,18 +146,26 @@ def _resolve_configuration(args: argparse.Namespace) -> dict:
         )
     if int(capacity) <= 0:
         raise ValueError("public slot count must be positive")
+    input_capacity = (
+        int(args.public_input_capacity)
+        if args.public_input_capacity is not None else int(capacity)
+    )
+    if input_capacity <= 0:
+        raise ValueError("public input capacity must be positive")
     data_spec = (
         (registered or {}).get("data", args.data)
         if args.data == (args.dataset_config or args.data)
         else args.data
     )
     expected_data_sha256 = (registered or {}).get("data_sha256")
-    if expected_data_sha256 is not None:
+    if args.verify_frozen_input:
+        if expected_data_sha256 is None:
+            raise ValueError("no frozen input hash is registered for this dataset")
         data_path = require_file(data_spec, "frozen trajectory input")
         actual_data_sha256 = sha256_file(data_path)
         if actual_data_sha256 != expected_data_sha256:
             raise RuntimeError(
-                f"frozen trajectory input hash mismatch: {actual_data_sha256}"
+                "frozen trajectory input hash mismatch in local preflight"
             )
         data_spec = data_path
     return {
@@ -155,10 +174,27 @@ def _resolve_configuration(args: argparse.Namespace) -> dict:
         "bbox": tuple(float(value) for value in bbox),
         "osm_cache": require_file(osm, "OSM cache"),
         "capacity": int(capacity),
+        "input_capacity": input_capacity,
         "status": status,
         "osm_max_ways": int((registered or {}).get("osm_max_ways", 0)),
         "osm_highway_classes": list((registered or {}).get("osm_highway_classes", [])),
     }
+
+
+def _load_private_input(data_spec, input_capacity: int, loader):
+    """Read the entire supplied corpus under a separately declared input bound.
+
+    Only the legacy city-name loaders use a public-prefix preprocessing rule;
+    a file input is never truncated according to the requested output size.
+    The occupied count is returned for an in-memory bound check, not release.
+    """
+    named_loader = isinstance(data_spec, str) and data_spec.lower() in {
+        "geolife", "porto", "sf", "oldenburg"
+    }
+    real = loader(str(data_spec), limit=input_capacity if named_loader else None)
+    if len(real) > input_capacity:
+        raise RuntimeError("private input exceeds the predeclared public input capacity")
+    return real, named_loader
 
 
 def _portal_release(real, coords, graph, capacity: int, epsilon: Fraction, seed: int):
@@ -346,7 +382,6 @@ def main() -> None:
     if work_dir.exists():
         raise FileExistsError(f"stale staging directory exists: {work_dir}")
     work_dir.mkdir(parents=True)
-    started = time.time()
     try:
         import audit_two_level_semimarkov_dp as audit
         import compact_graph_flow_experiment as compact
@@ -362,12 +397,12 @@ def main() -> None:
         )
 
         logger.info("loading trajectory data: %s", config["data"])
-        real = load_trajectories(str(config["data"]), limit=config["capacity"])
-        if len(real) != config["capacity"]:
-            raise RuntimeError(
-                "fixed-slot MTR requires input count to equal the public slot count; "
-                f"received {len(real)} records for {config['capacity']} public slots"
-            )
+        # File-backed inputs are read in full. Truncating them at m would let
+        # output cardinality silently select which private records are measured.
+        # Legacy named loaders define a publicly fixed prefix corpus at N_in.
+        real, named_loader = _load_private_input(
+            config["data"], config["input_capacity"], load_trajectories,
+        )
         with config["osm_cache"].open("rb") as handle:
             osm = pickle.load(handle)
         osm = filter_osm_ways_by_bbox(osm, config["bbox"])
@@ -393,7 +428,7 @@ def main() -> None:
         try:
             base_release = geometric.fit_geometric_measurements(
                 real, fine_tree, coarse_tree, support.standardized_xy(coarse_coords),
-                fine_count=256, coarse_count=24, capacity=config["capacity"],
+                fine_count=256, coarse_count=24, capacity=config["input_capacity"],
                 exact_rng=random.Random(int(args.noise_seed) + 101),
             )
         finally:
@@ -405,11 +440,11 @@ def main() -> None:
         context96, _ = audit.build_context(coords, graph, 24, 96, 4, 3)
         flow_totals = compact.aggregate(real, context96)
         flow_release, flow_sampler = compact.release(
-            flow_totals, config["capacity"], random.Random(int(args.noise_seed) + 202),
+            flow_totals, config["input_capacity"], random.Random(int(args.noise_seed) + 202),
             budgets["compact_graph_flow"],
         )
         q5_release, q5_sampler = _portal_release(
-            real, coords, graph, config["capacity"], budgets["portal_fiber_q5"], args.noise_seed
+            real, coords, graph, config["input_capacity"], budgets["portal_fiber_q5"], args.noise_seed
         )
         transcript = {}
         transcript.update({f"base_{k}": v for k, v in base_release.items()})
@@ -495,10 +530,17 @@ def main() -> None:
             "dataset": config["name"],
             "dataset_status": config["status"],
             "data_spec": str(config["data"]),
-            "input_record_count": config["capacity"],
+            # The occupied-record count is private under add/remove adjacency.
+            # Never serialize it, even when this particular run fills every slot.
+            "input_record_count": "not_released",
+            "public_input_capacity": config["input_capacity"],
             "private_input_hash_persisted": False,
             "public_slot_count": config["capacity"],
             "output_count": config["capacity"],
+            "input_selection": (
+                "public_prefix_preprocessing_at_input_capacity"
+                if named_loader else "entire_supplied_preprocessed_file"
+            ),
             "output_yield": 1.0,
             "bbox": config["bbox"],
             "public_osm": {
@@ -551,7 +593,6 @@ def main() -> None:
                 "active_hierarchy": decoder_report.get("active_hierarchy"),
             },
             "outputs": outputs,
-            "elapsed_sec": time.time() - started,
         }
         write_json(work_dir / "protocol.json", protocol)
         write_json(work_dir / "manifest.json", {
