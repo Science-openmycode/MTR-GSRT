@@ -57,7 +57,7 @@ def base_release_hash(path: Path, seen: frozenset[Path] = frozenset()) -> str:
             if (match_binding.get("input_sha256") != source_record.get("sha256")
                     or match_binding.get("output_sha256") != stmatch_record.get("sha256")):
                 raise ValueError(f"Family carrier no longer binds source release: {stmatch_file}")
-        elif manifest.get("router") in {"FMM", "STMatch"}:
+        elif str(manifest.get("router", "")).lower() in {"fmm", "stmatch"}:
             if manifest.get("output", {}).get("sha256") != digest:
                 raise ValueError(f"Routed view output hash mismatch: {path}")
             source_record = manifest.get("inputs", {}).get("source", {})

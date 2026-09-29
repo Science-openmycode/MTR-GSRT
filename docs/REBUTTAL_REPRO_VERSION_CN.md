@@ -22,11 +22,13 @@
 - 新增 `evaluation/evaluate_rebuttal_mr.py`：唯一 40 格结果 `experiment_results/rebuttal_shared_mr/metrics/`，同一输入哈希和五项指标供两个回复引用。旧图源中已有真实缓存的 31 格全部数值保持一致；原先的九个空占位改为实测。Python 3.11.15 锁定环境与当前工作环境重新评分的 40×5 数值相同（最大差异小于 (10^{-12})）。
 - 具体复现顺序、全部参数、预期文件和图见 `docs/REBUTTAL_SHARED_MR_CN.md`。旧回复 PDF 仍含空占位版图像；用户文档按要求保持原样，公开结果不被冒充为旧 PDF 的逐像素重现。
 
-严格 TSTR、Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先将保存图表登记为已复现。
+Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先将保存图表登记为已复现。
 
-### 严格 TSTR 路径族候选视图（阶段性，2026-09-30）
+### 严格 TSTR 七路由比较（阶段性，2026-09-30）
 
 - `materialize_family_routers.py` 增加 `--seed-schedule tstr-v1`；原完整发布矩阵仍默认使用 `full-road-v1`，原先路线与哈希不变。
 - 新增 `materialize_family_tstr_views.py` 和统一 CLI 的 `materialize-family-routes`、`materialize-family-tstr-views` 两阶段入口。输出同时保存下游通用坐标视图、道路任务坐标视图及完整来源哈希；无效路线退回同槽合成坐标。
 - 四种 train-only 基线 × 四种路径族 × 两种坐标视图共 32 个文件已从公开代码重新生成，逐文件 SHA-256 与 2026-09-28 隔离批次一致。命令及参数在 `docs/REBUTTAL_TSTR_FAMILY_VIEWS_CN.md`。
-- `run_tstr_experiment.py` 识别路径族视图的来源链，并在路由文件被篡改时拒绝评分。当前仅证明候选视图能复现；28 候选验证选择、最终真实测试评分、旧表批次差异仍未完成。
+- `run_tstr_experiment.py` 识别路径族视图的来源链，并在路由文件被篡改时拒绝评分；同时兼容已有 STMatch manifest 的大写 `STMATCH` 标签，仍核查基础发布哈希。
+- 新增 `run_rebuttal_tstr_selection.py` 与统一 CLI 的 `run-rebuttal-tstr`，对四基线各七个实际候选完成验证集评分，然后在独立真实测试划分上同批重评原生、最佳路由和 MTR-GSRT 共九行。验证阶段选出的四个路由与旧回复一致；最佳路由四行的 16 个指标数值与历史表一致；五个原生行的 20 个数值中有 15 个不同，因为旧表拼接了保存的历史原生批次。公开入口保留两阶段哈希和原始结果，不悄悄替换旧表。
+- 本次选择使用真实训练划分内的私有验证标签，是研究诊断，不属于无额外预算的 DP 后处理。完整输入生成链认证和独立克隆端到端重跑仍未完成。代码测试结果：58 passed、119 subtests passed。

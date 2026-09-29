@@ -60,3 +60,14 @@ def test_family_manifest_binds_base_release_and_route_file(tmp_path):
     route.write_bytes(b"changed")
     with pytest.raises(ValueError, match="Family route source"):
         tstr.base_release_hash(output)
+
+
+def test_stmatch_wrapper_case_does_not_erase_source_binding(tmp_path):
+    source, output = tmp_path / "source.pkl", tmp_path / "road.pkl"
+    source.write_bytes(b"synthetic training release")
+    output.write_bytes(b"public reconstructed view")
+    output.with_name(output.name + ".manifest.json").write_text(json.dumps({
+        "router": "STMATCH", "output": {"sha256": file_sha(output)},
+        "inputs": {"source": {"path": str(source), "sha256": file_sha(source)}},
+    }), encoding="utf-8")
+    assert tstr.base_release_hash(output) == file_sha(source)
