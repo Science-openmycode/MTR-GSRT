@@ -11,6 +11,13 @@
 
 ## 0. 安装环境
 
+克隆后先取回 Git LFS 中的公共道路缓存、预计算结果和图件；普通 Git 指针文件不能当作 pickle 或 gzip 输入。没有安装 Git LFS 时先安装它，然后在本目录运行：
+
+```powershell
+git lfs install
+git lfs pull
+```
+
 ```powershell
 python -m venv .venv
 .\\.venv\\Scripts\\Activate.ps1
