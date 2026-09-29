@@ -39,6 +39,24 @@ def base_release_hash(path: Path, seen: frozenset[Path] = frozenset()) -> str:
             if manifest.get("coordinates", {}).get("sha256") != digest:
                 raise ValueError(f"Road coordinate derivation output hash mismatch: {path}")
             source_record = manifest.get("route_source", {})
+        elif manifest.get("schema") == "tstr-family-coordinate-view-v1":
+            if manifest.get("coordinates", {}).get("sha256") != digest:
+                raise ValueError(f"Family coordinate view output hash mismatch: {path}")
+            route_record = manifest.get("route_source", {})
+            route_file = Path(route_record.get("path", ""))
+            if not route_file.is_file() or sha256_file(route_file) != route_record.get("sha256"):
+                raise ValueError(f"Family route source missing or changed: {route_file}")
+            stmatch_record = manifest.get("stmatch_source", {})
+            stmatch_file = Path(stmatch_record.get("path", ""))
+            if not stmatch_file.is_file() or sha256_file(stmatch_file) != stmatch_record.get("sha256"):
+                raise ValueError(f"Family STMatch carrier missing or changed: {stmatch_file}")
+            source_record = manifest.get("source", {})
+            match_manifest = stmatch_file.with_name(
+                stmatch_file.name.removesuffix(".pkl.gz") + ".manifest.json")
+            match_binding = json.loads(match_manifest.read_text(encoding="utf-8-sig"))
+            if (match_binding.get("input_sha256") != source_record.get("sha256")
+                    or match_binding.get("output_sha256") != stmatch_record.get("sha256")):
+                raise ValueError(f"Family carrier no longer binds source release: {stmatch_file}")
         elif manifest.get("router") in {"FMM", "STMatch"}:
             if manifest.get("output", {}).get("sha256") != digest:
                 raise ValueError(f"Routed view output hash mismatch: {path}")

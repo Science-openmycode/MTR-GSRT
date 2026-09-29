@@ -2,6 +2,8 @@
 
 本目录包含 MTR-GSRT、四种统计式 DP baseline 的合成数据、统一指标结果和论文图片。下面按照实验章节的叙述顺序执行合成、道路重建、指标与任务评估，最后调用对应作图命令，在 `experiment_results/regenerated_figures/` 产生 PNG 和 PDF。
 
+审稿回复共用的道路 M×R 实验见 [共用矩阵命令](docs/REBUTTAL_SHARED_MR_CN.md)；严格 TSTR 中四种路径族候选的训练侧视图命令见 [路径族视图](docs/REBUTTAL_TSTR_FAMILY_VIEWS_CN.md)。后者目前是视图生成阶段，七路由的完整最终任务评分尚在补齐。
+
 ![MTR-GSRT 实验顺序](experiment_results/published_figures/00_ordered_evidence_chain.png)
 
 ## 0. 安装环境

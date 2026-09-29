@@ -172,6 +172,9 @@ def main() -> None:
                         help="historical seed index: SPRT=0, PrivTrace=1, DPTraj-PM=2, DPStd=3, MTR-GSRT=5")
     parser.add_argument("--edge-cache", default="public_assets/ordered_portal_route_cache.pkl.gz")
     parser.add_argument("--head-threshold", type=int, default=36)
+    parser.add_argument("--seed-schedule", choices=("full-road-v1", "tstr-v1"),
+                        default="full-road-v1",
+                        help="Select the frozen independent random streams for the full-road or strict TSTR experiment")
     parser.add_argument("--out-dir", required=True)
     args = parser.parse_args()
     # The historical seed schedule also had a no-Q5 row at index 4. Retain
@@ -193,15 +196,18 @@ def main() -> None:
     head = head_counts(base, labels, args.head_threshold)
     pool = family_pool(base, labels)
     index = args.method_index
+    seed_bases = ((20271000, 20272000, 20273000, 20274000)
+                  if args.seed_schedule == "full-road-v1"
+                  else (20281000, 20282000, 20283000, 20284000))
     generated = {
         "Family_additive": (*additive(head, slots, pool, base, slots,
-                                      np.random.default_rng(20271000 + index)), None),
+                                      np.random.default_rng(seed_bases[0] + index)), None),
         "Family_residual": residual(head, slots, pool, base, labels, slots,
-                                    np.random.default_rng(20272000 + index)),
+                                    np.random.default_rng(seed_bases[1] + index)),
         "Family_length-OT": (*length_ot(head, slots, pool, base, slots,
-                                        np.random.default_rng(20273000 + index)), None),
+                                        np.random.default_rng(seed_bases[2] + index)), None),
         "Self-carrier_reweight": (*carrier_reweight(head, slots, base, base, labels, slots,
-                                                    np.random.default_rng(20274000 + index)), None),
+                                                    np.random.default_rng(seed_bases[3] + index)), None),
     }
     output.mkdir(parents=True)
     for name, (routes, unsupported, beta) in generated.items():
@@ -216,6 +222,7 @@ def main() -> None:
             "valid_routes": len(valid_routes(routes)), "head_threshold": args.head_threshold,
             "head_families": len(head), "unsupported_head_slots": unsupported,
             "residual_beta": beta,
+            "seed_schedule": args.seed_schedule, "seed": seed_bases[("Family_additive", "Family_residual", "Family_length-OT", "Self-carrier_reweight").index(name)] + index,
             "private_source_rule": "only this method's saved STMatch carrier; no real or foreign private route pool",
         }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"{args.method}/{name}: {slots} slots, {len(valid_routes(routes))} connected")

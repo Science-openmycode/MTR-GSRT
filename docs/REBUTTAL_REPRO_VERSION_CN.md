@@ -23,3 +23,10 @@
 - 具体复现顺序、全部参数、预期文件和图见 `docs/REBUTTAL_SHARED_MR_CN.md`。旧回复 PDF 仍含空占位版图像；用户文档按要求保持原样，公开结果不被冒充为旧 PDF 的逐像素重现。
 
 严格 TSTR、Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先将保存图表登记为已复现。
+
+### 严格 TSTR 路径族候选视图（阶段性，2026-09-30）
+
+- `materialize_family_routers.py` 增加 `--seed-schedule tstr-v1`；原完整发布矩阵仍默认使用 `full-road-v1`，原先路线与哈希不变。
+- 新增 `materialize_family_tstr_views.py` 和统一 CLI 的 `materialize-family-routes`、`materialize-family-tstr-views` 两阶段入口。输出同时保存下游通用坐标视图、道路任务坐标视图及完整来源哈希；无效路线退回同槽合成坐标。
+- 四种 train-only 基线 × 四种路径族 × 两种坐标视图共 32 个文件已从公开代码重新生成，逐文件 SHA-256 与 2026-09-28 隔离批次一致。命令及参数在 `docs/REBUTTAL_TSTR_FAMILY_VIEWS_CN.md`。
+- `run_tstr_experiment.py` 识别路径族视图的来源链，并在路由文件被篡改时拒绝评分。当前仅证明候选视图能复现；28 候选验证选择、最终真实测试评分、旧表批次差异仍未完成。

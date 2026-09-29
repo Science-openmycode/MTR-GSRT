@@ -162,6 +162,8 @@ def stage_helper(name: str, args: list[str]) -> int:
         "prepare-road-reference": ROOT / "evaluation" / "evaluation" / "cache_common_road_matches.py",
         "subset-routes": ROOT / "evaluation" / "subset_matched_routes.py",
         "routes-to-coordinates": ROOT / "evaluation" / "road_routes_to_coordinates.py",
+        "materialize-family-routes": ROOT / "evaluation" / "materialize_family_routers.py",
+        "materialize-family-tstr-views": ROOT / "evaluation" / "materialize_family_tstr_views.py",
     }
     return run([sys.executable, str(entries[name]), *forwarded(args)])
 
@@ -245,7 +247,8 @@ def main() -> int:
     plot.add_argument("args", nargs=argparse.REMAINDER)
     for name in ("generate-main", "generate-baselines", "evaluate",
                  "verify-matcher", "generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
-                 "routes-to-coordinates", "run-tstr", "materialize-tstr-mr", "combine-tstr-mr",
+                 "routes-to-coordinates", "materialize-family-routes", "materialize-family-tstr-views",
+                 "run-tstr", "materialize-tstr-mr", "combine-tstr-mr",
                  "run-ablation", "run-framework", "run-privacy", "run-profile", "run-mr",
                  "run-physical", "run-structure"):
         child = sub.add_parser(name)
@@ -267,7 +270,7 @@ def main() -> int:
         return stage_evaluate(ns.args)
     if ns.stage == "verify-matcher":
         return stage_verify_matcher(ns.args)
-    if ns.stage in {"generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates"}:
+    if ns.stage in {"generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates", "materialize-family-routes", "materialize-family-tstr-views"}:
         return stage_helper(ns.stage, ns.args)
     if ns.stage == "run-tstr":
         return stage_tstr(ns.args)
