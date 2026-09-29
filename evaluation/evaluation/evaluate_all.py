@@ -276,7 +276,8 @@ def main() -> None:
     real_eval = real[split:]
     metrics.update(tasks.count_query_metrics(real, synthetic))
     metrics.update(tasks.od_demand_metrics(real, synthetic))
-    metrics.update(tasks.destination_tstr_metrics(synthetic, real_eval))
+    destination_audit = {}
+    metrics.update(tasks.destination_tstr_metrics(synthetic, real_eval, audit=destination_audit))
     metrics.update(tasks.grid_route_choice_metrics(synthetic, real_eval))
     metrics.update(tasks.destination_conditioned_next_region_metrics(synthetic, real_eval))
     for name, value in metrics.items():
@@ -320,6 +321,7 @@ def main() -> None:
     }
     payload = {"protocol": protocol, "metrics": jsonable(metrics)}
     write_json(out_dir / "metrics.json", payload)
+    write_json(out_dir / "destination_model_audit.json", destination_audit)
     with (out_dir / "metrics.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=["metric", "value"])
         writer.writeheader()
@@ -348,6 +350,7 @@ def main() -> None:
         "outputs": {
             "metrics.json": sha256_file(out_dir / "metrics.json"),
             "metrics.csv": sha256_file(out_dir / "metrics.csv"),
+            "destination_model_audit.json": sha256_file(out_dir / "destination_model_audit.json"),
         },
         "elapsed_sec": time.time() - started,
     }

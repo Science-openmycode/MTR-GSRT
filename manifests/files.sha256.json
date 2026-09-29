@@ -16,8 +16,8 @@
     },
     {
       "path": "README_CN.md",
-      "size": 32268,
-      "sha256": "65be69675ab63dddb891c5762de5765215266f9a3fe5acb1830f4bca8b9e8c94",
+      "size": 33653,
+      "sha256": "6e56b8bb8d77c6b21fbf6ba40296474b18effe4834896407411128952b7baca4",
       "role": "source_or_documentation"
     },
     {
@@ -25,6 +25,12 @@
       "role": "source_or_documentation",
       "size": 3878,
       "sha256": "33148bac407b66ee10fe5505b5c3671734723ee7c480116853392c7459da56ab"
+    },
+    {
+      "path": "commands/generate_train_only.py",
+      "role": "source_or_documentation",
+      "size": 5319,
+      "sha256": "7b2c96ab06b35feb320a86bb508755f7f60058bc8f7b0f0a5d4879a2c2118da5"
     },
     {
       "path": "commands/prepare_geolife_beijing.py",
@@ -52,8 +58,8 @@
     },
     {
       "path": "commands/reproduce.py",
-      "size": 12127,
-      "sha256": "dbaf81ae4def4cff85b6fd680f18a2f2754f40d763c5d6e26ff891e9222149cd",
+      "size": 12250,
+      "sha256": "1b7feb061c214f91255fc98f0cbe7fb9ca4e87911f2141623d9c9e14fa5c3590",
       "role": "source_or_documentation"
     },
     {
@@ -243,6 +249,12 @@
       "sha256": "50d17d614751ab03c7b0664c8ef1c3d36a9299eb73a6511907c97e4b61ab4ee7"
     },
     {
+      "path": "docs/DESTINATION_BATCH_CN.md",
+      "role": "verified_reference",
+      "size": 1514,
+      "sha256": "64b46d68e4062006c3f3a56695a3ce07b5edfd44b6ce9184c8b2287bb28548e2"
+    },
+    {
       "path": "docs/FROZEN_EXPERIMENT_REPORT_CN.md",
       "size": 8816,
       "sha256": "b2d2e4cfdcfa6c2510a9b993c73782e2555a2051e2d218a1724672f911fc1674",
@@ -251,8 +263,8 @@
     {
       "path": "docs/RELEASE_BATCHES_AND_PROTOCOLS_CN.md",
       "role": "source_or_documentation",
-      "size": 5234,
-      "sha256": "dad06bfb220dcd24e78b08089b5ed0ee50e135f06ca94178abeb6b08a846c13c"
+      "size": 5360,
+      "sha256": "a57071ac8b3adc72cfd1edadc5bf81d6f4fa4023e269c46b5bb43407d21b514f"
     },
     {
       "path": "docs/RELEASE_ISSUE_AUDIT_20260924.md",
@@ -267,15 +279,27 @@
       "role": "source_or_documentation"
     },
     {
+      "path": "docs/TRAIN_ONLY_GENERATION_CN.md",
+      "role": "source_or_documentation",
+      "size": 6693,
+      "sha256": "c06ad9b9656e793ab80689a9ebb49aca7c25602e0e26fa1b99d1295c6bc1c916"
+    },
+    {
       "path": "evaluation/analysis_scripts/downstream_full_protocol.py",
-      "size": 20066,
-      "sha256": "d84ee763a25f8b26daf590be131019bcab5f5478c2ffe00e15bde1abd8c9b526",
+      "size": 21597,
+      "sha256": "95fa5b37634946e47311453f64fb3d1ab3c62953f94e7b144741120fd7c661a9",
       "role": "source_or_documentation"
     },
     {
+      "path": "evaluation/audit_tstr_split.py",
+      "role": "source_or_documentation",
+      "size": 3259,
+      "sha256": "8d962e4ee452eda043ef6d0405903318ccc42e2c55dacc46e77d8c51fcd2cad5"
+    },
+    {
       "path": "evaluation/combine_tstr_mr.py",
-      "size": 6221,
-      "sha256": "ca9cdd44cfcc887f03ae2c72c4228d009b283749710ce71f2c401f5573c20fa8",
+      "size": 6990,
+      "sha256": "47d20a9e4d1fc7912fc5c63c3fb2ccc8ec3d93ee9ecf60c8fbb9978aff601912",
       "role": "source_or_documentation"
     },
     {
@@ -394,8 +418,8 @@
     },
     {
       "path": "evaluation/evaluation/evaluate_all.py",
-      "size": 17275,
-      "sha256": "bdfcfb7ecfb6ed0dda887e22281533ba379d7236d0ab6a472ed989a685eec21e",
+      "size": 17502,
+      "sha256": "eefc6f6be0430713e64522447324280698b80db1ffd6eec9b5e694afe6753b71",
       "role": "source_or_documentation"
     },
     {
@@ -676,8 +700,8 @@
     },
     {
       "path": "evaluation/run_tstr_experiment.py",
-      "size": 9666,
-      "sha256": "1d8864ae7564f58ab58a7dc67a6e8f7157c9c10ed8801ff1e190bf0d9d5a9df2",
+      "size": 12173,
+      "sha256": "da9a1998497f19e744bcca4f6a7ebb994c6c5dbb2b5c59f481f7da0b328b90ab",
       "role": "source_or_documentation"
     },
     {
@@ -949,6 +973,18 @@
       "size": 2857,
       "sha256": "9f03c38fc7439d53ee7b4f7f9285cc345b529c678bdaf717df37152df58172d4",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "evaluation/synthesis_lineage.py",
+      "role": "source_or_documentation",
+      "size": 3660,
+      "sha256": "c7c2daf90cc7fe8d5d14d83b8e69405d03983eefbb46a4891a8412cffafe0e50"
+    },
+    {
+      "path": "experiment_results/current_verified/destination/mtr_gsrt.json",
+      "role": "verified_reference",
+      "size": 689,
+      "sha256": "77ad7eb6bf7f6891794b0bb341a00039f8c2d6aaa7b41c1377f253d38ffff5b2"
     },
     {
       "path": "experiment_results/executed_reference/tstr/manifest.json",
@@ -1881,6 +1917,12 @@
       "role": "source_or_documentation"
     },
     {
+      "path": "requirements-lock.txt",
+      "role": "source_or_documentation",
+      "size": 471,
+      "sha256": "665bdc65c14451a7076550d045b7a2ec2a51533045165e8eb763999de7d3a096"
+    },
+    {
       "path": "requirements.txt",
       "size": 144,
       "sha256": "0805bc7d607f4e60b21055be64770d78bd0e9d5b3fbecb7f31ef2ad01351dffe",
@@ -1891,6 +1933,12 @@
       "size": 644,
       "sha256": "3334a20dfaf5612f10a9b07e862f4f8b91b6d2c9b2586fe9e46ff7c7a9e604ea",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "tests/test_destination_model_audit.py",
+      "role": "source_or_documentation",
+      "size": 1231,
+      "sha256": "4cfb9e686316c4ae79ac42d0f064ed33da67a99f006c20e7b49be390eb78c85b"
     },
     {
       "path": "tests/test_frozen_metric_consistency.py",
@@ -1957,6 +2005,12 @@
       "size": 3877,
       "sha256": "c462d62296854cd5e4e596dc11cdd7fde47b7296ca6e606b3e9c9432246cfa52",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "tests/test_synthesis_lineage.py",
+      "role": "source_or_documentation",
+      "size": 6166,
+      "sha256": "0530752d94af04495d82ac41c3798bc9fed9f676c408330e2f229bdcda98422b"
     },
     {
       "path": "tests/test_train_route_split.py",

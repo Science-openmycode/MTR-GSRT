@@ -9,6 +9,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from synthesis_lineage import bind_records, bind_split
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PIPELINE = ROOT / "evaluation" / "pipeline"
@@ -22,18 +24,37 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def base_release_hash(path: Path) -> str:
+def base_release_hash(path: Path, seen: frozenset[Path] = frozenset()) -> str:
     """Bind a routed view to the release it reconstructs, not just its label."""
+    path = path.resolve()
+    if path in seen or len(seen) >= 32:
+        raise ValueError("Cyclic or excessive release derivation chain")
+    seen = seen | {path}
     digest = sha256_file(path)
     sidecar = path.with_name(path.name + ".manifest.json")
     if sidecar.is_file():
         manifest = json.loads(sidecar.read_text(encoding="utf-8-sig"))
-        if manifest.get("router") in {"FMM", "STMatch"}:
+        source_record = None
+        if manifest.get("schema") == "road-route-coordinate-derivation-v1":
+            if manifest.get("coordinates", {}).get("sha256") != digest:
+                raise ValueError(f"Road coordinate derivation output hash mismatch: {path}")
+            source_record = manifest.get("route_source", {})
+        elif manifest.get("router") in {"FMM", "STMatch"}:
             if manifest.get("output", {}).get("sha256") != digest:
                 raise ValueError(f"Routed view output hash mismatch: {path}")
-            source = manifest.get("inputs", {}).get("source", {}).get("sha256")
+            source_record = manifest.get("inputs", {}).get("source", {})
+        if source_record is not None:
+            source = source_record.get("sha256")
             if not source:
                 raise ValueError(f"Routed view missing source release binding: {path}")
+            raw_source = source_record.get("path")
+            if raw_source:
+                original = Path(raw_source)
+                original = original if original.is_absolute() else path.parent / original
+                if original.is_file():
+                    if sha256_file(original) != source:
+                        raise ValueError(f"Derivation source file hash mismatch: {original}")
+                    return base_release_hash(original, seen)
             return source
     return digest
 
@@ -121,8 +142,10 @@ def aggregate(generic_dir: Path, road_dir: Path, output: Path, input_binding: di
         "normalization": "coverage times conditional quality, divided by the Real-train product; Real-train=1",
         "pipelines": [row["Pipeline"] for row in rows],
         "split_binding": input_binding,
-        "synthesis_lineage_verified": False,
-        "lineage_note": "Task scoring binds train/test inputs; train-only synthesis additionally requires a generator-run provenance record.",
+        "synthesis_lineage_verified": bool(input_binding and input_binding.get("synthesis_lineage")
+            and set(input_binding["synthesis_lineage"]) == set(input_binding["base_releases"])),
+        "disjoint_split_verified": bool(input_binding and input_binding.get("disjoint_split")),
+        "lineage_note": "Executed generator input binding is checked separately from task scoring; it is local research provenance, not a DP release or formal noninterference proof.",
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
@@ -141,6 +164,11 @@ def main() -> None:
     parser.add_argument("--bbox", nargs=4, type=float, required=True)
     parser.add_argument("--seed", type=int, default=20260713)
     parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--synthesis-lineage", action="append", default=[],
+                        help="MEASUREMENT=local generator record.json; repeat per base measurement")
+    parser.add_argument("--require-synthesis-lineage", action="store_true",
+                        help="Reject before scoring unless every release has executed train-only provenance")
+    parser.add_argument("--split-audit", help="Local audit_tstr_split.py record binding disjoint indexed inputs")
     args = parser.parse_args()
     if len(args.names) != len(args.synthetic):
         parser.error("--names must contain one name for every repeated --synthetic argument")
@@ -152,6 +180,8 @@ def main() -> None:
         path = Path(value)
         return str((path if path.is_absolute() else ROOT / path).resolve())
     output = args.out_dir if args.out_dir.is_absolute() else ROOT / args.out_dir
+    if output.exists():
+        parser.error(f"Choose a new task output directory; existing results are not overwritten: {output}")
     train_path, test_path = Path(resolved(args.train_real)), Path(resolved(args.test_real))
     input_binding = {
         "classification": "LOCAL_RESEARCH_AUDIT_NOT_A_DP_RELEASE",
@@ -177,6 +207,12 @@ def main() -> None:
         for name, path in zip(args.names, args.road_synthetic):
             if base_release_hash(Path(resolved(path))) != input_binding["base_releases"][measurement_name(name)]:
                 parser.error(f"{name}: coordinate and road views use different base releases")
+    input_binding["synthesis_lineage"] = bind_records(
+        args.synthesis_lineage, ROOT, input_binding, args.require_synthesis_lineage)
+    if args.require_synthesis_lineage and not args.split_audit:
+        parser.error("Strict TSTR also requires --split-audit from audit_tstr_split.py")
+    input_binding["disjoint_split"] = (bind_split(Path(resolved(args.split_audit)),
+        input_binding["train_sha256"], input_binding["test_sha256"]) if args.split_audit else None)
     generic_dir, road_dir = output / "raw_generic", output / "raw_road"
     common = ["--train-real", resolved(args.train_real), "--test-real", resolved(args.test_real)]
     for path in args.synthetic:

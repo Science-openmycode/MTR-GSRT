@@ -1,0 +1,19 @@
+{
+  "schema": "locked_destination_reference_v1",
+  "metrics": {
+    "B1_dest16_top1": 0.031532846715328466,
+    "B1_dest8_top1": 0.1781021897810219,
+    "B1_dest8_top5": 0.503941605839416,
+    "B1_dest8_macro_f1": 0.04600745132529039,
+    "B1_dest16_macro_f1": 0.007615965478265778,
+    "B1_dest16_top5": 0.19912408759124087
+  },
+  "real_eval_count": 3425,
+  "train_synthetic_count": 17123,
+  "dependencies": "requirements-lock.txt",
+  "date": "2026-09-29",
+  "method": "MTR-GSRT",
+  "python": "3.11.15",
+  "protocol": "retrospective_full_corpus_proxy",
+  "historical_policy": "Historical files retained unchanged; separately recomputed batch, not recovery of the original environment."
+}

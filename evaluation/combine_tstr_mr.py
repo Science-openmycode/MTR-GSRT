@@ -60,7 +60,7 @@ def validate_bindings(paths: dict[str, Path]) -> dict:
         bindings[router] = binding
     if any(not binding.get("base_releases") for binding in bindings.values()):
         raise ValueError("Missing base release hashes; rerun task scoring with routed-view manifests")
-    for key in ("train_sha256", "test_sha256", "bbox", "seed", "osm_sha256", "base_releases"):
+    for key in ("train_sha256", "test_sha256", "bbox", "seed", "osm_sha256", "base_releases", "synthesis_lineage", "disjoint_split"):
         values = [json.dumps(binding.get(key), sort_keys=True) for binding in bindings.values()]
         if len(set(values)) != 1:
             raise ValueError(f"Router tables use different {key}")
@@ -83,6 +83,8 @@ def main() -> None:
     parser.add_argument("--fmm", type=Path, required=True)
     parser.add_argument("--stmatch", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--require-synthesis-lineage", action="store_true",
+                        help="Only aggregate matrices with executed generation evidence for every base release")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     for name in ("native", "fmm", "stmatch", "out_dir"):
@@ -90,6 +92,11 @@ def main() -> None:
         setattr(args, name, (path if path.is_absolute() else root / path).resolve())
     paths = {"Native": args.native, "FMM": args.fmm, "STMatch": args.stmatch}
     bindings = validate_bindings(paths)
+    lineage_verified = all(bool(b.get("synthesis_lineage")) and
+                           set(b["synthesis_lineage"]) == set(b["base_releases"])
+                           for b in bindings.values())
+    if args.require_synthesis_lineage and (not lineage_verified or not all(b.get("disjoint_split") for b in bindings.values())):
+        parser.error("Missing executed generation lineage; cannot certify a strict synthesis matrix")
     tables = {router: read(path) for router, path in paths.items()}
     methods = [name for name in tables["Native"] if name != "Real-train"]
     rows: list[dict[str, object]] = []
@@ -128,7 +135,8 @@ def main() -> None:
         "main_matrix_cells": len(main_rows),
         "all_matrix_cells": len(rows),
         "split_bindings": bindings,
-        "synthesis_lineage_verified": False,
+        "synthesis_lineage_verified": lineage_verified,
+        "disjoint_split_verified": all(bool(b.get("disjoint_split")) for b in bindings.values()),
         "inputs": {router: {"path": str(path.resolve()), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()} for router, path in paths.items()},
     }, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 

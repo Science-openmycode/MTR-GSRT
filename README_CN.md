@@ -10,7 +10,7 @@
 python -m venv .venv
 .\\.venv\\Scripts\\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-lock.txt
 ```
 
 安装完成后，本目录中的生成、评估和作图命令均使用这个 Python 3.11 环境。
@@ -302,6 +302,18 @@ python commands/reproduce.py plot -- --figure all --data-root experiment_results
 
 完整数值分析见 `docs/FROZEN_EXPERIMENT_REPORT_CN.md`。
 ## 发布批次与实验输入
+
+Destination 的历史保存值和当前锁定环境值分开存放，见 [数值批次说明](docs/DESTINATION_BATCH_CN.md)。重新评估使用现行参考，不覆盖旧结果。
+
+精确复算使用 Python 3.11.15 和 `requirements-lock.txt`，其中同时固定直接与间接依赖；`requirements.txt` 保留主要依赖列表。这里的环境版本已经在独立 Windows 环境测试，不把未经运行的其它平台称为相同数值环境。
+
+### 带生成来源记录的 train-only 实验
+
+新增 `commands/generate_train_only.py` 实际调用本文件夹的生成算法，并把训练输入、生成源码、命令、退出码及输出哈希存为独立的本地记录。测试文件只用于记录划分哈希，不传入生成器。逐步命令及全部参数见 [TRAIN_ONLY_GENERATION_CN.md](docs/TRAIN_ONLY_GENERATION_CN.md)。
+
+运行后得到合成数据目录和目录外的 `lineage.json`/`lineage.log`。评分命令追加 `--synthesis-lineage "方法名=记录路径" --require-synthesis-lineage`，在训练下游模型之前核对每份生成记录；M×R 聚合也可追加 `--require-synthesis-lineage`。旧结果保持原样，新结果输出到新的目录。
+
+统一指标评估还生成 `destination_model_audit.json`，记录 Destination 模型使用的依赖版本、特征、预测和参数哈希，便于定位不同环境的评分差异。
 
 保存数据与新生成数据分开评估；全量拟合任务与严格 train-only TSTR 分开报告。逐文件预算来源、批次核查命令、三路由聚合检查和跨城市参数见 [数据批次与评估流程](docs/RELEASE_BATCHES_AND_PROTOCOLS_CN.md)。
 

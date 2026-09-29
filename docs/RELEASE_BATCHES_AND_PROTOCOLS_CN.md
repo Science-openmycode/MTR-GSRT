@@ -26,7 +26,7 @@ experiment_results/release_inventory/
 
 `evaluate` 中的任务代理是全量拟合语料上的回顾性任务评估。`run-tstr` 读取独立的 `--train-real`、`--test-real`，实际训练和评分，并在本地研究 manifest 中绑定两个输入文件、公共图、bbox、seed 和合成数据哈希。这些私有输入哈希属于本地复现记录，不是具有 DP 保证的公开发布对象。
 
-严格 TSTR 必须先用训练划分重新生成合成数据；预测器只在这些训练侧发布上训练。把全量合成数据传给 `run-tstr` 不会自动成为严格 TSTR。生成器命令与训练输入对应关系仍需保留：任务入口仅能证实评分使用了哪两个文件，不能凭文件名证明生成器没有读取测试集。因此 manifest 单独记录 `synthesis_lineage_verified=false`，而不是给未核验的生成流程签发“严格”结论。
+严格 TSTR 先用训练划分生成合成数据，再用合成数据训练预测器。新 `generate-train-only` 命令实际执行生成并保存独立的本地来源记录，`audit_tstr_split.py` 逐记录核验源数据划分。评分时提供 `--synthesis-lineage 方法=记录.json --split-audit 划分记录.json --require-synthesis-lineage`，核验全部方法的训练输入、实际生成输出和不重叠划分。通过后 manifest 的 `synthesis_lineage_verified` 和 `disjoint_split_verified` 均为 true；没有这些证据的历史评分仍保持 false，不从文件名推断生成来源。
 
 GSRT 的三种路由表使用以下命令合并（DFR 也提供相同独立脚本）：
 

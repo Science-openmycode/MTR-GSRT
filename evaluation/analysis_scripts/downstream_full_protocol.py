@@ -13,6 +13,8 @@ Protocol:
 from __future__ import annotations
 
 import csv
+import hashlib
+import importlib.metadata
 import json
 import math
 import pickle
@@ -228,8 +230,21 @@ def topk_acc_from_proba(proba: np.ndarray, classes: np.ndarray, y_true: np.ndarr
     return float(np.mean([yt in row for yt, row in zip(y_true, pred_classes)]))
 
 
-def destination_tstr_metrics(train: list[np.ndarray], real_eval: list[np.ndarray], prefix: str = "B1") -> dict[str, float]:
+def destination_tstr_metrics(train: list[np.ndarray], real_eval: list[np.ndarray], prefix: str = "B1",
+                             audit: dict | None = None) -> dict[str, float]:
     out = {}
+    if audit is not None:
+        from threadpoolctl import threadpool_info
+        audit.update({"classification": "LOCAL_MODEL_AUDIT_NOT_A_DP_RELEASE",
+                      "versions": {name: importlib.metadata.version(name)
+                                   for name in ("numpy", "scipy", "scikit-learn")},
+                      "threadpools": threadpool_info(), "models": {}})
+    def array_hash(value):
+        array = np.ascontiguousarray(value)
+        digest = hashlib.sha256()
+        digest.update(str((array.shape, array.dtype.str)).encode())
+        digest.update(array.tobytes())
+        return digest.hexdigest()
     for grid in [8, 16]:
         x_train, y_train = trajectory_features(train, grid)
         x_test, y_test = trajectory_features(real_eval, grid)
@@ -253,6 +268,19 @@ def destination_tstr_metrics(train: list[np.ndarray], real_eval: list[np.ndarray
         pred = clf.predict(x_test)
         proba = clf.predict_proba(x_test)
         classes = clf.named_steps["sgdclassifier"].classes_
+        if audit is not None:
+            model = clf.named_steps["sgdclassifier"]
+            scaler = clf.named_steps["standardscaler"]
+            audit["models"][str(grid)] = {
+                "train_rows": len(x_train), "test_rows": len(x_test),
+                "bbox": list(BBOX), "hyperparameters": model.get_params(),
+                "hashes": {name: array_hash(value) for name, value in {
+                    "x_train": x_train, "y_train": y_train, "x_test": x_test, "y_test": y_test,
+                    "scaler_mean": scaler.mean_, "scaler_scale": scaler.scale_,
+                    "coef": model.coef_, "intercept": model.intercept_, "classes": classes,
+                    "predictions": pred, "probabilities": proba}.items()},
+                "iterations": int(model.n_iter_),
+            }
         out[f"{prefix}_dest{grid}_top1"] = float(np.mean(pred == y_test))
         out[f"{prefix}_dest{grid}_top5"] = topk_acc_from_proba(proba, classes, y_test, 5)
         out[f"{prefix}_dest{grid}_macro_f1"] = float(f1_score(y_test, pred, average="macro", zero_division=0))
