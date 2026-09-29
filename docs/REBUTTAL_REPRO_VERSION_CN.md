@@ -32,3 +32,9 @@ Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先�
 - `run_tstr_experiment.py` 识别路径族视图的来源链，并在路由文件被篡改时拒绝评分；同时兼容已有 STMatch manifest 的大写 `STMATCH` 标签，仍核查基础发布哈希。
 - 新增 `run_rebuttal_tstr_selection.py` 与统一 CLI 的 `run-rebuttal-tstr`，对四基线各七个实际候选完成验证集评分，然后在独立真实测试划分上同批重评原生、最佳路由和 MTR-GSRT 共九行。验证阶段选出的四个路由与旧回复一致；最佳路由四行的 16 个指标数值与历史表一致；五个原生行的 20 个数值中有 15 个不同，因为旧表拼接了保存的历史原生批次。公开入口保留两阶段哈希和原始结果，不悄悄替换旧表。
 - 本次选择使用真实训练划分内的私有验证标签，是研究诊断，不属于无额外预算的 DP 后处理。完整输入生成链认证和独立克隆端到端重跑仍未完成。代码测试结果：58 passed、119 subtests passed。
+
+### Q3：长度条件路由数学核对（2026-09-30）
+
+- 新增 `audit-rebuttal-q3` 公共 CLI，在无私有输入的两路图上调用实际 `RSPBridge` 和 `portal_information_projection`；逐项断言 Doob 转移与 Gibbs 分配函数、期望代价与解析值、长度目标下的 beta 选择、portal 信息投影与显式指数倾斜相同。
+- Python 3.11.15 锁定环境与当前测试环境生成的 JSON SHA-256 同为 `0489E99AF2CE3EE7E4C7C5FAD7AE6170AA941EAA3F5B5C0486C5B109130339A8`。具体数值、命令和主配置两阶段调用链见 `docs/REBUTTAL_Q3_ROUTING_CN.md`。
+- 该核对也发现旧回复把区域桥接与跨界 portal 投影写成一次统一核投影，并把多因子操作写成先组合后截断，均不是主配置逐操作规格。原回复按用户要求未改；公开文档精确标出差异。公开测试现为 59 passed、119 subtests passed。
