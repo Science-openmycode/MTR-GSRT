@@ -30,3 +30,19 @@ python commands/reproduce.py plot-rebuttal-q5-q6 -- `
 ```
 
 输出 `q6_complete_low_epsilon_audit.png`、`.pdf` 和图像哈希清单。该入口重算已有 35 份发布的诊断，不替代 35 次合成、跨城市五种子生成或攻击实验。若需从原始轨迹重做，先按 `README_CN.md` 的生成、统一评估与道路选择评估命令准备上述三类输入。
+
+## Porto 与旧金山的五种子结果
+
+两城各有五份 ε=7/5 的独立发布与统一指标。聚合入口要求十份协议和十份指标全部存在，不会静默跳过缺失种子；`--sf-seed-suffix` 对应已保存的 `_arterial_v2` 生成批次。使用自己的城市运行时，分别把四个根目录指向相应生成和评分结果。
+
+```powershell
+python commands/reproduce.py aggregate-rebuttal-q6-multicity -- `
+  --porto-generation-root C:\runs\mtr\porto\eps_7_5 `
+  --porto-metrics-root C:\runs\rebuttal_q6_multicity\porto `
+  --sf-generation-root C:\runs\mtr\sf_trip20k\eps_7_5 `
+  --sf-seed-suffix _arterial_v2 `
+  --sf-metrics-root C:\runs\rebuttal_q6_multicity\sf `
+  --out-dir C:\runs\rebuttal_q6_multicity_summary
+```
+
+每个生成根目录下应有 `seed_<seed><suffix>/protocol.json`，每个指标根目录下有 `seed_<seed>/metrics.json`，五个 seed 固定为 `20260719`—`20260723`。得到 `q6_multicity_five_seed_detailed.csv`、`q6_multicity_five_seed_summary.csv` 与绑定二十份输入哈希的 `manifest.json`。这一步从已有完整发布重算均值和 95% 区间；从零生成两城十份轨迹仍需先按跨城市生成命令完成。
