@@ -38,3 +38,9 @@ Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先�
 - 新增 `audit-rebuttal-q3` 公共 CLI，在无私有输入的两路图上调用实际 `RSPBridge` 和 `portal_information_projection`；逐项断言 Doob 转移与 Gibbs 分配函数、期望代价与解析值、长度目标下的 beta 选择、portal 信息投影与显式指数倾斜相同。
 - Python 3.11.15 锁定环境与当前测试环境生成的 JSON SHA-256 同为 `0489E99AF2CE3EE7E4C7C5FAD7AE6170AA941EAA3F5B5C0486C5B109130339A8`。具体数值、命令和主配置两阶段调用链见 `docs/REBUTTAL_Q3_ROUTING_CN.md`。
 - 该核对也发现旧回复把区域桥接与跨界 portal 投影写成一次统一核投影，并把多因子操作写成先组合后截断，均不是主配置逐操作规格。原回复按用户要求未改；公开文档精确标出差异。公开测试现为 59 passed、119 subtests passed。
+
+### Q5：区域粒度诊断与 Portal-Fiber 组件对照（2026-09-30）
+
+- 新增 `run-rebuttal-q5-partition`，显式传入本地完整真实输入、公开 OSM、bbox 和容量，重算 22 个嵌套与 8 个非嵌套划分，每个使用五个固定噪声种子。17,123 条北京冻结输入的 150 个种子行和 30 个汇总行按字段与旧补充材料完全一致；汇总 CSV SHA-256 同为 `527444A0105475E3034AFD4122911CC70CEF13089C6FAE194CECF43FA68F74F2`。详细 CSV 列顺序不同，不能要求字节哈希一致，逐字段差异为 0。
+- 新增 `plot-rebuttal-q5-q6`，从新汇总结果生成的 Q5 分区 PNG 与从旧汇总结果经同一代码生成的 PNG SHA-256 相同；结果含输入/图像哈希 manifest。这里复算的是研究诊断，未公开原始轨迹或 exact q5 向量。
+- 四臂重解码入口 `run-rebuttal-q5-ablation` 复用一份 DP transcript。三条新解码臂的轨迹和 witness SHA-256 均与历史协议逐项相同；四臂共同评分的 68 个指标字段与历史结果逐项相同（容差 `1e-12`）。由新结果绘出的消融 PNG 与旧结果经同一绘图入口生成的 PNG SHA-256 均为 `EE133DE8B0B15F099E7D9CDBEAF612B9259568B0636B9D522BFBFAC37674E286`。去跨界流与去局部投影两臂彼此也完全相同，不能当作两份独立效果证据。具体输入、命令和产物见 `docs/REBUTTAL_Q5_PARTITION_CN.md`。整体 Portal 单元的严格 TSTR 消融是另一项实验，尚未在本版本完成来源核验。
