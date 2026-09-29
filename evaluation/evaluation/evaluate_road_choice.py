@@ -58,6 +58,24 @@ def _load_records(path: Path) -> tuple[list[dict], int]:
     return records, offset
 
 
+def _select_real_test_trips(
+    real_records: list[dict],
+    edge_context: dict,
+    edge_nodes: dict,
+    real_test_fraction: float,
+    real_test_start_index: int | None,
+) -> tuple[list, int]:
+    """Keep an explicit split on record slots, before failed matches are removed."""
+    if real_test_start_index is not None:
+        return (
+            matched_choice_trips(real_records[real_test_start_index:], edge_context, edge_nodes),
+            real_test_start_index,
+        )
+    real_trips = matched_choice_trips(real_records, edge_context, edge_nodes)
+    split = int(len(real_trips) * (1.0 - real_test_fraction))
+    return real_trips[split:], split
+
+
 def _edge_endpoint_regions(
     network: Path,
     config: dict,
@@ -233,6 +251,10 @@ def main() -> None:
     parser.add_argument("--quotient-regions", type=int, choices=(24, 96, 384), default=384)
     parser.add_argument("--mixture-weight", type=float, default=0.5)
     parser.add_argument("--expected-count", type=int)
+    parser.add_argument("--synthetic-expected-count", type=int,
+                        help="Public synthetic slot count when train-only synthesis differs from the full real corpus")
+    parser.add_argument("--real-test-start-index", type=int,
+                        help="Exact public boundary in the full ordered real cache; all later slots form the test set")
     parser.add_argument("--bootstrap-draws", type=int, default=10000)
     parser.add_argument("--bootstrap-seed", type=int, default=20260727)
     parser.add_argument("--out-dir", required=True)
@@ -281,9 +303,14 @@ def main() -> None:
     expected = args.expected_count if args.expected_count is not None else int(
         config["public_slot_count"]
     )
-    for name, records in {"Real": real_records, **synthetic_records}.items():
-        if len(records) != expected:
-            raise RuntimeError(f"{name} cache contains {len(records)} records; expected {expected}")
+    synthetic_expected = args.synthetic_expected_count or expected
+    if len(real_records) != expected:
+        raise RuntimeError(f"Real cache contains {len(real_records)} records; expected {expected}")
+    for name, records in synthetic_records.items():
+        if len(records) != synthetic_expected:
+            raise RuntimeError(f"{name} cache contains {len(records)} records; expected {synthetic_expected}")
+    if args.real_test_start_index is not None and not 0 < args.real_test_start_index < expected:
+        raise ValueError("--real-test-start-index must lie inside the full real cache")
 
     edge_regions, edge_nodes, carrier_edge_regions, quotient = _edge_endpoint_regions(
         network, config, args.quotient_regions
@@ -303,9 +330,13 @@ def main() -> None:
         for edge_id, pair in edge_nodes.items()
         if pair in option_context
     }
-    real_trips = matched_choice_trips(real_records, edge_context, edge_nodes)
-    split = int(len(real_trips) * (1.0 - args.real_test_fraction))
-    real_test = real_trips[split:]
+    real_test, split = _select_real_test_trips(
+        real_records,
+        edge_context,
+        edge_nodes,
+        args.real_test_fraction,
+        args.real_test_start_index,
+    )
 
     results: dict[str, dict[str, float | int]] = {}
     trip_scores: dict[str, dict[str, np.ndarray | int]] = {}
@@ -317,7 +348,7 @@ def main() -> None:
     for name, path in witness_methods.items():
         all_trips[name], witness_inputs[name] = _load_witness_trips(
             path,
-            expected=expected,
+            expected=synthetic_expected,
             option_context=option_context,
         )
     for name, trips in all_trips.items():
@@ -362,6 +393,7 @@ def main() -> None:
         "classification": "ROAD_CHOICE_EVALUATION_NO_SYNTHESIS",
         "dataset": config["name"],
         "record_count": expected,
+        "synthetic_record_count": synthetic_expected,
         "screening_prefix": bool(args.expected_count is not None),
         "definition": {
             "context": "ordered pair of distinct public quotient regions",
@@ -371,6 +403,7 @@ def main() -> None:
             "population_weighting": "unit mass per contributing trajectory",
             "real_test_start": split,
             "real_test_fraction": args.real_test_fraction,
+            "real_test_start_is_record_index": args.real_test_start_index is not None,
             "next_road_mixture_weight": args.mixture_weight,
             "failed_match_policy": "zero choice events",
             "source_index_offsets": source_index_offsets,
