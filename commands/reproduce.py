@@ -168,6 +168,7 @@ def stage_helper(name: str, args: list[str]) -> int:
         "audit-rebuttal-q3": ROOT / "evaluation" / "audit_rebuttal_q3_routing.py",
         "run-rebuttal-q5-partition": ROOT / "evaluation" / "run_rebuttal_q5_partition.py",
         "run-rebuttal-q5-ablation": ROOT / "evaluation" / "run_rebuttal_q5_portal_ablation.py",
+        "run-rebuttal-q6-low-epsilon": ROOT / "evaluation" / "run_rebuttal_q6_low_epsilon.py",
         "plot-rebuttal-q5-q6": ROOT / "plotting" / "plot_rebuttal_q5_q6.py",
     }
     return run([sys.executable, str(entries[name]), *forwarded(args)])
@@ -253,7 +254,7 @@ def main() -> int:
     for name in ("generate-main", "generate-baselines", "evaluate",
                  "verify-matcher", "generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
                  "routes-to-coordinates", "materialize-family-routes", "materialize-family-tstr-views",
-                 "run-tstr", "run-rebuttal-tstr", "audit-rebuttal-q3", "run-rebuttal-q5-partition", "run-rebuttal-q5-ablation", "plot-rebuttal-q5-q6", "materialize-tstr-mr", "combine-tstr-mr",
+                 "run-tstr", "run-rebuttal-tstr", "audit-rebuttal-q3", "run-rebuttal-q5-partition", "run-rebuttal-q5-ablation", "run-rebuttal-q6-low-epsilon", "plot-rebuttal-q5-q6", "materialize-tstr-mr", "combine-tstr-mr",
                  "run-ablation", "run-framework", "run-privacy", "run-profile", "run-mr",
                  "run-physical", "run-structure"):
         child = sub.add_parser(name)
@@ -275,7 +276,7 @@ def main() -> int:
         return stage_evaluate(ns.args)
     if ns.stage == "verify-matcher":
         return stage_verify_matcher(ns.args)
-    if ns.stage in {"generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates", "materialize-family-routes", "materialize-family-tstr-views", "run-rebuttal-tstr", "audit-rebuttal-q3", "run-rebuttal-q5-partition", "run-rebuttal-q5-ablation", "plot-rebuttal-q5-q6"}:
+    if ns.stage in {"generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates", "materialize-family-routes", "materialize-family-tstr-views", "run-rebuttal-tstr", "audit-rebuttal-q3", "run-rebuttal-q5-partition", "run-rebuttal-q5-ablation", "run-rebuttal-q6-low-epsilon", "plot-rebuttal-q5-q6"}:
         return stage_helper(ns.stage, ns.args)
     if ns.stage == "run-tstr":
         return stage_tstr(ns.args)

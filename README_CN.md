@@ -4,6 +4,7 @@
 
 审稿回复共用的道路 M×R 实验见 [共用矩阵命令](docs/REBUTTAL_SHARED_MR_CN.md)；严格 TSTR 的四种路径族生成、七路由验证与九行最终任务评分见 [七路由 TSTR 命令](docs/REBUTTAL_TSTR_FAMILY_VIEWS_CN.md)；长度条件桥接与 Portal-Fiber 投影的公开计算示例见 [路由数学核对](docs/REBUTTAL_Q3_ROUTING_CN.md)。
 区域粒度的 30 配置、五种子 Portal-Fiber 测量诊断见 [Q5 分区实验命令](docs/REBUTTAL_Q5_PARTITION_CN.md)。
+七预算×五种子的查询层与完整发布分层诊断见 [Q6 隐私预算命令](docs/REBUTTAL_Q6_LOW_EPSILON_CN.md)。
 
 ![MTR-GSRT 实验顺序](experiment_results/published_figures/00_ordered_evidence_chain.png)
 
