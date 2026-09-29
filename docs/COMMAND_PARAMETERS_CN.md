@@ -26,6 +26,7 @@
 | `--dwell-strength` | `0.10` | 驻留测量进入公共路由的权重。 |
 | `--hierarchy-likelihood-ratio-cap` | `100.0` | 层次测量后处理的公共似然比上限。 |
 | `--component-mode` | `full` | `full` 使用全部组件；`no-portal-fiber` 关闭 Portal-Fiber 路线信号；`no-graph-flow` 关闭 compact graph-flow；`demand-only` 同时关闭两类路线测量。关闭操作发生在已写出的 DP transcript 之后，以等质量公共均匀场替代该组件，其余测量、预算、随机种子和路由设置保持不变。 |
+| `--portal-unit-mode` | `full` | `ablated` 为单独的研究消融：私有测量中移除 portal-fiber 查询，将 q5 固定逐记录质量分给其余四块，公共路由改用公共 crossing-edge prior；须与 `--component-mode full` 联用，且与 `full` 分别生成 transcript。命令见 `docs/REBUTTAL_Q5_TRAIN_ONLY_DIAGNOSTIC_CN.md`。 |
 | `--public-slot-count` | `17123` | 预先声明的公开输出条数；不得从待保护数据运行时推断。严格 TSTR 中使用预先声明的训练发布规模。 |
 | `--public-input-capacity` | `17123` | 私有测量的预声明输入容量上界 (N)，独立于输出数 (m)。省略时默认为 `--public-slot-count`，保持旧命令兼容；若输入有效轨迹超过 (N)，命令报错而不按输出数截断。 |
 | `--verify-frozen-input` | 默认关闭 | 用注册配置的输入 SHA-256 做本地精确复现预检。该检查区分相邻输入，不属于 DP 发布机制；验证私有输入来源时单独运行，不用其成功/失败作为公开发布事件。 |

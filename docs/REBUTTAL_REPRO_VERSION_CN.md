@@ -31,6 +31,11 @@
 
 Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先将保存图表登记为已复现。
 
+### 北京主运行的干净克隆核验（2026-09-30）
+
+- 在独立 GitHub 克隆、Python 3.11.15 锁定环境中，对本地冻结的北京 17,123 条完整输入执行 `generate-main`；先取回公共 OSM 的 Git LFS 实体文件，随后全量完成。输出恰有 17,123 条轨迹和 17,123 个 witness，公共路由回退为 0。
+- 新 DP transcript SHA-256 为 `5343F9BE4F7C0E9EEDC42FC76231931F317C83E76788C5A7B50D40C41D4E4AAD`，与旧保存结果逐字节相同。新轨迹/witness SHA-256 分别为 `34DE44012537557783A0ECF375C33145C13B2A75CD06B733FA2FDADBB26CDAC7` / `EE87AEF1C919244BC47FEFCBB376BB9652A18B0231C1BEB12498BD8BB9AEA001`，与旧保存的 `BBDB4093366A8E6CE8B9018BE0E19AFA63DB1F294938B407D0ED4337D781FBEA` / `AF920F6FF71150AE66BAC7A80F594C1598D2514BC7D8A4D488764520497A23FD` 不同。旧协议记载的解码器源码绑定与当前 GitHub `SOURCE_MANIFEST.json` 不同；此结果是**当前版本**从头生成成功，不能称旧论文生成物逐字节复现。后续效用表需要分别绑定所用版本。
+
 ### 严格 TSTR 七路由比较（阶段性，2026-09-30）
 
 - `materialize_family_routers.py` 增加 `--seed-schedule tstr-v1`；原完整发布矩阵仍默认使用 `full-road-v1`，原先路线与哈希不变。
@@ -51,6 +56,12 @@ Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先�
 - 新增 `run-rebuttal-q5-partition`，显式传入本地完整真实输入、公开 OSM、bbox 和容量，重算 22 个嵌套与 8 个非嵌套划分，每个使用五个固定噪声种子。17,123 条北京冻结输入的 150 个种子行和 30 个汇总行按字段与旧补充材料完全一致；汇总 CSV SHA-256 同为 `527444A0105475E3034AFD4122911CC70CEF13089C6FAE194CECF43FA68F74F2`。详细 CSV 列顺序不同，不能要求字节哈希一致，逐字段差异为 0。
 - 新增 `plot-rebuttal-q5-q6`，从新汇总结果生成的 Q5 分区 PNG 与从旧汇总结果经同一代码生成的 PNG SHA-256 相同；结果含输入/图像哈希 manifest。这里复算的是研究诊断，未公开原始轨迹或 exact q5 向量。
 - 四臂重解码入口 `run-rebuttal-q5-ablation` 复用一份 DP transcript。三条新解码臂的轨迹和 witness SHA-256 均与历史协议逐项相同；四臂共同评分的 68 个指标字段与历史结果逐项相同（容差 `1e-12`）。由新结果绘出的消融 PNG 与旧结果经同一绘图入口生成的 PNG SHA-256 均为 `EE133DE8B0B15F099E7D9CDBEAF612B9259568B0636B9D522BFBFAC37674E286`。去跨界流与去局部投影两臂彼此也完全相同，不能当作两份独立效果证据。具体输入、命令和产物见 `docs/REBUTTAL_Q5_PARTITION_CN.md`。整体 Portal 单元的严格 TSTR 消融是另一项实验，尚未在本版本完成来源核验。
+
+### Q5：整体 Portal 单元的独立 train-only 研究臂（2026-09-30）
+
+- `generate-main --portal-unit-mode ablated` 在 q5 私有测量中删去 portal-fiber 块，按固定质量重分配其余四块；公共 crossing-edge prior 由单独的 `portal_unit_research_decoder.py` 读取。正式 SOURCE_MANIFEST 中原解码器、默认 `full` 输出和生产账本不变。此开关不同于只在带噪 transcript 后中和信号的 `--component-mode no-portal-fiber`。
+- 锁定 Python 3.11.15 环境以真实训练划分生成 13,698 条 ablated 轨迹和 witness，fallback 0。base/compact-flow 七块与已有 full 臂逐项相同，五块 q5 按定义改变，portal-fiber 块为零。研究解码器哈希与协议绑定一致。
+- 相同未见测试分割的 Full 与 Portal-removed 的 RC-CPC 为 `0.253970/0.296508`，RC-NDCG 为 `0.672019/0.620615`，NextRoadAcc 为 `0.227050/0.153624`，NextRoadNLL 为 `1.961308/1.939319`。两臂呈现排序/判别与分布重合/对数损失之间的权衡，不得写成全指标提升。命令见 `docs/REBUTTAL_Q5_TRAIN_ONLY_DIAGNOSTIC_CN.md`；它不追认旧 PDF 中以全量输入合成、却称严格 TSTR 的历史表。公开测试为 75 passed、119 subtests passed。
 
 ### Q6：北京七预算×五种子的查询与发布层诊断（2026-09-30）
 

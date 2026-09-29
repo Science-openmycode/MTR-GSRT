@@ -52,6 +52,12 @@ Q5_BLOCK_NAMES = (
     "fine384_flow",
     "portal_fiber_flow",
 )
+PORTAL_UNIT_ABLATED_MASSES = {
+    "coarse24_occupancy": 153_846,
+    "fine384_occupancy": 153_846,
+    "fine96_flow": 230_769,
+    "fine384_flow": 461_539,
+}
 
 
 def _peak_rss_bytes() -> int:
@@ -153,6 +159,12 @@ def build_parser() -> argparse.ArgumentParser:
         help=("Algorithm-level ablation applied after the DP transcript is written. "
               "Disabled route blocks are replaced by mass-preserving public uniform fields."),
     )
+    parser.add_argument(
+        "--portal-unit-mode", choices=("full", "ablated"), default="full",
+        help=("Research-only bundled Portal unit ablation. The ablated arm "
+              "removes the private portal-fiber query, reallocates its q5 "
+              "mass across four blocks, and uses a public crossing-edge prior."),
+    )
     parser.add_argument("--public-slot-count", type=int)
     parser.add_argument(
         "--public-input-capacity", type=int,
@@ -243,11 +255,13 @@ def _load_private_input(data_spec, input_capacity: int, loader):
     return real, named_loader
 
 
-def _portal_release(real, coords, graph, capacity: int, epsilon: Fraction, seed: int):
+def _portal_release(real, coords, graph, capacity: int, epsilon: Fraction, seed: int,
+                    portal_unit_mode: str = "full"):
     import audit_two_level_semimarkov_dp as audit
     import certified_discrete_dp as certified
     import nested_quotient_graph as nested
     import portal_fiber_route_release_development as portal
+    from dp_two_level_semimarkov_release import hamilton_quantize_block
 
     if tuple(portal.BLOCK_BUDGETS) != Q5_BLOCK_NAMES:
         raise RuntimeError("frozen Portal-Fiber q5 block schema changed")
@@ -263,17 +277,35 @@ def _portal_release(real, coords, graph, capacity: int, epsilon: Fraction, seed:
         "fine384_flow": np.zeros(len(context384.fine_edge_index) + 1),
         "portal_fiber_flow": np.zeros(portal_atoms + 1),
     }
-    totals = {name: np.zeros_like(value, dtype=np.int64) for name, value in templates.items()}
+    active_masses = (dict(portal.BLOCK_BUDGETS) if portal_unit_mode == "full"
+                     else dict(PORTAL_UNIT_ABLATED_MASSES))
+    if portal_unit_mode not in {"full", "ablated"}:
+        raise ValueError(f"unknown Portal unit mode: {portal_unit_mode}")
+    if sum(active_masses.values()) != int(portal.ROUTE_LATTICE):
+        raise RuntimeError("q5 per-record masses must sum to the route lattice")
+    totals = {name: np.zeros_like(templates[name], dtype=np.int64) for name in active_masses}
     for trajectory in real:
         blocks = portal.trajectory_blocks(
             trajectory, context96, context384, portals, offsets, coords
         )
-        quantized = portal.quantize_trajectory_blocks(blocks)
+        if portal_unit_mode == "full":
+            quantized = portal.quantize_trajectory_blocks(blocks)
+        elif blocks is None:
+            quantized = None
+        else:
+            quantized = {
+                name: hamilton_quantize_block(blocks[name], int(mass))
+                for name, mass in active_masses.items()
+            }
+            if any(value is None for value in quantized.values()):
+                quantized = None
+            elif sum(int(value.sum()) for value in quantized.values()) != int(portal.ROUTE_LATTICE):
+                raise RuntimeError("ablated q5 record mass is not exactly Q")
         if quantized is None:
             continue
-        for name in portal.BLOCK_BUDGETS:
+        for name in active_masses:
             totals[name] += quantized[name]
-    exact = np.concatenate([totals[name].ravel() for name in portal.BLOCK_BUDGETS])
+    exact = np.concatenate([totals[name].ravel() for name in active_masses])
     noisy, sampler = certified.add_exact_discrete_laplace(
         exact,
         epsilon_numerator=epsilon.numerator,
@@ -282,7 +314,7 @@ def _portal_release(real, coords, graph, capacity: int, epsilon: Fraction, seed:
         rng=random.Random(int(seed) + 770_027),
     )
     released, offset = {}, 0
-    for name, mass in portal.BLOCK_BUDGETS.items():
+    for name, mass in active_masses.items():
         size = int(totals[name].size)
         block = noisy[offset : offset + size].reshape(totals[name].shape)
         released[name] = (
@@ -290,6 +322,14 @@ def _portal_release(real, coords, graph, capacity: int, epsilon: Fraction, seed:
             / float(portal.ROUTE_LATTICE)
         )
         offset += size
+    if portal_unit_mode == "ablated":
+        released["portal_fiber_flow"] = np.zeros_like(templates["portal_fiber_flow"])
+        sampler = dict(sampler)
+        sampler.update({
+            "portal_unit_mode": "ablated",
+            "active_block_masses": active_masses,
+            "portal_fiber_private_measurement": False,
+        })
     return released, sampler
 
 
@@ -316,13 +356,17 @@ def _decode(
     dwell_strength: float = 1.0,
     hierarchy_likelihood_ratio_cap: float = 100.0,
     route_alignment: str = "correct-dp",
+    portal_unit_mode: str = "full",
 ) -> Path:
     import graph_cycle_dp_production_sanitizer as lineage
     import graph_voronoi_doptimal_support_probe as support
     import portal_fiber_qrsp_production_gate as gate
     import portal_fiber_route_production_sanitizer as portal_sanitizer
     import prepare_graph_cycle_production_requests as requests
-    import quotient_rsp_bridge_development as decoder
+    if portal_unit_mode == "ablated":
+        import portal_unit_research_decoder as decoder
+    else:
+        import quotient_rsp_bridge_development as decoder
 
     support.BBOX = bbox
     lineage.PUBLIC_CAPACITY = int(capacity)
@@ -381,7 +425,9 @@ def _decode(
             "--route-release-schema", "portal-fiber-nested384",
             "--regions", "384",
             "--reference-source", "dp-flow",
-            "--reference-conditioning", "portal-fiber",
+            "--reference-conditioning", (
+                "global" if portal_unit_mode == "ablated" else "portal-fiber"
+            ),
             "--od-family-source", "released",
             "--od-likelihood-ratio-cap", str(od_likelihood_ratio_cap),
             "--active-hierarchy",
@@ -398,6 +444,8 @@ def _decode(
             "--request-seed", str(request_seed),
             "--production-postprocess",
         ]
+        if portal_unit_mode == "ablated":
+            sys.argv.append("--portal-unit-ablation")
         internal_stdout = io.StringIO()
         with contextlib.redirect_stdout(internal_stdout):
             decoder.main()
@@ -415,6 +463,13 @@ def main() -> None:
     add_runtime_paths()
     config = _resolve_configuration(args)
     source_binding = _source_binding()
+    if args.portal_unit_mode == "ablated":
+        if args.component_mode != "full":
+            raise ValueError("Portal unit ablation cannot be combined with component-mode ablations")
+        source_binding["research_decoder_sha256"] = sha256_file(
+            PUBLIC_RELEASE / "src" / "mtr" / "DP_GSRT" / "final"
+            / "portal_unit_research_decoder.py"
+        )
     if args.limit is not None and int(args.limit) != int(config["capacity"]):
         raise ValueError(
             "--limit may not change the release cardinality; it must equal --public-slot-count"
@@ -500,7 +555,8 @@ def main() -> None:
             budgets["compact_graph_flow"],
         )
         q5_release, q5_sampler = _portal_release(
-            real, coords, graph, config["input_capacity"], budgets["portal_fiber_q5"], args.noise_seed
+            real, coords, graph, config["input_capacity"], budgets["portal_fiber_q5"],
+            args.noise_seed, args.portal_unit_mode,
         )
         transcript = {}
         transcript.update({f"base_{k}": v for k, v in base_release.items()})
@@ -545,6 +601,7 @@ def main() -> None:
             occupancy_strength=args.occupancy_strength,
             dwell_strength=args.dwell_strength,
             hierarchy_likelihood_ratio_cap=args.hierarchy_likelihood_ratio_cap,
+            portal_unit_mode=args.portal_unit_mode,
         )
         source_syn = decoder_out / "dp_gsrt_portal_qrsp.pkl"
         source_witness = decoder_out / "road_witnesses.pkl"
@@ -630,6 +687,7 @@ def main() -> None:
                 "dwell_strength": args.dwell_strength,
                 "hierarchy_likelihood_ratio_cap": args.hierarchy_likelihood_ratio_cap,
                 "component_mode": args.component_mode,
+                **({"portal_unit_mode": "ablated"} if args.portal_unit_mode == "ablated" else {}),
             },
             "query_reports": {
                 "base": base_samplers, "flow": flow_sampler, "q5": q5_sampler, "sinkhorn": sinkhorn
