@@ -1,0 +1,15 @@
+{
+  "schema": "single_m_family_router_v1",
+  "method": "PrivTrace",
+  "router": "Family_length-OT",
+  "stmatch_carrier_sha256": "dbbbfd55a41694225140dd035b4668451495c28e8f2a2a608df5418c87c6e835",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "d71eee830f18368a3a9bf4daaa82b9978758bcfa5af186831db6ba2c8cc55bcf",
+  "slots": 17123,
+  "valid_routes": 11520,
+  "head_threshold": 36,
+  "head_families": 32,
+  "unsupported_head_slots": 0,
+  "residual_beta": null,
+  "private_source_rule": "only this method's saved STMatch carrier; no real or foreign private route pool"
+}

@@ -14,4 +14,12 @@
 
 ## 后续实验
 
-M×R、严格 TSTR、Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先将保存图表登记为已复现。
+### 共用 M×R：rebuttal1-Q2 / rebuttal2-Q4（2026-09-30）
+
+- 新增 `evaluation/materialize_direct_road_rows.py`：五方法 Nearest 真实执行，四个坐标基线的 Original 按无补路的直接有向相邻关系执行；MTR 原生 witness 路线保留原文件。Nearest 使用每条最多 32 个观测点、200 m 公共道路搜索半径。
+- 新增 `evaluation/materialize_family_routers.py`：从**同一方法**的保存 STMatch 载体生成四种路径族重采样。历史方法索引和随机种子原样保留；五方法 20 份路线各 17,123 条，与隔离实验逐条相同。
+- 补充原有 MTR-GSRT 完整 FMM/STMatch 合成缓存及其 SHA-256 manifest；不上传真实道路参考。
+- 新增 `evaluation/evaluate_rebuttal_mr.py`：唯一 40 格结果 `experiment_results/rebuttal_shared_mr/metrics/`，同一输入哈希和五项指标供两个回复引用。旧图源中已有真实缓存的 31 格全部数值保持一致；原先的九个空占位改为实测。Python 3.11.15 锁定环境与当前工作环境重新评分的 40×5 数值相同（最大差异小于 (10^{-12})）。
+- 具体复现顺序、全部参数、预期文件和图见 `docs/REBUTTAL_SHARED_MR_CN.md`。旧回复 PDF 仍含空占位版图像；用户文档按要求保持原样，公开结果不被冒充为旧 PDF 的逐像素重现。
+
+严格 TSTR、Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先将保存图表登记为已复现。

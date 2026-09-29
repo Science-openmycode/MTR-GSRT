@@ -1,0 +1,14 @@
+{
+  "schema": "direct_road_rows_v1",
+  "method": "MTR-GSRT",
+  "mode": "nearest",
+  "input_sha256": "34de44012537557783a0ecf375c33145c13b2a75cd06b733fa2fdadbb26cdac7",
+  "network_sha256": "f9ab3c394563e6516a5813cb303fa7c72b0c83c89479c404544984ed46f473c0",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "0fb7e7d4573599754c3b6157bb3ac16191602d5d450c8a68a121fc6225860288",
+  "record_count": 17123,
+  "nonempty_count": 17123,
+  "max_points": 32,
+  "radius_m": 200.0,
+  "routing": "no path insertion; consecutive nearest duplicates collapsed"
+}

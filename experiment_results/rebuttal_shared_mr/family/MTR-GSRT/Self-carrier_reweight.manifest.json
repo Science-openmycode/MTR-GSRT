@@ -1,0 +1,15 @@
+{
+  "schema": "single_m_family_router_v1",
+  "method": "MTR-GSRT",
+  "router": "Self-carrier_reweight",
+  "stmatch_carrier_sha256": "d70e71b4d63923003b2d8d4eecd208e202119e00a52e144a513151051ca12c04",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "13474684c3dc3761355e6af8262c14db3631d3e98d009f9f11b56e988188138c",
+  "slots": 17123,
+  "valid_routes": 17028,
+  "head_threshold": 36,
+  "head_families": 34,
+  "unsupported_head_slots": 0,
+  "residual_beta": null,
+  "private_source_rule": "only this method's saved STMatch carrier; no real or foreign private route pool"
+}

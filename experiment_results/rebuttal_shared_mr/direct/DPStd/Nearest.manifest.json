@@ -1,0 +1,14 @@
+{
+  "schema": "direct_road_rows_v1",
+  "method": "DPStd",
+  "mode": "nearest",
+  "input_sha256": "4c881f309c0d14ea6b8222c9aaa4793101d77694b81be8159ad7c22d04eab4cd",
+  "network_sha256": "f9ab3c394563e6516a5813cb303fa7c72b0c83c89479c404544984ed46f473c0",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "feb1891cafa163d92ef698433ebd89c2780abe9844b634e063c04c575682dd89",
+  "record_count": 17123,
+  "nonempty_count": 13595,
+  "max_points": 32,
+  "radius_m": 200.0,
+  "routing": "no path insertion; consecutive nearest duplicates collapsed"
+}

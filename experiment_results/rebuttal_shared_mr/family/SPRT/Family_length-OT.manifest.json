@@ -1,0 +1,15 @@
+{
+  "schema": "single_m_family_router_v1",
+  "method": "SPRT",
+  "router": "Family_length-OT",
+  "stmatch_carrier_sha256": "ca60ced0960a2f224aa23a566e325d0a51ed531e001122efc7045bf077713a82",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "090a328d05c4e02a6d99f9c6a206a357372c8586cde7afb4d01c5d476400d356",
+  "slots": 17123,
+  "valid_routes": 15951,
+  "head_threshold": 36,
+  "head_families": 11,
+  "unsupported_head_slots": 0,
+  "residual_beta": null,
+  "private_source_rule": "only this method's saved STMatch carrier; no real or foreign private route pool"
+}

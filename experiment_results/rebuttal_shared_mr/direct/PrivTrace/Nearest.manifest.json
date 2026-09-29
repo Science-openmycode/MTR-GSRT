@@ -1,0 +1,14 @@
+{
+  "schema": "direct_road_rows_v1",
+  "method": "PrivTrace",
+  "mode": "nearest",
+  "input_sha256": "76538f38dbd78420ed0594b391f0a26bc0958d905d1bf0d98144873b684d6c73",
+  "network_sha256": "f9ab3c394563e6516a5813cb303fa7c72b0c83c89479c404544984ed46f473c0",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "ba746fbb51b81c758cddf51b0701bae9a44631b3199ad3898e6a1b4de56105a7",
+  "record_count": 17123,
+  "nonempty_count": 9254,
+  "max_points": 32,
+  "radius_m": 200.0,
+  "routing": "no path insertion; consecutive nearest duplicates collapsed"
+}

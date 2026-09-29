@@ -1,0 +1,14 @@
+{
+  "schema": "direct_road_rows_v1",
+  "method": "DPTraj-PM",
+  "mode": "original",
+  "input_sha256": "3b468623db12ec4f963d1b7774016842d289ee948c3c170d2641144560d863d1",
+  "network_sha256": "f9ab3c394563e6516a5813cb303fa7c72b0c83c89479c404544984ed46f473c0",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "0a53b6aa87220639ad71a4a94a25e1a5f2d9bfbd1a9f657f23008665c5b595a1",
+  "record_count": 17123,
+  "nonempty_count": 0,
+  "max_points": 32,
+  "radius_m": 200.0,
+  "routing": "no path insertion; consecutive nearest duplicates collapsed"
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "single_m_family_router_v1",
+  "method": "MTR-GSRT",
+  "router": "Family_residual",
+  "stmatch_carrier_sha256": "d70e71b4d63923003b2d8d4eecd208e202119e00a52e144a513151051ca12c04",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "f0c12b8b8d972c69459efc997d0b3d132d0ffc59868662fd71a5a875a84615cb",
+  "slots": 17123,
+  "valid_routes": 16991,
+  "head_threshold": 36,
+  "head_families": 34,
+  "unsupported_head_slots": 0,
+  "residual_beta": 1.0,
+  "private_source_rule": "only this method's saved STMatch carrier; no real or foreign private route pool"
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "single_m_family_router_v1",
+  "method": "DPTraj-PM",
+  "router": "Family_residual",
+  "stmatch_carrier_sha256": "181294b5719d3c4f55baa35541a746f861a2bacda9d8b4e0112fc238d525da9a",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "b2c2b06343e4608f3ef4078fecc7be551c11050546f1886f8e6c880e6a28e9fa",
+  "slots": 17123,
+  "valid_routes": 2653,
+  "head_threshold": 36,
+  "head_families": 2,
+  "unsupported_head_slots": 0,
+  "residual_beta": 1.0,
+  "private_source_rule": "only this method's saved STMatch carrier; no real or foreign private route pool"
+}

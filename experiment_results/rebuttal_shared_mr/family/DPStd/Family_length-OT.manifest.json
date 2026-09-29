@@ -1,0 +1,15 @@
+{
+  "schema": "single_m_family_router_v1",
+  "method": "DPStd",
+  "router": "Family_length-OT",
+  "stmatch_carrier_sha256": "fde11b6ae09f8c603ba227aa1df7b7b9853b4e7b35e0eb4ea9efa173bc7e56b5",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "62accdcf826b0aad18db1bcd6f8bf1ba8c81ecc2f9992a4bd4f29b7a34003ade",
+  "slots": 17123,
+  "valid_routes": 16035,
+  "head_threshold": 36,
+  "head_families": 38,
+  "unsupported_head_slots": 0,
+  "residual_beta": null,
+  "private_source_rule": "only this method's saved STMatch carrier; no real or foreign private route pool"
+}

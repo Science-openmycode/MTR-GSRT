@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "classification": "COMMON_MAP_MATCH_CACHE_NO_SYNTHESIS",
+  "corpus": "MTR-GSRT",
+  "input_sha256": "34de44012537557783a0ecf375c33145c13b2a75cd06b733fa2fdadbb26cdac7",
+  "network_sha256": "f9ab3c394563e6516a5813cb303fa7c72b0c83c89479c404544984ed46f473c0",
+  "output_sha256": "da6ccdea7c1eba45083dad59f391ea1efa0537057e08f7a22b8232ccc683120d",
+  "record_count": 17123,
+  "parameters": {
+    "matcher": "fmm",
+    "max_points": 32,
+    "radius_m": 200.0,
+    "gps_error_m": 50.0,
+    "candidates": 8,
+    "route_only": true
+  },
+  "source_note": "Saved synthetic-only cache, copied byte-for-byte from the full FMM run; real road reference is not included."
+}

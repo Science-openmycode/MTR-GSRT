@@ -199,6 +199,8 @@ python commands/reproduce.py plot -- --figure mr --data-root experiment_results/
 
 ![MTR-GSRT 的测量—路由矩阵](experiment_results/published_figures/04_mr_matrix_mtr_gsrt.png)
 
+审稿回复 1-Q2 与回复 2-Q4 使用另一份**共用**的 5×8 矩阵，覆盖 Original、实测 Nearest、完整 FMM、完整 STMatch 和四种路径族重采样，按正文 RoadYield、RC-CPC、RC-NDCG、NextRoadAcc、NextRoadNLL 统一评分。它的从坐标生成道路缓存、逐方法生成四种路由、40 格评分和作图命令逐步列在 [REBUTTAL_SHARED_MR_CN.md](docs/REBUTTAL_SHARED_MR_CN.md)；两份回复只引用 `experiment_results/rebuttal_shared_mr/metrics/` 这一套结果。
+
 同一真实道路参考还可直接计算有序道路公里数、转向和消环骨干的物理质量恢复率；每个公开 OD 层最多取 20 条路线，抽样和精确质量传输均由命令重算。为与归档的 GSRT 六列数值逐位对应，保留当时的抽样标签：
 
 ```powershell

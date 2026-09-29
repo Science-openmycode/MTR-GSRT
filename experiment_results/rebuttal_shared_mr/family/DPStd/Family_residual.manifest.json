@@ -1,0 +1,15 @@
+{
+  "schema": "single_m_family_router_v1",
+  "method": "DPStd",
+  "router": "Family_residual",
+  "stmatch_carrier_sha256": "fde11b6ae09f8c603ba227aa1df7b7b9853b4e7b35e0eb4ea9efa173bc7e56b5",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "96f82d88a21b5da056a6adb0da994d5a97a6433a701394923d95c183f771ccb7",
+  "slots": 17123,
+  "valid_routes": 13594,
+  "head_threshold": 36,
+  "head_families": 38,
+  "unsupported_head_slots": 0,
+  "residual_beta": 1.0,
+  "private_source_rule": "only this method's saved STMatch carrier; no real or foreign private route pool"
+}

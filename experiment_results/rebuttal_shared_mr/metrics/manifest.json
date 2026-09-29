@@ -1,0 +1,242 @@
+{
+  "schema": "shared_rebuttal_1_q2_and_rebuttal_2_q4_v1",
+  "scope": [
+    "rebuttal1-Q2",
+    "rebuttal2-Q4"
+  ],
+  "method_order": [
+    "SPRT",
+    "PrivTrace",
+    "DPTraj-PM",
+    "DPStd",
+    "MTR-GSRT"
+  ],
+  "router_order": [
+    "Original",
+    "Nearest",
+    "Full FMM",
+    "Full STMatch",
+    "Family additive",
+    "Family residual",
+    "Family length-OT",
+    "Self-carrier reweight"
+  ],
+  "slots": 17123,
+  "real_reference": {
+    "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\check\\road_metric_extension_20260726\\beijing_common_match_cache_v1\\matched_paths\\Real.pkl.gz",
+    "sha256": "81ac2377b7e383d1b68d32dbcc7d3536c46220a3ae06904f964c1b2ff7311d21",
+    "records": 17123,
+    "test_start": 13698,
+    "test_records": 3425,
+    "public_choice_contexts": 1158
+  },
+  "public_choice_contexts": 1158,
+  "region_key": "labels384",
+  "real_test_fraction": 0.2,
+  "mixture_weight": 0.5,
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "network_sha256": "f9ab3c394563e6516a5813cb303fa7c72b0c83c89479c404544984ed46f473c0",
+  "route_sources": {
+    "SPRT/Original": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\SPRT\\Original.pkl.gz",
+      "sha256": "ddaa22e54daf4a4a45e97191cd081a0e300b734a18ba4245297769b82208f022",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\SPRT\\Original.manifest.json"
+    },
+    "SPRT/Nearest": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\SPRT\\Nearest.pkl.gz",
+      "sha256": "992b11182d74de0904e02f6a30276089f446f46941e7e41e8537f8c44a0e2c1b",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\SPRT\\Nearest.manifest.json"
+    },
+    "SPRT/Full FMM": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\SPRT\\FMM.pkl.gz",
+      "sha256": "d5544d89122ab8cd4d5c0c612b9b68ae3b6f38f1b134a4cdaea41c93e11be35c"
+    },
+    "SPRT/Full STMatch": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\SPRT\\STMatch.pkl.gz",
+      "sha256": "ca60ced0960a2f224aa23a566e325d0a51ed531e001122efc7045bf077713a82"
+    },
+    "SPRT/Family additive": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\SPRT\\Family_additive.pkl.gz",
+      "sha256": "76c6a8f0451257bfeec81a3256152b661b0594ecdca169dadc3103d4854a41f6",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\SPRT\\Family_additive.manifest.json"
+    },
+    "SPRT/Family residual": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\SPRT\\Family_residual.pkl.gz",
+      "sha256": "fdde158164a5a6ddc619eafe2b0d9696334d53ed71dca60a457aad5522ccd7d0",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\SPRT\\Family_residual.manifest.json"
+    },
+    "SPRT/Family length-OT": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\SPRT\\Family_length-OT.pkl.gz",
+      "sha256": "090a328d05c4e02a6d99f9c6a206a357372c8586cde7afb4d01c5d476400d356",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\SPRT\\Family_length-OT.manifest.json"
+    },
+    "SPRT/Self-carrier reweight": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\SPRT\\Self-carrier_reweight.pkl.gz",
+      "sha256": "877b270fec8e9cc4758efe3c7604b7e09e157e9132ced5142f953691c288756a",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\SPRT\\Self-carrier_reweight.manifest.json"
+    },
+    "PrivTrace/Original": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\PrivTrace\\Original.pkl.gz",
+      "sha256": "0a53b6aa87220639ad71a4a94a25e1a5f2d9bfbd1a9f657f23008665c5b595a1",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\PrivTrace\\Original.manifest.json"
+    },
+    "PrivTrace/Nearest": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\PrivTrace\\Nearest.pkl.gz",
+      "sha256": "ba746fbb51b81c758cddf51b0701bae9a44631b3199ad3898e6a1b4de56105a7",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\PrivTrace\\Nearest.manifest.json"
+    },
+    "PrivTrace/Full FMM": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\PrivTrace\\FMM.pkl.gz",
+      "sha256": "b497b49f48231657666f930fac02b8eefb7407c39f0f3a06cea72a1b40f3927b"
+    },
+    "PrivTrace/Full STMatch": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\PrivTrace\\STMatch.pkl.gz",
+      "sha256": "dbbbfd55a41694225140dd035b4668451495c28e8f2a2a608df5418c87c6e835"
+    },
+    "PrivTrace/Family additive": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\PrivTrace\\Family_additive.pkl.gz",
+      "sha256": "e93b56607df1b6da34eb70cb06894f77af8ca1c6030dbea21a1f9f59da60a469",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\PrivTrace\\Family_additive.manifest.json"
+    },
+    "PrivTrace/Family residual": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\PrivTrace\\Family_residual.pkl.gz",
+      "sha256": "e73457fbc55d1f861cbbb4650ca2fdbad74a94c1196a9bfdc79fa90337d460b9",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\PrivTrace\\Family_residual.manifest.json"
+    },
+    "PrivTrace/Family length-OT": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\PrivTrace\\Family_length-OT.pkl.gz",
+      "sha256": "d71eee830f18368a3a9bf4daaa82b9978758bcfa5af186831db6ba2c8cc55bcf",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\PrivTrace\\Family_length-OT.manifest.json"
+    },
+    "PrivTrace/Self-carrier reweight": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\PrivTrace\\Self-carrier_reweight.pkl.gz",
+      "sha256": "3c8ec8eb1c77fd8f3da123bd82e480c25e41802d223a8532263b6a1d06b3fa82",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\PrivTrace\\Self-carrier_reweight.manifest.json"
+    },
+    "DPTraj-PM/Original": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\DPTraj-PM\\Original.pkl.gz",
+      "sha256": "0a53b6aa87220639ad71a4a94a25e1a5f2d9bfbd1a9f657f23008665c5b595a1",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\DPTraj-PM\\Original.manifest.json"
+    },
+    "DPTraj-PM/Nearest": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\DPTraj-PM\\Nearest.pkl.gz",
+      "sha256": "ed332f7dec3abe5cc0ace48eec61f733e429e4a1ffb6430ba07f3c93b762093d",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\DPTraj-PM\\Nearest.manifest.json"
+    },
+    "DPTraj-PM/Full FMM": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\DPTraj-PM\\FMM.pkl.gz",
+      "sha256": "4bdb4d26440eb923e897d77b09cdfbb2b8984b9bbd16fafd91fb7b3c926d0b2a"
+    },
+    "DPTraj-PM/Full STMatch": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\DPTraj-PM\\STMatch.pkl.gz",
+      "sha256": "181294b5719d3c4f55baa35541a746f861a2bacda9d8b4e0112fc238d525da9a"
+    },
+    "DPTraj-PM/Family additive": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPTraj-PM\\Family_additive.pkl.gz",
+      "sha256": "35846316e5446aad050845fc77af619e4f35a5842d6145017f9c07b0fa5d7418",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPTraj-PM\\Family_additive.manifest.json"
+    },
+    "DPTraj-PM/Family residual": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPTraj-PM\\Family_residual.pkl.gz",
+      "sha256": "b2c2b06343e4608f3ef4078fecc7be551c11050546f1886f8e6c880e6a28e9fa",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPTraj-PM\\Family_residual.manifest.json"
+    },
+    "DPTraj-PM/Family length-OT": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPTraj-PM\\Family_length-OT.pkl.gz",
+      "sha256": "24a02fea333121e4e795a63f36546580ce05c5f99b36dc63b1ae0b4b5af3c7cc",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPTraj-PM\\Family_length-OT.manifest.json"
+    },
+    "DPTraj-PM/Self-carrier reweight": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPTraj-PM\\Self-carrier_reweight.pkl.gz",
+      "sha256": "e5134d247c90bb1e6562cc92b05c909e78a792b094ac06969931f852412a93b0",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPTraj-PM\\Self-carrier_reweight.manifest.json"
+    },
+    "DPStd/Original": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\DPStd\\Original.pkl.gz",
+      "sha256": "0a53b6aa87220639ad71a4a94a25e1a5f2d9bfbd1a9f657f23008665c5b595a1",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\DPStd\\Original.manifest.json"
+    },
+    "DPStd/Nearest": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\DPStd\\Nearest.pkl.gz",
+      "sha256": "feb1891cafa163d92ef698433ebd89c2780abe9844b634e063c04c575682dd89",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\DPStd\\Nearest.manifest.json"
+    },
+    "DPStd/Full FMM": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\DPStd\\FMM.pkl.gz",
+      "sha256": "85aa6f227200b5ba591b81c8b57ce7589fdd3b7fd21bfd9a9f14d2c5b949054a"
+    },
+    "DPStd/Full STMatch": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\DPStd\\STMatch.pkl.gz",
+      "sha256": "fde11b6ae09f8c603ba227aa1df7b7b9853b4e7b35e0eb4ea9efa173bc7e56b5"
+    },
+    "DPStd/Family additive": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPStd\\Family_additive.pkl.gz",
+      "sha256": "3ffbdab06e6c01b74486b20b41958f51150f04cc1a46426346c1390cf6232f4e",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPStd\\Family_additive.manifest.json"
+    },
+    "DPStd/Family residual": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPStd\\Family_residual.pkl.gz",
+      "sha256": "96f82d88a21b5da056a6adb0da994d5a97a6433a701394923d95c183f771ccb7",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPStd\\Family_residual.manifest.json"
+    },
+    "DPStd/Family length-OT": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPStd\\Family_length-OT.pkl.gz",
+      "sha256": "62accdcf826b0aad18db1bcd6f8bf1ba8c81ecc2f9992a4bd4f29b7a34003ade",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPStd\\Family_length-OT.manifest.json"
+    },
+    "DPStd/Self-carrier reweight": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPStd\\Self-carrier_reweight.pkl.gz",
+      "sha256": "12ed9c3855e8b0276ddc838c085c76dbd02c596b021aeeddb3eb8bc2f866ef67",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\DPStd\\Self-carrier_reweight.manifest.json"
+    },
+    "MTR-GSRT/Original": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\MTR-GSRT\\Original.pkl",
+      "sha256": "ee87aef1c919244bc47fefcbb376bb9652a18b0231c1beb12498bd8bb9aea001"
+    },
+    "MTR-GSRT/Nearest": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\MTR-GSRT\\Nearest.pkl.gz",
+      "sha256": "0fb7e7d4573599754c3b6157bb3ac16191602d5d450c8a68a121fc6225860288",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\direct\\MTR-GSRT\\Nearest.manifest.json"
+    },
+    "MTR-GSRT/Full FMM": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\MTR-GSRT\\FMM.pkl.gz",
+      "sha256": "da6ccdea7c1eba45083dad59f391ea1efa0537057e08f7a22b8232ccc683120d",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\MTR-GSRT\\FMM.manifest.json"
+    },
+    "MTR-GSRT/Full STMatch": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\MTR-GSRT\\STMatch.pkl.gz",
+      "sha256": "d70e71b4d63923003b2d8d4eecd208e202119e00a52e144a513151051ca12c04",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\datasets\\synthetic\\route_experiments\\MTR-GSRT\\STMatch.manifest.json"
+    },
+    "MTR-GSRT/Family additive": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\MTR-GSRT\\Family_additive.pkl.gz",
+      "sha256": "500703c8131bf2bc932d353d80adbc988c272aac1c7930666f1fc0015c8376a4",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\MTR-GSRT\\Family_additive.manifest.json"
+    },
+    "MTR-GSRT/Family residual": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\MTR-GSRT\\Family_residual.pkl.gz",
+      "sha256": "f0c12b8b8d972c69459efc997d0b3d132d0ffc59868662fd71a5a875a84615cb",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\MTR-GSRT\\Family_residual.manifest.json"
+    },
+    "MTR-GSRT/Family length-OT": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\MTR-GSRT\\Family_length-OT.pkl.gz",
+      "sha256": "8492a9e2066c66ccc20b5232059d2d55482fd5f7943ee107b0c4fbdf4fee29da",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\MTR-GSRT\\Family_length-OT.manifest.json"
+    },
+    "MTR-GSRT/Self-carrier reweight": {
+      "path": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\MTR-GSRT\\Self-carrier_reweight.pkl.gz",
+      "sha256": "13474684c3dc3761355e6af8262c14db3631d3e98d009f9f11b56e988188138c",
+      "manifest": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\reproducibility_folders\\GSRT\\experiment_results\\rebuttal_shared_mr\\family\\MTR-GSRT\\Self-carrier_reweight.manifest.json"
+    }
+  },
+  "results_sha256": "87519f181bed5ab06ee4b7b1c5e7a70a1b598109b50b6be87adaee662d202490",
+  "metric_contract": {
+    "RoadYield": "connected nonempty road routes / all public slots",
+    "RC-CPC": "conditional road-choice CPC times RoadYield",
+    "RC-NDCG": "conditional road-choice NDCG times RoadYield",
+    "NextRoadAcc": "conditional next-road accuracy times RoadYield",
+    "NextRoadNLL": "conditional NLL minus log(RoadYield); infinite at zero yield"
+  },
+  "native_interface_note": "Original coordinate rows require direct observed graph adjacency; the separate native evidence audit counts any directly observed edge.",
+  "family_carrier_note": "Family routers resample each method's STMatch carrier, not its raw coordinates."
+}

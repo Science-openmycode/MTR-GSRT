@@ -1,0 +1,15 @@
+{
+  "schema": "single_m_family_router_v1",
+  "method": "SPRT",
+  "router": "Self-carrier_reweight",
+  "stmatch_carrier_sha256": "ca60ced0960a2f224aa23a566e325d0a51ed531e001122efc7045bf077713a82",
+  "edge_cache_sha256": "235e1bd9a6db55ea4987a5bf91e29d71020db8bc2454ae4080c941cdbf8be588",
+  "output_sha256": "877b270fec8e9cc4758efe3c7604b7e09e157e9132ced5142f953691c288756a",
+  "slots": 17123,
+  "valid_routes": 15944,
+  "head_threshold": 36,
+  "head_families": 11,
+  "unsupported_head_slots": 0,
+  "residual_beta": null,
+  "private_source_rule": "only this method's saved STMatch carrier; no real or foreign private route pool"
+}
