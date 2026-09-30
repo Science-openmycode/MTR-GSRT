@@ -171,6 +171,7 @@ def stage_helper(name: str, args: list[str]) -> int:
         "materialize-family-routes": ROOT / "evaluation" / "materialize_family_routers.py",
         "materialize-family-tstr-views": ROOT / "evaluation" / "materialize_family_tstr_views.py",
         "run-rebuttal-tstr": ROOT / "evaluation" / "run_rebuttal_tstr_selection.py",
+        "audit-rebuttal-q2": ROOT / "evaluation" / "audit_rebuttal_q2_protocols.py",
         "audit-rebuttal-q3": ROOT / "evaluation" / "audit_rebuttal_q3_routing.py",
         "run-rebuttal-q5-partition": ROOT / "evaluation" / "run_rebuttal_q5_partition.py",
         "run-rebuttal-q5-ablation": ROOT / "evaluation" / "run_rebuttal_q5_portal_ablation.py",
@@ -262,7 +263,7 @@ def main() -> int:
     for name in ("generate-main", "generate-sweep", "generate-baselines", "evaluate",
                  "verify-matcher", "generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
                  "routes-to-coordinates", "materialize-family-routes", "materialize-family-tstr-views",
-                 "run-tstr", "run-rebuttal-tstr", "audit-rebuttal-q3", "run-rebuttal-q5-partition", "run-rebuttal-q5-ablation", "run-rebuttal-q6-low-epsilon", "aggregate-rebuttal-q6-multicity", "assemble-rebuttal-q6-threat-model", "plot-rebuttal-q5-q6", "materialize-tstr-mr", "combine-tstr-mr",
+                 "run-tstr", "run-rebuttal-tstr", "audit-rebuttal-q2", "audit-rebuttal-q3", "run-rebuttal-q5-partition", "run-rebuttal-q5-ablation", "run-rebuttal-q6-low-epsilon", "aggregate-rebuttal-q6-multicity", "assemble-rebuttal-q6-threat-model", "plot-rebuttal-q5-q6", "materialize-tstr-mr", "combine-tstr-mr",
                  "run-ablation", "run-framework", "run-privacy", "run-profile", "run-mr",
                  "run-physical", "run-structure"):
         child = sub.add_parser(name)
@@ -286,7 +287,7 @@ def main() -> int:
         return stage_evaluate(ns.args)
     if ns.stage == "verify-matcher":
         return stage_verify_matcher(ns.args)
-    if ns.stage in {"generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates", "materialize-family-routes", "materialize-family-tstr-views", "run-rebuttal-tstr", "audit-rebuttal-q3", "run-rebuttal-q5-partition", "run-rebuttal-q5-ablation", "run-rebuttal-q6-low-epsilon", "aggregate-rebuttal-q6-multicity", "assemble-rebuttal-q6-threat-model", "plot-rebuttal-q5-q6"}:
+    if ns.stage in {"generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes", "routes-to-coordinates", "materialize-family-routes", "materialize-family-tstr-views", "run-rebuttal-tstr", "audit-rebuttal-q2", "audit-rebuttal-q3", "run-rebuttal-q5-partition", "run-rebuttal-q5-ablation", "run-rebuttal-q6-low-epsilon", "aggregate-rebuttal-q6-multicity", "assemble-rebuttal-q6-threat-model", "plot-rebuttal-q5-q6"}:
         return stage_helper(ns.stage, ns.args)
     if ns.stage == "run-tstr":
         return stage_tstr(ns.args)
