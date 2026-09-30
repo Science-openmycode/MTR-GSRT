@@ -134,6 +134,12 @@ def stage_generate_main(args: list[str]) -> int:
     return run([sys.executable, str(entry), *forwarded(args)])
 
 
+def stage_generate_sweep(args: list[str]) -> int:
+    """Run one explicit epsilon/seed cell of the shared-query research sweep."""
+    entry = ROOT / "generation" / "mtr_gsrt" / "generation" / "mtr" / "generate_sweep.py"
+    return run([sys.executable, str(entry), *forwarded(args)])
+
+
 def stage_generate_baselines(args: list[str]) -> int:
     if not CONFIG["includes_baseline_code"]:
         print(
@@ -253,7 +259,7 @@ def main() -> int:
         sub.add_parser(name)
     plot = sub.add_parser("plot")
     plot.add_argument("args", nargs=argparse.REMAINDER)
-    for name in ("generate-main", "generate-baselines", "evaluate",
+    for name in ("generate-main", "generate-sweep", "generate-baselines", "evaluate",
                  "verify-matcher", "generate-train-only", "prepare-geolife", "prepare-porto", "prepare-sf", "prepare-split", "prepare-attack-split", "prepare-road-reference", "subset-routes",
                  "routes-to-coordinates", "materialize-family-routes", "materialize-family-tstr-views",
                  "run-tstr", "run-rebuttal-tstr", "audit-rebuttal-q3", "run-rebuttal-q5-partition", "run-rebuttal-q5-ablation", "run-rebuttal-q6-low-epsilon", "aggregate-rebuttal-q6-multicity", "assemble-rebuttal-q6-threat-model", "plot-rebuttal-q5-q6", "materialize-tstr-mr", "combine-tstr-mr",
@@ -272,6 +278,8 @@ def main() -> int:
         return stage_smoke()
     if ns.stage == "generate-main":
         return stage_generate_main(ns.args)
+    if ns.stage == "generate-sweep":
+        return stage_generate_sweep(ns.args)
     if ns.stage == "generate-baselines":
         return stage_generate_baselines(ns.args)
     if ns.stage == "evaluate":
