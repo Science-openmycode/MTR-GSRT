@@ -79,3 +79,4 @@ Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先�
 
 - 2026-09-30：`generate_sweep.py` 已修正为共享查询、冻结输入和当前配置路径。协议不再写入 `input_record_count` 或 `elapsed_sec`；阶段耗时由发布目录外的本地性能日志承载。北京 `epsilon=7/5, seed=20260719` 单元格已从当前公开入口完成，输出 17,123 条、fallback 0，transcript SHA 与主运行一致。该单元格位于 `check/rebuttal_public_repro_20260930/shared_query_sweep_one`，仅作为本地复核记录；完整 7×5 扫描和跨城市十种子从零重跑仍未完成。
 - 2026-09-30：`commands/reproduce.py generate-sweep` 已加入统一复现入口，提交 `e2ff4b9b11aea9093539382f9f9e064df01ff579` 已推送；`python -m pytest -q tests` 为 `78 passed, 119 subtests passed`。该入口只转发显式预算/种子参数，不改变共享查询或发布协议。
+- 2026-09-30：公开文件清单已随审计后的源码、文档与结果更新；`python commands/reproduce.py verify` 返回 `VERIFY OK: MTR-GSRT (337 files)`，提交 `9b616a8ac3e358e96d52e479a4e015fa9662f663` 已推送。
