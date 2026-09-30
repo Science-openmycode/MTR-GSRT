@@ -43,6 +43,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--road-routes", help="Directed route objects used to derive the coordinate release")
     parser.add_argument("--edge-cache", help="Public directed edge cache for --road-routes")
     parser.add_argument("--dataset-config")
+    parser.add_argument(
+        "--allow-unregistered-input",
+        action="store_true",
+        help=(
+            "Allow a real trajectory file whose SHA-256 is not the registered "
+            "frozen dataset hash. The output manifest records its actual hash; "
+            "omit this flag for frozen-paper reproduction."
+        ),
+    )
     parser.add_argument("--bbox", nargs=4, type=float)
     parser.add_argument("--osm-cache")
     parser.add_argument("--public-slot-count", type=int)
@@ -76,17 +85,22 @@ def _resolve_config(args: argparse.Namespace) -> dict:
     else:
         real_data = public_path(args.real) if Path(args.real).suffix else args.real
     expected_real_hash = config.get("data_sha256")
+    actual_real_hash = None
     if expected_real_hash is not None:
         real_path = Path(real_data)
         if not real_path.is_file():
             raise FileNotFoundError(f"frozen real trajectory input not found: {real_path}")
         actual_real_hash = sha256_file(real_path)
-        if actual_real_hash != expected_real_hash:
+        if actual_real_hash != expected_real_hash and not args.allow_unregistered_input:
             raise RuntimeError(f"frozen real trajectory input hash mismatch: {actual_real_hash}")
+    elif args.allow_unregistered_input:
+        real_path = Path(real_data)
+        if real_path.is_file():
+            actual_real_hash = sha256_file(real_path)
     return {
         "name": config["name"],
         "real_data": real_data,
-        "real_data_sha256": expected_real_hash,
+        "real_data_sha256": actual_real_hash or expected_real_hash,
         "bbox": tuple(map(float, bbox)),
         "osm": osm_path,
         "osm_max_ways": int(config.get("osm_max_ways", 0)),

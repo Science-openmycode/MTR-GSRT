@@ -78,3 +78,10 @@ parameters, and cross-dataset migration rules are documented in
 
 The fixed output size is a public parameter and must be declared with
 `--public-slot-count`; it is never inferred from a private input at runtime.
+
+For a dataset that is not registered in `config/datasets.json`, pass explicit
+`--bbox`, `--osm-cache`, and `--public-slot-count` values and add
+`--allow-unregistered-input` to the evaluation command. The evaluator records
+the actual input SHA-256 in its manifest. Without this opt-in, registered
+datasets remain protected by the frozen-input hash check used for paper
+reproduction.

@@ -10,15 +10,15 @@
     },
     {
       "path": "README.md",
-      "size": 3296,
-      "sha256": "30f4232f3251c3daa1f62af59c24b61f0e2728d96bf19ba2e10c49c9771e647e",
+      "size": 3679,
+      "sha256": "f25a9fbeaf8840ab5d9e2de81cca4f53d063cf37afb0ab7af70acaf91df27d29",
       "role": "source_or_documentation"
     },
     {
       "path": "README_CN.md",
       "role": "source_or_documentation",
-      "size": 37947,
-      "sha256": "0ad41f78b96b321ad563c251544adf75d4265703151bd0d4a738fb4cb80c93b2"
+      "size": 38792,
+      "sha256": "ed4590f5c8f70bd0a0e9f08dd3c740b2f175a8a930b7e0e11dadb8c5709a20de"
     },
     {
       "path": "commands/audit_release_batches.py",
@@ -424,8 +424,8 @@
     },
     {
       "path": "evaluation/evaluation/evaluate_all.py",
-      "size": 17502,
-      "sha256": "eefc6f6be0430713e64522447324280698b80db1ffd6eec9b5e694afe6753b71",
+      "size": 18095,
+      "sha256": "64bd5316393cb6409e0c115373d5dea98a9a54c22fa0290b39a3605815a0eb99",
       "role": "source_or_documentation"
     },
     {
@@ -2029,6 +2029,12 @@
       "role": "source_or_documentation",
       "size": 4107,
       "sha256": "55de32d4576083ec0d0e727be475975fbc23ccb57e0c24899cbd481b174f697f"
+    },
+    {
+      "path": "tests/test_evaluate_input_policy.py",
+      "role": "source_or_documentation",
+      "size": 1202,
+      "sha256": "750e0e920b7fe424d3d43d5cf0df8af0c7daa53b23f015ac7f30accdf61ca4f0"
     }
   ]
 }

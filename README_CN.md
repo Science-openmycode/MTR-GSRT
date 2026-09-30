@@ -181,6 +181,25 @@ python commands/reproduce.py evaluate -- --real "C:\data\real_full_frozen.pkl" -
 
 参数说明：`--real` 是真实参考，`--synthetic` 是刚生成的坐标轨迹，`--witness` 是一一对应的道路证明，`--bbox` 与 `--osm-cache` 显式定义数据所在城市及其公共道路图，`--public-slot-count` 是预声明评估条数，`--out-dir` 保存本次指标。已有注册数据集也可用 `--dataset-config` 代替显式公共配置。
 
+迁移到未登记的数据集时，仍然必须显式提供 `--bbox`、`--osm-cache` 和
+`--public-slot-count`，并额外加入 `--allow-unregistered-input`：
+
+```powershell
+python commands/reproduce.py evaluate -- `
+  --real "C:\data\new_city.pkl" `
+  --synthetic "C:\runs\new_city\trajectories.pkl" `
+  --witness "C:\runs\new_city\road_witnesses.pkl" `
+  --bbox 31.10 31.40 121.20 121.70 `
+  --osm-cache "C:\data\osm_cache_new_city.pkl" `
+  --public-slot-count 10000 `
+  --allow-unregistered-input `
+  --out-dir "C:\runs\new_city\metrics"
+```
+
+这个开关只放宽评估输入的冻结哈希预检，输出 `manifest.json` 会记录该真实
+文件的实际 SHA-256；它不改变生成器的隐私接口。省略该开关时，注册城市仍
+严格要求论文冻结输入哈希，避免把不同批次的结果误称为北京复现。
+
 输出结构：
 
 ```text
