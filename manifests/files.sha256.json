@@ -16,9 +16,9 @@
     },
     {
       "path": "README_CN.md",
-      "size": 36717,
-      "sha256": "7c93d44d43c088031f5bf7c6170f3bcdff3bb3a25e3a36b239b9639e96835f9d",
-      "role": "source_or_documentation"
+      "role": "source_or_documentation",
+      "size": 37613,
+      "sha256": "b171c7fcba8cf3917272478dc7e31e44fc87ad6c1ad68cd98a1c2464ad1ce6b1"
     },
     {
       "path": "commands/audit_release_batches.py",
@@ -235,6 +235,12 @@
       "size": 797,
       "sha256": "a3248856239421ace5e7cbf3584fe9fa50054811927b3a649989b50cea2b3527",
       "role": "source_or_documentation"
+    },
+    {
+      "path": "docs/BASELINE_FROZEN_RESULTS_CN.md",
+      "role": "source_or_documentation",
+      "size": 2150,
+      "sha256": "bc0bb8d9e3670168aa0d567e625f5ab7fd747d3d185f0ebb6b7c5cd8242e160e"
     },
     {
       "path": "docs/COMMAND_PARAMETERS_CN.md",

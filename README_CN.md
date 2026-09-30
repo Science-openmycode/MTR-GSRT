@@ -1,6 +1,8 @@
 # MTR-GSRT 公开代码与论文实验复现
 
-本目录包含 MTR-GSRT、四种统计式 DP baseline 的合成数据、统一指标结果和论文图片。下面按照实验章节的叙述顺序执行合成、道路重建、指标与任务评估，最后调用对应作图命令，在 `experiment_results/regenerated_figures/` 产生 PNG 和 PDF。
+本目录包含 MTR-GSRT 的生成代码，以及四种统计式 DP baseline 已经生成好的合成数据、统一指标结果和论文图片。复现时只对 MTR-GSRT 执行生成；SPRT、PrivTrace、DPTraj-PM 和 DPStd 直接读取 `datasets/synthetic/` 中随仓库发布的结果，不在本目录重新生成。下面按照实验章节的叙述顺序执行 MTR-GSRT 生成、道路重建、指标与任务评估，最后调用对应作图命令，在 `experiment_results/regenerated_figures/` 产生 PNG 和 PDF。
+
+> **Baseline 固定结果约定。** 本公开目录不包含四个 baseline 的原始算法源码和重新生成入口。四个 baseline 的 `.pkl`/train-only `.pkl` 是论文比较所使用的已生成结果；所有 baseline 相关命令都是读取、道路适配、评估和作图。`python commands/reproduce.py generate-baselines` 会明确拒绝运行，避免把冻结结果误写成重新生成结果。需要从 baseline 源码重新生成时，必须使用包含相应源码的独立代码包，不能在本目录声称完成。
 
 审稿回复共用的道路 M×R 实验见 [共用矩阵命令](docs/REBUTTAL_SHARED_MR_CN.md)；严格 TSTR 的四种路径族生成、七路由验证与九行最终任务评分见 [七路由 TSTR 命令](docs/REBUTTAL_TSTR_FAMILY_VIEWS_CN.md)；长度条件桥接与 Portal-Fiber 投影的公开计算示例见 [路由数学核对](docs/REBUTTAL_Q3_ROUTING_CN.md)。
 区域粒度的 30 配置、五种子 Portal-Fiber 测量诊断见 [Q5 分区实验命令](docs/REBUTTAL_Q5_PARTITION_CN.md)。
@@ -68,7 +70,7 @@ python commands/reproduce.py prepare-road-reference -- --dataset-config geolife 
 
 ## 1. 从统计发布到道路轨迹
 
-这一实验先得到 SPRT、PrivTrace、DPTraj-PM 和 DPStd 的统计式合成轨迹，再比较它们的原生输出与加入 MTR 公共道路路由后的输出。比较保持私有测量不变，只改变道路重建过程，因此直接展示 MTR 路由带来的 RoadYield、BTF 和 FamilyCPC 变化。真实道路参考只取成功匹配的连通路线；合成结果仍保留所有公开输出槽位，匹配失败的槽位在 RoadYield、BTF 和 FamilyCPC 中计零。
+这一实验直接读取已经生成好的 SPRT、PrivTrace、DPTraj-PM 和 DPStd 统计式合成轨迹，再比较它们的原生输出与加入 MTR 公共道路路由后的输出。这里不重新生成四个 baseline，只改变道路重建过程，因此直接展示 MTR 路由带来的 RoadYield、BTF 和 FamilyCPC 变化。真实道路参考只取成功匹配的连通路线；合成结果仍保留所有公开输出槽位，匹配失败的槽位在 RoadYield、BTF 和 FamilyCPC 中计零。
 
 先生成本工程的 MTR-GSRT 发布，供下文道路匹配、攻击和主方案比较共用：
 
@@ -76,7 +78,7 @@ python commands/reproduce.py prepare-road-reference -- --dataset-config geolife 
 python commands/reproduce.py generate-main -- --data "C:\data\real_full_frozen.pkl" --epsilon-total 7/5 --noise-seed 20260719 --decoder-seed 30260719 --public-slot-count 17123 --bbox 39.75 40.15 116.10 116.65 --osm-cache "generation\mtr_gsrt\data\osm\osm_cache_beijing.pkl" --component-mode full --out-dir "C:\runs\mtr_gsrt"
 ```
 
-四份已经生成的统计式 DP 合成数据位于：
+四份已经生成并固定使用的统计式 DP 合成数据位于：
 
 ```text
 datasets/synthetic/baselines/
@@ -86,7 +88,7 @@ datasets/synthetic/baselines/
 └─ dpstd_native.pkl
 ```
 
-每份数据均包含 17,123 条合成轨迹，后续实验直接读取这四份数据。
+每份数据均包含 17,123 条合成轨迹，后续实验直接读取这四份数据。它们是输入结果，不是本目录中重新运行 baseline 算法得到的临时文件。
 
 包内带有已缓存的统计发布路线对象。需要从本轮新合成轨迹重新建立 M×R 矩阵时，先用同一公共道路图分别生成 FMM 和 STMatch 路线缓存，再计算指标。以下例子以四种 baseline 和新生成的 MTR-GSRT 为输入；baseline 路径在无源码包中指向随包数据，在完整源码包中替换成刚生成的 `.pkl`。
 
