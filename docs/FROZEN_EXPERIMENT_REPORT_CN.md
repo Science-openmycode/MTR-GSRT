@@ -113,7 +113,7 @@ Portal-Fiber 对整体 CPC 的改变较小，对道路排序和下一道路决�
 
 ![MTR-GSRT 严格 train-only TSTR](results/mtr_gsrt/06_strict_tstr.png)
 
-严格 TSTR 只允许真实训练集进入私有测量和轨迹合成，下游模型在合成数据上训练，并在生成器从未访问的真实测试轨迹上评价。NextCell Hit@1、NextCell MRR、Destination Hit@5 和 RoadContinuation Hit@1 分别为 0.465、0.524、0.122 和 0.501。结果表明 MTR-GSRT 保存了部分可迁移的局部道路移动信息；历史 RouteRetrieval 读取隐藏真实后缀，不进入本报告结论。
+严格 TSTR 只允许真实训练集进入私有测量和轨迹合成，下游模型在合成数据上训练，并在生成器从未访问的真实测试轨迹上评价。当前统一批次的 MTR-GSRT 原始任务值为：Next-cell Hit@1=0.3823、Next-cell MRR=0.5704、Destination Hit@5=0.1907、Road continuation Hit@1=0.6987、Route retrieval NDCG@5=0.8110；对应 Real-train 基准分别为 0.6275、0.7584、0.6229、0.8288 和 0.8271。结果表明 MTR-GSRT 保存了可迁移的局部道路移动信息；路线检索使用公开道路任务定义，不读取真实测试轨迹的隐藏后缀。
 
 ## 综合结论
 

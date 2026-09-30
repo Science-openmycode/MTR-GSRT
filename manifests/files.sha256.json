@@ -262,8 +262,8 @@
     },
     {
       "path": "docs/FROZEN_EXPERIMENT_REPORT_CN.md",
-      "size": 8816,
-      "sha256": "b2d2e4cfdcfa6c2510a9b993c73782e2555a2051e2d218a1724672f911fc1674",
+      "size": 8976,
+      "sha256": "c80a5f6ed4a1f8d83ac9c5974a2eafb33cdebc83353200171776eb7747d7ce2f",
       "role": "source_or_documentation"
     },
     {
@@ -281,7 +281,7 @@
     {
       "path": "docs/STRICT_TSTR_RESULTS_CN.md",
       "size": 2867,
-      "sha256": "20730b1e9c3f0e763430afe2dfad87e6a23f29eb5296cba9495357a8b084b578",
+      "sha256": "c9759e5ec52767f50c665e805fdd9f7190c62af9304790e50ada78554f9c553f",
       "role": "source_or_documentation"
     },
     {
