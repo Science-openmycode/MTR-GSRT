@@ -12,16 +12,33 @@ requires the original input with SHA-256
 `6a160ca557fbd7bab97af489b56c931e73532c498c390e31965c0d61e53361fd`;
 other datasets reproduce the workflow, not the same numerical results.
 
-## Quick start
+## Quick start for a first-time user
+
+The shortest verification path does not require a private dataset or a road
+matcher. It only checks the released files and redraws the released paper
+figures:
 
 ```powershell
+git clone https://github.com/Science-openmycode/MTR-GSRT.git
+cd MTR-GSRT
+git lfs install
+git lfs pull
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-lock.txt
 python commands/reproduce.py verify
 python commands/reproduce.py smoke
+python commands/reproduce.py all-precomputed
 ```
+
+Expected results are `VERIFY OK: MTR-GSRT (339 files)`, a successful smoke
+summary, and refreshed PNG/PDF files under
+`experiment_results/regenerated_figures/`. This path validates the package and
+the released results; it does not regenerate the four baseline algorithms.
+
+To regenerate MTR-GSRT itself, follow the numbered sections below after
+providing a coordinate-trajectory file and the public road-graph cache.
 
 Generate a new release from an explicit coordinate-trajectory dataset and a
 public road graph:

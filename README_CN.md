@@ -11,7 +11,29 @@
 
 ![MTR-GSRT 实验顺序](experiment_results/published_figures/00_ordered_evidence_chain.png)
 
-## 0. 安装环境
+## 0. 新手最短复现路径
+
+如果第一次接触本项目，先执行下面的完整命令。它不需要私有数据，也不运行道路匹配；它只验证公开文件、读取 Git LFS 资产，并重新生成论文已有图件：
+
+```powershell
+git clone https://github.com/Science-openmycode/MTR-GSRT.git
+cd MTR-GSRT
+git lfs install
+git lfs pull
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements-lock.txt
+python commands/reproduce.py verify
+python commands/reproduce.py smoke
+python commands/reproduce.py all-precomputed
+```
+
+预期看到 `VERIFY OK: MTR-GSRT (339 files)`、smoke 成功，并在 `experiment_results/regenerated_figures/` 得到 PNG/PDF 图件。该路径验证公开代码和已发布结果，不会重新生成四个 baseline；baseline 的原始源码不在本仓库中。
+
+需要重新生成 MTR-GSRT 时，再继续下面的环境、数据准备和实验章节。完整生成还需要 Python 3.11、公开 GeoLife 输入、公共道路图以及 Windows 道路匹配运行库。
+
+## 1. 安装环境
 
 克隆后必须先取回 Git LFS 中的公共道路缓存、预计算结果和图件；普通 Git 指针文件不能当作 pickle 或 gzip 输入。先检查并安装 Git LFS：
 

@@ -10,15 +10,15 @@
     },
     {
       "path": "README.md",
-      "size": 3679,
-      "sha256": "f25a9fbeaf8840ab5d9e2de81cca4f53d063cf37afb0ab7af70acaf91df27d29",
+      "size": 4431,
+      "sha256": "e4699ef4bb60a92716242951c618dce9becdb404b475ef59d81a7ec601b5cf5e",
       "role": "source_or_documentation"
     },
     {
       "path": "README_CN.md",
       "role": "source_or_documentation",
-      "size": 38792,
-      "sha256": "ed4590f5c8f70bd0a0e9f08dd3c740b2f175a8a930b7e0e11dadb8c5709a20de"
+      "size": 39878,
+      "sha256": "3297afc6b1b016546a858755b11dacdd44dd133b6d4643f4851a069529a80a46"
     },
     {
       "path": "commands/audit_release_batches.py",
