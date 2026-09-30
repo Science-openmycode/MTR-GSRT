@@ -82,3 +82,4 @@ Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先�
 - 2026-09-30：公开文件清单已随审计后的源码、文档与结果更新；`python commands/reproduce.py verify` 返回 `VERIFY OK: MTR-GSRT (337 files)`，提交 `9b616a8ac3e358e96d52e479a4e015fa9662f663` 已推送。
 - 2026-09-30：统一入口新增 `audit-rebuttal-q2`，可从 GitHub 命令行复核三城协议、维度、预算、回退和外部性能日志；它只读取已保存发布与公共 OSM，不读取私有轨迹。
 - 2026-09-30：从当前公开入口完成北京 7×5 隐私预算生成扫描，共 35 个单元，目录为本地隔离记录 `check/rebuttal_public_repro_20260930/q6_current_clean_clone_full`。35 个协议均为 17,123 条固定槽位、`input_record_count=not_released`、无 `elapsed_sec`，无残留 staging 目录；该批次完成了生成复现，尚未替代已有 Q6 的统一指标和道路选择评分结果。
+- 2026-09-30：从该批次的 `epsilon=7/5, seed=20260719` 产物接入 `commands/reproduce.py evaluate` 完成一次端到端指标 smoke，统一评估器写出 `metrics.json/csv/manifest`；完整 35 格评分仍按 Q6 文档命令执行，旧 Q6 聚合结果不被新 smoke 覆盖。
