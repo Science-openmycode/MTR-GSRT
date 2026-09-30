@@ -6,6 +6,7 @@ import json
 import gzip
 import os
 import pickle
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -51,6 +52,11 @@ def stage_verify() -> int:
             continue
         if hashlib.sha256(payload).hexdigest() != entry["sha256"]:
             failures.append(f"sha256: {entry['path']}")
+    if failures and shutil.which("git-lfs") is None:
+        failures.append(
+            "git-lfs is not installed; run `git lfs install` and `git lfs pull` "
+            "before verifying packaged binary artifacts"
+        )
     actual_data = [p for p in (ROOT / "datasets" / "synthetic").rglob("*") if p.is_file()]
     if not actual_data:
         failures.append("no packaged synthetic datasets")

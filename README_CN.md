@@ -13,12 +13,17 @@
 
 ## 0. 安装环境
 
-克隆后先取回 Git LFS 中的公共道路缓存、预计算结果和图件；普通 Git 指针文件不能当作 pickle 或 gzip 输入。没有安装 Git LFS 时先安装它，然后在本目录运行：
+克隆后必须先取回 Git LFS 中的公共道路缓存、预计算结果和图件；普通 Git 指针文件不能当作 pickle 或 gzip 输入。先检查并安装 Git LFS：
 
 ```powershell
+git lfs version
+# 如果上一条命令不存在，可在 Windows 执行：
+winget install GitHub.GitLFS
 git lfs install
 git lfs pull
 ```
+
+只有 `git lfs pull` 完成后才运行下面的 Python 检查。若跳过这一步，`verify` 会列出缺失的 LFS 文件，`smoke`、`all-precomputed` 和涉及道路缓存的测试也会失败；这表示输入文件尚未取回，不是算法失败。
 
 ```powershell
 python -m venv .venv
