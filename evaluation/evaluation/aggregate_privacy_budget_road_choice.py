@@ -31,7 +31,7 @@ def main() -> None:
     sources = parser.add_mutually_exclusive_group(required=True)
     sources.add_argument("--input")
     sources.add_argument("--input-dir")
-    parser.add_argument("--config", default="configs/mtr_epsilon_sweep_beijing.json")
+    parser.add_argument("--config", default="generation/mtr_gsrt/configs/mtr_epsilon_sweep_beijing.json")
     parser.add_argument("--out-dir", required=True)
     args = parser.parse_args()
     config_path = public_path(args.config)

@@ -47,6 +47,7 @@ from generation.mtr.generate import (  # noqa: E402
     CLASSIFICATION,
     Q5_BLOCK_NAMES,
     _decode,
+    _load_private_input,
     _resolve_configuration,
     _source_binding,
 )
@@ -55,8 +56,11 @@ from generation.mtr.generate import (  # noqa: E402
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", default="geolife")
+    parser.add_argument("--data", help="local private trajectory file; required when not at the registered path")
+    parser.add_argument("--verify-frozen-input", action="store_true",
+                        help="local exact-file preflight, outside the DP release interface")
     parser.add_argument(
-        "--sweep-config", default="configs/mtr_epsilon_sweep_beijing.json"
+        "--sweep-config", default="generation/mtr_gsrt/configs/mtr_epsilon_sweep_beijing.json"
     )
     parser.add_argument("--out-root", default="results/synthetic_datasets/mtr")
     parser.add_argument("--resume", action="store_true")
@@ -290,6 +294,19 @@ def _resolve_filters(
     return epsilon_filters, seed_filters
 
 
+def resolve_sweep_config(dataset: str, data: str | None = None,
+                         verify_frozen_input: bool = False) -> dict:
+    return _resolve_configuration(argparse.Namespace(
+        data=data if data is not None else dataset,
+        dataset_config=dataset,
+        bbox=None,
+        osm_cache=None,
+        public_slot_count=None,
+        public_input_capacity=None,
+        verify_frozen_input=verify_frozen_input,
+    ))
+
+
 def main() -> None:
     args = build_parser().parse_args()
     add_runtime_paths()
@@ -297,14 +314,7 @@ def main() -> None:
     epsilon_filters, seed_filters = _resolve_filters(
         sweep, args.epsilon_filters, args.seed_filters
     )
-    config_args = argparse.Namespace(
-        data=args.dataset,
-        dataset_config=args.dataset,
-        bbox=None,
-        osm_cache=None,
-        public_slot_count=None,
-    )
-    config = _resolve_configuration(config_args)
+    config = resolve_sweep_config(args.dataset, args.data, args.verify_frozen_input)
     source_binding = _source_binding()
     logger = configure_logging(
         PUBLIC_RELEASE / "logs" / "generation" / f"{args.dataset}_shared_query.log",
@@ -319,7 +329,7 @@ def main() -> None:
     import route_structure_potential_experiment as route
     from public_utils import filter_osm_ways_by_bbox, filter_osm_ways_by_highway, load_trajectories
 
-    real = load_trajectories(str(config["data"]), limit=config["capacity"])
+    real, _ = _load_private_input(config["data"], config["input_capacity"], load_trajectories)
     if len(real) != config["capacity"]:
         raise RuntimeError("frozen input does not fill the public slot domain")
     with config["osm_cache"].open("rb") as handle:
@@ -453,8 +463,9 @@ def main() -> None:
                     "dataset": config["name"],
                     "dataset_status": config["status"],
                     "data_spec": str(config["data"]),
-                    "input_record_count": config["capacity"],
+                    "input_record_count": "not_released",
                     "private_input_hash_persisted": False,
+                    "public_input_capacity": config["input_capacity"],
                     "public_slot_count": config["capacity"],
                     "output_count": config["capacity"],
                     "output_yield": 1.0,
@@ -514,7 +525,6 @@ def main() -> None:
                         "exact_totals_serialized": False,
                     },
                     "outputs": output_hashes,
-                    "elapsed_sec": time.time() - run_started,
                 }
                 write_json(work_dir / "protocol.json", protocol)
                 write_json(

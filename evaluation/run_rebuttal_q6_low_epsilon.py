@@ -108,7 +108,25 @@ def exact_workloads(real_path: Path, osm_path: Path, bbox: tuple[float, ...], ca
     return base, flow, q5
 
 
-def utility_rows(route_choice_csv: Path, metrics_root: Path, generation_root: Path):
+def generation_seconds(protocol_path: Path, protocol: dict,
+                       performance_path: Path | None) -> float:
+    if performance_path is None:
+        if "elapsed_sec" not in protocol:
+            raise ValueError(f"{protocol_path}: supply --generation-performance-root for new releases")
+        return float(protocol["elapsed_sec"])
+    performance = json.loads(performance_path.read_text(encoding="utf-8"))
+    if performance.get("classification") != "LOCAL_PERFORMANCE_DIAGNOSTIC_NOT_DP_RELEASE":
+        raise ValueError(f"{performance_path}: wrong performance-log classification")
+    if performance.get("release_protocol_sha256") != sha256_file(protocol_path):
+        raise ValueError(f"{performance_path}: release protocol SHA-256 mismatch")
+    elapsed = float(performance["generation_elapsed_sec"])
+    if not math.isfinite(elapsed) or elapsed < 0:
+        raise ValueError(f"{performance_path}: invalid generation time")
+    return elapsed
+
+
+def utility_rows(route_choice_csv: Path, metrics_root: Path, generation_root: Path,
+                 performance_root: Path | None = None):
     rows = []
     route_choice = {}
     with route_choice_csv.open("r", encoding="utf-8") as handle:
@@ -118,22 +136,30 @@ def utility_rows(route_choice_csv: Path, metrics_root: Path, generation_root: Pa
         for seed in SEEDS:
             metric_path = metrics_root / directory / f"seed_{seed}" / "metrics/metrics.json"
             metrics = json.loads(metric_path.read_text(encoding="utf-8"))["metrics"]
-            protocol = json.loads((generation_root / directory / f"seed_{seed}" / "protocol.json").read_text(encoding="utf-8"))
+            protocol_path = generation_root / directory / f"seed_{seed}" / "protocol.json"
+            protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+            performance_path = (performance_root / directory / f"seed_{seed}.json"
+                                if performance_root else None)
             item = {
                 "epsilon": epsilon, "seed": seed,
                 "Grid": metrics["grid_density_jsd"], "Trip": metrics["trip_error"],
                 "Len": metrics["path_length_jsd"], "OD": metrics["OD_jsd"],
                 "RoadSeg": metrics["road_segment_jsd"],
-                "DirectedRoadValidity": metrics["directed_road_validity"],
-                "RouteCompatibleYield": metrics["route_compatible_yield"],
-                "RouteMRR": metrics["B2_route_mrr"],
+                "DirectedRoadValidity": metrics.get(
+                    "coordinate_projection_directed_road_validity",
+                    metrics["directed_road_validity"]),
+                "RouteCompatibleYield": metrics.get(
+                    "coordinate_projection_route_compatible_yield",
+                    metrics["route_compatible_yield"]),
+                "RouteMRR": (metrics["B2_route_mrr"] if "B2_route_mrr" in metrics
+                             else metrics["B2_grid_route_mrr"]),
                 "DestinationTop5": metrics["B1_dest8_top5"],
                 "WitnessValid": metrics["witness_valid"],
                 "RC_NDCG": route_choice[(epsilon, seed, "road_choice_ndcg")],
                 "NextRoadAcc": route_choice[(epsilon, seed, "next_road_accuracy")],
                 "NextRoadNLL": route_choice[(epsilon, seed, "next_road_nll")],
                 "FallbackCount": protocol["decoder"]["fallback_count"],
-                "GenerationSeconds": protocol["elapsed_sec"],
+                "GenerationSeconds": generation_seconds(protocol_path, protocol, performance_path),
             }
             rows.append(item)
     return rows
@@ -146,6 +172,8 @@ def main():
     parser.add_argument("--bbox", nargs=4, type=float, required=True)
     parser.add_argument("--public-capacity", type=int, required=True)
     parser.add_argument("--generation-root", required=True)
+    parser.add_argument("--generation-performance-root",
+                        help="external local timing logs under eps_*/seed_*.json for new releases")
     parser.add_argument("--metrics-root", required=True)
     parser.add_argument("--route-choice-csv", required=True)
     parser.add_argument("--out-dir", required=True)
@@ -158,6 +186,8 @@ def main():
     real_path = rooted(args.real)
     osm_path = rooted(args.osm_cache)
     generation_root = rooted(args.generation_root)
+    performance_root = (rooted(args.generation_performance_root)
+                        if args.generation_performance_root else None)
     metrics_root = rooted(args.metrics_root)
     route_choice_csv = rooted(args.route_choice_csv)
     out = rooted(args.out_dir)
@@ -186,6 +216,10 @@ def main():
             input_files[f"{prefix}/dp_transcript.npz"] = generation_root / prefix / "dp_transcript.npz"
             input_files[f"{prefix}/protocol.json"] = generation_root / prefix / "protocol.json"
             input_files[f"{prefix}/metrics.json"] = metrics_root / prefix / "metrics/metrics.json"
+            if performance_root is not None:
+                input_files[f"{directory}/seed_{seed}.performance.json"] = (
+                    performance_root / directory / f"seed_{seed}.json"
+                )
     missing = [name for name, path in input_files.items() if not path.is_file()]
     if missing:
         raise FileNotFoundError(f"Missing Q6 matrix inputs: {missing}")
@@ -255,7 +289,7 @@ def main():
     with qsum_path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(query_summary[0])); writer.writeheader(); writer.writerows(query_summary)
 
-    utility = utility_rows(route_choice_csv, metrics_root, generation_root)
+    utility = utility_rows(route_choice_csv, metrics_root, generation_root, performance_root)
     utility_path = OUT / "q6_full_release_utility_detailed.csv"
     with utility_path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(utility[0])); writer.writeheader(); writer.writerows(utility)
