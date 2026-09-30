@@ -93,6 +93,7 @@
 | `evaluate --road-routes/--edge-cache` | 可选有向道路路线与公共边缓存；用于由 `routes-to-coordinates` 派生坐标的发布，要求同名 derivation manifest 的哈希和槽位数一致。与 `--witness` 互斥。 |
 | `evaluate --dataset-config` | 可选数据集配置键；注册数据集用它加载冻结公共设置。任意新数据集可省略并显式提供后述三项。 |
 | `evaluate --bbox/--osm-cache/--public-slot-count` | 任意新数据集必须显式给出城市范围、公共道路缓存和预声明评估条数。 |
+| `evaluate --allow-unregistered-input` | 迁移到未登记数据集时显式开启；评估 manifest 记录真实输入 SHA-256。省略时仍严格执行注册数据集的冻结输入哈希检查。 |
 | `evaluate --task-mode` | 当前为 `retrospective`；严格泛化任务使用独立的 `run-tstr`。 |
 | `evaluate --evaluation-seed` | 评估抽样随机种子，默认 `20260713`。 |
 | `evaluate --cdtw-samples` | cDTW 真实样本数，默认 `400`。 |
