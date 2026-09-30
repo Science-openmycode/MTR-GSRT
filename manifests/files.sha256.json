@@ -1150,14 +1150,14 @@
     },
     {
       "path": "experiment_results/published_figures/06_strict_tstr.pdf",
-      "size": 35490,
-      "sha256": "919a808d334581445649aac5ffa269a14f20b0aa2393980232ee13b004d5544b",
+      "size": 33442,
+      "sha256": "c52229b6dce317189b8d855357e3ba1b06e9fb5924fc9c33495d6fc3834875a5",
       "role": "source_or_documentation"
     },
     {
       "path": "experiment_results/published_figures/06_strict_tstr.png",
-      "size": 259089,
-      "sha256": "ceae2f3f6ffa71e9c82657849b3c0870fcfcce7798b90717691a387f6414e7a1",
+      "size": 223771,
+      "sha256": "63aa39f78ae18174034b6ba7d43d1ad2d7b09aa5aca5e50c6cd68c7f10c387b3",
       "role": "source_or_documentation"
     },
     {
