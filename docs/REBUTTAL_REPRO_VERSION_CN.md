@@ -83,3 +83,4 @@ Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先�
 - 2026-09-30：统一入口新增 `audit-rebuttal-q2`，可从 GitHub 命令行复核三城协议、维度、预算、回退和外部性能日志；它只读取已保存发布与公共 OSM，不读取私有轨迹。
 - 2026-09-30：从当前公开入口完成北京 7×5 隐私预算生成扫描，共 35 个单元，目录为本地隔离记录 `check/rebuttal_public_repro_20260930/q6_current_clean_clone_full`。35 个协议均为 17,123 条固定槽位、`input_record_count=not_released`、无 `elapsed_sec`，无残留 staging 目录；该批次完成了生成复现，尚未替代已有 Q6 的统一指标和道路选择评分结果。
 - 2026-09-30：从该批次的 `epsilon=7/5, seed=20260719` 产物接入 `commands/reproduce.py evaluate` 完成一次端到端指标 smoke，统一评估器写出 `metrics.json/csv/manifest`；完整 35 格评分仍按 Q6 文档命令执行，旧 Q6 聚合结果不被新 smoke 覆盖。
+- 2026-09-30：在同一当前公开生成批次上完成完整 7×5 全指标评分。35 个叶目录均写出 `metrics.json`、`metrics.csv`、`manifest.json`、`evaluation.log` 和 `destination_model_audit.json`；每个协议的 `real_count` 与 `synthetic_count` 均为 17,123，JSON 可解析且无缺失单元。结果仅保存于本地隔离目录 `check/rebuttal_public_repro_20260930/q6_current_eval_all/geolife`，不覆盖历史 Q6 表格；道路选择专用 q24 聚合仍使用文档规定的 STMatch 缓存与 `evaluate_road_choice.py` 口径。
