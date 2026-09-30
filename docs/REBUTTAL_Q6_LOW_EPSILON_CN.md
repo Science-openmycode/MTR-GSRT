@@ -2,6 +2,8 @@
 
 北京实验使用七个总预算 `1/5, 2/5, 7/10, 1, 7/5, 2, 3`，每个预算五个研究噪声种子 `20260719`—`20260723`。公开生成入口 `generate-main` 按同一公共图、槽位和预算比例生成 35 份独立合成语料；随后对每份运行统一指标评估和道路选择评估。它们是研究扫描，不能把 35 次发布合称一次 ε-DP 发布。
 
+从仓库根目录也可以使用统一转发入口：`python commands/reproduce.py generate-sweep -- --dataset geolife --data <real_full_frozen.pkl> --verify-frozen-input --out-root <generation-root> --resume`。需要只复核一个单元格时追加 `--epsilon 7/5 --noise-seed 20260719`；不加筛选参数则依次运行全部 35 个单元格。
+
 从头执行时，先按 README 生成 `C:\data\real_full_frozen.pkl` 与 `C:\runs\real_road_reference\matched_paths\Real.pkl.gz`。下面的命令为 35 个单次生成分别记录完整耗时，而不是把共享查询的初始化时间分摊到各次发布。它在本地空目录执行；已经存在的发布目录会由生成器拒绝覆盖。
 
 ```powershell
