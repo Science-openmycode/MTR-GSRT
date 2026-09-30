@@ -81,3 +81,4 @@ Q5 和 Q6 的版本与结果将在逐项完成公开重跑后追加，不预先�
 - 2026-09-30：`commands/reproduce.py generate-sweep` 已加入统一复现入口，提交 `e2ff4b9b11aea9093539382f9f9e064df01ff579` 已推送；`python -m pytest -q tests` 为 `78 passed, 119 subtests passed`。该入口只转发显式预算/种子参数，不改变共享查询或发布协议。
 - 2026-09-30：公开文件清单已随审计后的源码、文档与结果更新；`python commands/reproduce.py verify` 返回 `VERIFY OK: MTR-GSRT (337 files)`，提交 `9b616a8ac3e358e96d52e479a4e015fa9662f663` 已推送。
 - 2026-09-30：统一入口新增 `audit-rebuttal-q2`，可从 GitHub 命令行复核三城协议、维度、预算、回退和外部性能日志；它只读取已保存发布与公共 OSM，不读取私有轨迹。
+- 2026-09-30：从当前公开入口完成北京 7×5 隐私预算生成扫描，共 35 个单元，目录为本地隔离记录 `check/rebuttal_public_repro_20260930/q6_current_clean_clone_full`。35 个协议均为 17,123 条固定槽位、`input_record_count=not_released`、无 `elapsed_sec`，无残留 staging 目录；该批次完成了生成复现，尚未替代已有 Q6 的统一指标和道路选择评分结果。
