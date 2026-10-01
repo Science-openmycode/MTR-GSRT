@@ -1,0 +1,141 @@
+{
+  "n_original_sample": 20000,
+  "n_synthetic_sample": 20000,
+  "original_stats": {
+    "n": 20000,
+    "mean_len": 69.6522,
+    "median_len": 68.0,
+    "min_len": 2,
+    "max_len": 169,
+    "step_mean": 163.5171636396397,
+    "step_median": 149.2249643993928,
+    "step_p95": 364.5716054494047,
+    "trip_mean": 8969.649794189114,
+    "trip_median": 8497.763595281542,
+    "sinuosity_median": 1.2144603158535936,
+    "min_x": 281.0,
+    "max_x": 23854.0,
+    "min_y": 3935.0,
+    "max_y": 30851.0
+  },
+  "synthetic": [
+    {
+      "file": "syn_oldenburg_eps_0.5_max_0.9_grid_6.pkl",
+      "stats": {
+        "n": 5000,
+        "mean_len": 2.0,
+        "median_len": 2.0,
+        "min_len": 2,
+        "max_len": 2,
+        "step_mean": 258.76907603895336,
+        "step_median": 254.1603928986661,
+        "step_p95": 471.18896722738765,
+        "trip_mean": 258.76907603895336,
+        "trip_median": 254.1603928986661,
+        "sinuosity_median": null,
+        "min_x": 347000.1854544513,
+        "max_x": 349999.89347546507,
+        "min_y": 5799500.03337738,
+        "max_y": 5801999.919966913
+      },
+      "bbox_overlap": 0.0,
+      "compatible_with_original": 0
+    },
+    {
+      "file": "syn_oldenburg_eps_1.0_max_0.9_grid_6.pkl",
+      "stats": {
+        "n": 20000,
+        "mean_len": 3.875,
+        "median_len": 3.0,
+        "min_len": 2,
+        "max_len": 32,
+        "step_mean": 4786.097651974094,
+        "step_median": 4743.100713460168,
+        "step_p95": 7926.26699591066,
+        "trip_mean": 5845.112480372387,
+        "trip_median": 5227.606247189559,
+        "sinuosity_median": 2.5163152131418527,
+        "min_x": 281.22733646662346,
+        "max_x": 23853.847490750446,
+        "min_y": 3935.0113360421274,
+        "max_y": 30850.081917999618
+      },
+      "bbox_overlap": 1.0,
+      "compatible_with_original": 1,
+      "comparison": {
+        "len_jsd": 0.8245008837241812,
+        "step_jsd": 0.8259117260843334,
+        "trip_jsd": 0.25391889544178503,
+        "sinuosity_jsd": 0.5286781711966043,
+        "syn_step_mean": 4786.097651974094,
+        "syn_sinuosity_median": 2.5163152131418527
+      }
+    },
+    {
+      "file": "syn_oldenburg_eps_10.0_max_0.9_grid_6.pkl",
+      "stats": {
+        "n": 5000,
+        "mean_len": 20.2564,
+        "median_len": 19.0,
+        "min_len": 2,
+        "max_len": 36,
+        "step_mean": 629.228955377552,
+        "step_median": 627.4153701307666,
+        "step_p95": 987.2321262906903,
+        "trip_mean": 1375.7310453631167,
+        "trip_median": 1232.7933275007172,
+        "sinuosity_median": 8.015487170281174,
+        "min_x": 347000.4267823363,
+        "max_x": 349999.9649412141,
+        "min_y": 5799000.052682026,
+        "max_y": 5801999.963256104
+      },
+      "bbox_overlap": 0.0,
+      "compatible_with_original": 0
+    },
+    {
+      "file": "syn_oldenburg_eps_2.0_max_0.9_grid_6.pkl",
+      "stats": {
+        "n": 5000,
+        "mean_len": 2.0,
+        "median_len": 2.0,
+        "min_len": 2,
+        "max_len": 2,
+        "step_mean": 258.76907603895336,
+        "step_median": 254.1603928986661,
+        "step_p95": 471.18896722738765,
+        "trip_mean": 258.76907603895336,
+        "trip_median": 254.1603928986661,
+        "sinuosity_median": null,
+        "min_x": 347000.1542889416,
+        "max_x": 349999.14412445005,
+        "min_y": 5799000.033377047,
+        "max_y": 5801999.996591026
+      },
+      "bbox_overlap": 0.0,
+      "compatible_with_original": 0
+    },
+    {
+      "file": "syn_oldenburg_eps_5.0_max_0.9_grid_6.pkl",
+      "stats": {
+        "n": 5000,
+        "mean_len": 15.375,
+        "median_len": 12.0,
+        "min_len": 2,
+        "max_len": 36,
+        "step_mean": 636.0439406803175,
+        "step_median": 635.1445927979416,
+        "step_p95": 996.615619021688,
+        "trip_mean": 1338.367944834607,
+        "trip_median": 1146.0744883271877,
+        "sinuosity_median": 5.363998502459985,
+        "min_x": 347000.1954793177,
+        "max_x": 349999.95603688306,
+        "min_y": 5799000.017354382,
+        "max_y": 5801999.970011426
+      },
+      "bbox_overlap": 0.0,
+      "compatible_with_original": 0
+    }
+  ]
+}

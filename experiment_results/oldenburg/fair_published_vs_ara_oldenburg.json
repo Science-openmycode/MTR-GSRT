@@ -1,0 +1,71 @@
+{
+  "protocol": {
+    "dataset": "Oldenburg simulated road-network trajectories",
+    "n_load": 5000,
+    "n_train": 1000,
+    "n_eval_visual": 300,
+    "n_gen": 300,
+    "support": "raw Oldenburg trajectory graph; diagnostic, not public OSM",
+    "seed": 42
+  },
+  "generated_counts": {
+    "SPRT-native": 300,
+    "SPRT-OSM": 300,
+    "PrivTrace-native": 300,
+    "PrivTrace-OSM": 290,
+    "DPTrajPM-native": 300,
+    "DPTrajPM-OSM": 281,
+    "DPStd-native": 300,
+    "DPStd-OSM": 300,
+    "DP-TRB": 300
+  },
+  "generation_errors": {},
+  "pra_counts": {
+    "SPRT-OSM": {
+      "routed": 16885,
+      "fallback": 0,
+      "ok_trajectories": 300
+    },
+    "PrivTrace-OSM": {
+      "routed": 18300,
+      "fallback": 0,
+      "ok_trajectories": 290
+    },
+    "DPTrajPM-OSM": {
+      "routed": 7287,
+      "fallback": 0,
+      "ok_trajectories": 281
+    },
+    "DPStd-OSM": {
+      "routed": 48664,
+      "fallback": 0,
+      "ok_trajectories": 300
+    }
+  },
+  "dp_trb_diagnostics": {
+    "method": "diverseStochasticBridge",
+    "attempted": 315,
+    "routed": 300,
+    "skipped_same_anchor": 15,
+    "skipped_unroutable": 0,
+    "mean_route_nodes": 178.52,
+    "mean_candidate_paths": 2.36,
+    "selected_candidate_graphs": {
+      "lambda=0.00": 179,
+      "lambda=0.00+penalty": 83,
+      "lambda=1.10+penalty": 7,
+      "lambda=0.35": 13,
+      "lambda=0.35+penalty": 10,
+      "lambda=0.75+penalty": 7,
+      "lambda=1.10": 1
+    },
+    "epsilon_extra_corridor": 0.2,
+    "paired_route_specs": true,
+    "public_bbox_normalization": false,
+    "raw_graph_diagnostic_only": true
+  },
+  "figures": {
+    "map_png": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\results\\figures\\fair_published_vs_ara\\oldenburg_published_vs_ara_map.png",
+    "map_pdf": "E:\\study\\大四下\\Paper-Agent-main\\Paper-Agent-main\\ARA_codex\\results\\figures\\fair_published_vs_ara\\oldenburg_published_vs_ara_map.pdf"
+  }
+}

@@ -102,3 +102,17 @@ For a dataset that is not registered in `config/datasets.json`, pass explicit
 the actual input SHA-256 in its manifest. Without this opt-in, registered
 datasets remain protected by the frozen-input hash check used for paper
 reproduction.
+
+## Oldenburg diagnostic benchmark
+
+The repository includes `datasets/raw/oldenburg.dat` through Git LFS and the
+measured diagnostic outputs in `experiment_results/oldenburg/`. Recompute the
+input audit with:
+
+```powershell
+python commands/oldenburg_diagnostics.py --data datasets/raw/oldenburg.dat --limit 20000 --out-dir experiment_results/oldenburg/recomputed
+```
+
+Oldenburg is a simulated local-coordinate road-network corpus for road-
+structure diagnostics. It is not claimed as a formal public-OSM/Portal-Fiber
+MTR-GSRT release; see `docs/OLDENBURG.md`.

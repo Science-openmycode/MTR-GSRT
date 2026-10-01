@@ -388,6 +388,22 @@ Destination 的历史保存值和当前锁定环境值分开存放，见 [数值
 保存数据与新生成数据分开评估；全量拟合任务与严格 train-only TSTR 分开报告。逐文件预算来源、批次核查命令、三路由聚合检查和跨城市参数见 [数据批次与评估流程](docs/RELEASE_BATCHES_AND_PROTOCOLS_CN.md)。
 
 `all-precomputed` 只校验保存数据并重画已有结果，不执行合成、攻击或下游训练，也不表示已从零复现整篇论文。保存的 PrivTrace 是 epsilon=1 的 official-stageA+p30 批次，本轮按要求不更换其预算；新的 privtrace-native 发布是独立批次。
+
+## Oldenburg 诊断基准
+
+仓库通过 Git LFS 提供 `datasets/raw/oldenburg.dat`，并保留已经测量的
+Oldenburg 诊断结果于 `experiment_results/oldenburg/`。从仓库根目录运行：
+
+```powershell
+python commands/oldenburg_diagnostics.py `
+  --data datasets/raw/oldenburg.dat `
+  --limit 20000 `
+  --out-dir experiment_results/oldenburg/recomputed
+```
+
+该命令重新计算输入哈希、轨迹数量、坐标范围和长度统计。Oldenburg 是
+局部投影坐标下的模拟道路网络轨迹，用于道路结构诊断，不作为正式的公开
+OSM/Portal-Fiber MTR-GSRT 发布；具体结果和边界见 `docs/OLDENBURG.md`。
 # Porto、San Francisco 与自定义数据
 
 输入准备、公共道路图、合成、重新评分和图片输入的逐步命令见 [跨城市运行](docs/CROSS_CITY_COMMANDS_CN.md)。Porto 与 SF 公共 OSM cache 已随目录提供；真实轨迹从公开原始数据准备。新的实验使用新的输出目录。
