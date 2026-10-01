@@ -407,3 +407,6 @@ OSM/Portal-Fiber MTR-GSRT 发布；具体结果和边界见 `docs/OLDENBURG.md`�
 # Porto、San Francisco 与自定义数据
 
 输入准备、公共道路图、合成、重新评分和图片输入的逐步命令见 [跨城市运行](docs/CROSS_CITY_COMMANDS_CN.md)。Porto 与 SF 公共 OSM cache 已随目录提供；真实轨迹从公开原始数据准备。新的实验使用新的输出目录。
+
+各城市当前到底能做什么、哪些结果已经随 GitHub 发布，见
+[多城市复现事实表](docs/MULTI_CITY_FACT_TABLE_CN.md)。
